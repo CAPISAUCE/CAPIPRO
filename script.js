@@ -242,10 +242,10 @@ function confirmOrder() {
     </html>
   `);
 
+  // Vaciar carrito
   cart = [];
   renderCart();
 }
-
 
 function updateCartCount() {
   const count = cart.reduce((sum, item) => sum + item.quantity, 0);
