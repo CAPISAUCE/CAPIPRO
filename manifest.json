@@ -1,0 +1,9 @@
+{
+  "name": "CAPI",
+  "short_name": "CAPI",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#ffeaa7",
+  "theme_color": "#fd79a8",
+  "icons": []
+}
