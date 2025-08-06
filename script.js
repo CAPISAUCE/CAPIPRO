@@ -196,7 +196,36 @@ function toggleCart() {
 }
 
 function confirmOrder() {
-  alert("Заказ принят! / Order confirmed!");
+  if (cart.length === 0) {
+    alert("🛒 El carrito está vacío.");
+    return;
+  }
+
+  let message = "🧾 Pedido:\n";
+  let totalKGS = 0;
+  let totalUSD = 0;
+
+  cart.forEach(item => {
+    message += `• ${item.name} (${item.size}) x${item.qty} = ${item.priceKGS * item.qty} сом / $${(item.priceUSD * item.qty).toFixed(2)}\n`;
+    totalKGS += item.priceKGS * item.qty;
+    totalUSD += item.priceUSD * item.qty;
+  });
+
+  message += `\nTOTAL: ${totalKGS} сом / $${totalUSD.toFixed(2)}`;
+
+  const encodedMsg = encodeURIComponent(message);
+  const whatsappKG = "https://wa.me/996559500551?text=" + encodedMsg;
+  const whatsappUS = "https://wa.me/17866514487?text=" + encodedMsg;
+
+  const popup = window.open("", "WhatsApp", "width=300,height=200");
+  popup.document.write(`
+    <html><head><title>Confirmar Pedido</title></head>
+    <body style='font-family:sans-serif;padding:20px;'>
+      <h3>Enviar pedido por WhatsApp:</h3>
+      <p><a href='${whatsappKG}' target='_blank'>🇰🇬 Kirguistán</a></p>
+      <p><a href='${whatsappUS}' target='_blank'>🇺🇸 Estados Unidos</a></p>
+    </body></html>
+  `);
 }
 
 function updateCartCount() {
