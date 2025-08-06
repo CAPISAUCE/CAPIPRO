@@ -235,11 +235,6 @@ function confirmOrder() {
   updateCartDisplay();
 }
 
-  // Vaciar carrito
-  cart = [];
-  renderCart();
-}
-
 function updateCartCount() {
   const count = cart.reduce((sum, item) => sum + item.quantity, 0);
   const badge = document.getElementById("cart-count");
