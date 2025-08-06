@@ -196,31 +196,7 @@ function toggleCart() {
 }
 
 function confirmOrder() {
-  if (cart.length === 0) {
-    alert("🛒 " + translations["your_cart"][currentLang] + " " + (currentLang === 'es' ? "está vacío." : currentLang === 'ru' ? "пустая." : "бош");
-    return;
-  }
-
-  let message = "🧾 " + translations["your_cart"][currentLang] + ":\n";
-  let totalKGS = 0;
-  let totalUSD = 0;
-
-  cart.forEach(item => {
-    message += `• ${item.name} (${item.size} ml) x${item.quantity} = ${item.price.kgs * item.quantity} сом / $${(item.price.usd * item.quantity).toFixed(2)}\n`;
-    totalKGS += item.price.kgs * item.quantity;
-    totalUSD += item.price.usd * item.quantity;
-  });
-
-  message += `\n${translations["price"][currentLang]} ${totalKGS} сом / $${totalUSD.toFixed(2)}`;
-
-  const encodedMsg = encodeURIComponent(message);
-  const phone = "996559500551";
-  const phone = "17866514487";
-  
-  window.location.href = `https://wa.me/${phone}?text=${encodedMsg}`;
-
-  cart = [];
-  renderCart();
+  alert("Заказ принят! / Order confirmed!");
 }
 
 function updateCartCount() {
