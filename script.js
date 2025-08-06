@@ -196,8 +196,56 @@ function toggleCart() {
 }
 
 function confirmOrder() {
-  alert("Заказ принят! / Order confirmed!");
+  if (cart.length === 0) {
+    alert("🛒 El carrito está vacío.");
+    return;
+  }
+
+  let message = "🧾 Pedido:\n";
+  let totalKGS = 0;
+  let totalUSD = 0;
+
+  cart.forEach(item => {
+    message += `• ${item.name} (${item.size} ml) x${item.quantity} = ${item.price.kgs * item.quantity} сом / $${(item.price.usd * item.quantity).toFixed(2)}\n`;
+    totalKGS += item.price.kgs * item.quantity;
+    totalUSD += item.price.usd * item.quantity;
+  });
+
+  message += `\nTOTAL: ${totalKGS} сом / $${totalUSD.toFixed(2)}`;
+
+  const encodedMsg = encodeURIComponent(message);
+  const phoneKG = "996559500551";
+  const phoneUS = "17866514487";
+
+  const whatsappAppKG = `whatsapp://send?phone=${phoneKG}&text=${encodedMsg}`;
+  const whatsappAppUS = `whatsapp://send?phone=${phoneUS}&text=${encodedMsg}`;
+  const whatsappWebKG = `https://wa.me/${phoneKG}?text=${encodedMsg}`;
+  const whatsappWebUS = `https://wa.me/${phoneUS}?text=${encodedMsg}`;
+
+  const popup = window.open("", "WhatsApp", "width=320,height=260");
+  popup.document.write(`
+    <html>
+      <head><title>Confirmar Pedido</title></head>
+      <body style="font-family:sans-serif;padding:20px;text-align:center;">
+        <h3>📦 Enviar pedido por WhatsApp:</h3>
+        <p>
+          <a href="${whatsappAppKG}" onclick="setTimeout(() => { window.open('${whatsappWebKG}', '_blank'); }, 1000); window.close();">
+            🇰🇬 Enviar a Kirguistán
+          </a>
+        </p>
+        <p>
+          <a href="${whatsappAppUS}" onclick="setTimeout(() => { window.open('${whatsappWebUS}', '_blank'); }, 1000); window.close();">
+            🇺🇸 Enviar a Estados Unidos
+          </a>
+        </p>
+      </body>
+    </html>
+  `);
+
+  cart = [];
+  renderCart();
 }
+
 
 function updateCartCount() {
   const count = cart.reduce((sum, item) => sum + item.quantity, 0);
