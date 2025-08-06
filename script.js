@@ -234,7 +234,6 @@ function confirmOrder() {
   localStorage.removeItem("cart");
   updateCartDisplay();
 }
-  `);
 
   // Vaciar carrito
   cart = [];
