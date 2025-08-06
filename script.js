@@ -46,7 +46,7 @@ const translations = {
   ky: "Себетиңиз бош",
   ru: "Ваша корзина пустая",
   es: "Tu carrito está vacío"
-}
+},
 };
 
 const products = [
