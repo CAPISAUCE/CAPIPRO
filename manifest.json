@@ -32,7 +32,13 @@
       "purpose": "any"
     },
     {
-      "src": "icons/ios-1024x1024.png",
+  "src": "icons/splash-1024x1024.png",
+  "sizes": "1024x1024",
+  "type": "image/png",
+  "purpose": "any"
+    },
+    {
+    "src": "icons/ios-1024x1024.png",
       "sizes": "1024x1024",
       "type": "image/png",
       "purpose": "any"
