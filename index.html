@@ -1,40 +1,31 @@
+
 <!DOCTYPE html>
-<html lang="ky">
+<html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CAPI</title>
-  <link rel="stylesheet" href="style.css" />
-  <link rel="manifest" href="manifest.json" />
 </head>
-<body onload="setLanguage('ky')">
-  <header>
-    <h1>CAPI</h1>
-    <p id="slogan" data-i18n="slogan">100% табигый продуктылар</p>
-    <div id="language-selector">
-      <button onclick="setLanguage('ky')">🇰🇬</button>
-      <button onclick="setLanguage('ru')">🇷🇺</button>
-      <button onclick="setLanguage('es')">🇪🇸</button>
-    </div>
-    <button id="cart-button" onclick="toggleCart()">🛒<span id="cart-count">0</span></button>
-  </header>
+<body>
+  <select id="language-selector">
+    <option value="kg">🇰🇬 Кыргызча</option>
+    <option value="ru">🇷🇺 Русский</option>
+    <option value="es" selected>🇪🇸 Español</option>
+  </select>
 
-  <main id="product-list">
-    <!-- Productos dinámicos -->
-  </main>
-
-  <div id="cart-popup" class="hidden">
-    <h3 data-i18n="your_cart">Себетиңиз</h3>
-    <ul id="cart-items"></ul>
-    <p id="cart-total"></p>
-    <button onclick="confirmOrder()" data-i18n="confirm_order">Буйрутманы ырастоо</button>
+  <div>
+    <h2>Productos</h2>
+    <button onclick="addToCart('miel500', translations[currentLanguage].honey + ' 500 ml', 5.00)">🍯 Miel 500ml</button>
+    <button onclick="addToCart('picante230', translations[currentLanguage].spicy + ' 230 ml', 3.50)">🌶️ Picante 230ml</button>
   </div>
 
-  <div id="modal" class="modal hidden">
-    <div class="modal-content">
-      <span class="close" onclick="closeModal()">&times;</span>
-      <div id="modal-body"></div>
-    </div>
+  <button onclick="toggleCart()">🛒 Ver carrito</button>
+
+  <div id="cart-popup" style="display:none; border:1px solid #ccc; padding:10px;">
+    <h3>Carrito</h3>
+    <ul id="cart-items"></ul>
+    <p><strong>Total:</strong> <span id="cart-total">$0.00</span></p>
+    <button onclick="confirmOrder()">✅ Confirmar pedido</button>
   </div>
 
   <script src="script.js"></script>
