@@ -42,6 +42,11 @@ const translations = {
     ru: "Удалить",
     es: "Eliminar"
   }
+  cart_empty: {
+  ky: "Себетиңиз бош",
+  ru: "Ваша корзина пустая",
+  es: "Tu carrito está vacío"
+}
 };
 
 const products = [
