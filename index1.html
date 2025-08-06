@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ky">
+<head>
+  <meta charset="UTF-8">
+  <title>CAPI</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>CAPI</h1>
+  <div id="slogan">Productos 100% Natural</div>
+</header>
+
+<div id="product-list"></div>
+
+<div id="cart-popup" class="hidden">
+  <h3>🛒 Carrito</h3>
+  <ul id="cart-items"></ul>
+  <p><strong>Total:</strong> <span id="cart-total"></span></p>
+  <button onclick="confirmOrder()">✅ Confirmar Pedido</button>
+</div>
+
+<button id="cart-button" onclick="toggleCart()">🛒<span id="cart-count"></span></button>
+
+<script src="script.js"></script>
+</body>
+</html>
