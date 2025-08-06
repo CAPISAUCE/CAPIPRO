@@ -26,7 +26,7 @@ h1 {
 
 button {
   background-color: #ffb300;
-  color: white;
+  color: black;
   border: none;
   padding: 10px 14px;
   border-radius: 6px;
@@ -102,7 +102,7 @@ button:hover {
   bottom: 20px;
   right: 20px;
   background-color: #ffb300;
-  color: white;
+  color: black;
   border: none;
   border-radius: 50%;
   width: 60px;
