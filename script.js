@@ -41,7 +41,7 @@ const translations = {
     ky: "Өчүрүү",
     ru: "Удалить",
     es: "Eliminar"
-  }
+  },
   cart_empty: {
   ky: "Себетиңиз бош",
   ru: "Ваша корзина пустая",
