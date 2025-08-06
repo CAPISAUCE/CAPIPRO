@@ -197,7 +197,7 @@ function toggleCart() {
 
 function confirmOrder() {
   if (cart.length === 0) {
-    alert("🛒 El carrito está vacío.");
+    alert("🛒 " + translations["cart_empty"][currentLang]);
     return;
   }
 
