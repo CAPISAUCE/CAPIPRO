@@ -1,53 +1,27 @@
 <!DOCTYPE html>
 <html lang="ky">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
   <title>CAPI</title>
-  <link rel="stylesheet" href="style.css" />
-  <link rel="manifest" href="manifest.json" />
-<!-- Apple Touch Icons -->
-<link rel="apple-touch-icon" sizes="120x120" href="icons/apple-touch-icon-120x120.png">
-<link rel="apple-touch-icon" sizes="152x152" href="icons/apple-touch-icon-152x152.png">
-<link rel="apple-touch-icon" sizes="167x167" href="icons/apple-touch-icon-167x167.png">
-<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon-180x180.png">
-<link rel="apple-touch-icon" sizes="1024x1024" href="icons/apple-touch-icon-1024x1024.png">
-
-<!-- Web App Meta Tags for iOS -->
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="CAPI">
+  <link rel="stylesheet" href="style.css">
 </head>
-<body onload="setLanguage('ky')">
-  <header>
-    <h1>CAPI</h1>
-    <p id="slogan" data-i18n="slogan">100% табигый продуктылар</p>
-    <div id="language-selector">
-      <button onclick="setLanguage('ky')">🇰🇬</button>
-      <button onclick="setLanguage('ru')">🇷🇺</button>
-      <button onclick="setLanguage('es')">🇪🇸</button>
-    </div>
-    <button id="cart-button" onclick="toggleCart()">🛒<span id="cart-count">0</span></button>
-  </header>
+<body>
+<header>
+  <h1>CAPI</h1>
+  <div id="slogan">Productos 100% Natural</div>
+</header>
 
-  <main id="product-list">
-    <!-- Productos dinámicos -->
-  </main>
+<div id="product-list"></div>
 
-  <div id="cart-popup" class="hidden">
-    <h3 data-i18n="your_cart">Себетиңиз</h3>
-    <ul id="cart-items"></ul>
-    <p id="cart-total"></p>
-    <button onclick="confirmOrder()" data-i18n="confirm_order">Буйрутманы ырастоо</button>
-  </div>
+<div id="cart-popup" class="hidden">
+  <h3>🛒 Carrito</h3>
+  <ul id="cart-items"></ul>
+  <p><strong>Total:</strong> <span id="cart-total"></span></p>
+  <button onclick="confirmOrder()">✅ Confirmar Pedido</button>
+</div>
 
-  <div id="modal" class="modal hidden">
-    <div class="modal-content">
-      <span class="close" onclick="closeModal()">&times;</span>
-      <div id="modal-body"></div>
-    </div>
-  </div>
+<button id="cart-button" onclick="toggleCart()">🛒<span id="cart-count"></span></button>
 
-  <script src="script.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
