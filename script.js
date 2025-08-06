@@ -197,11 +197,11 @@ function toggleCart() {
 
 function confirmOrder() {
   if (cart.length === 0) {
-    alert("🛒 El carrito está vacío.");
+    alert("🛒 " + translations["your_cart"][currentLang] + " " + (currentLang === 'es' ? "está vacío." : currentLang === 'ru' ? "пустая." : "бош");
     return;
   }
 
-  let message = "🧾 Pedido:\n";
+  let message = "🧾 " + translations["your_cart"][currentLang] + ":\n";
   let totalKGS = 0;
   let totalUSD = 0;
 
@@ -211,17 +211,13 @@ function confirmOrder() {
     totalUSD += item.price.usd * item.quantity;
   });
 
-  message += `\nTOTAL: ${totalKGS} сом / $${totalUSD.toFixed(2)}`;
+  message += `\n${translations["price"][currentLang]} ${totalKGS} сом / $${totalUSD.toFixed(2)}`;
 
   const encodedMsg = encodeURIComponent(message);
-
-  // Puedes elegir cuál número usar como destino principal
-  const phone = "996559500551"; // Kirguistán (o cambia por 17866514487 para EE. UU.)
-
-  // Redirigir directamente a la app de WhatsApp (móvil) o WhatsApp Web (navegador)
+  const phone = "996559500551";
+  const phone = "17866514487";
   window.location.href = `https://wa.me/${phone}?text=${encodedMsg}`;
 
-  // Limpia el carrito después de enviar
   cart = [];
   renderCart();
 }
