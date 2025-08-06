@@ -216,6 +216,7 @@ function confirmOrder() {
   const encodedMsg = encodeURIComponent(message);
   const phone = "996559500551";
   const phone = "17866514487";
+  
   window.location.href = `https://wa.me/${phone}?text=${encodedMsg}`;
 
   cart = [];
