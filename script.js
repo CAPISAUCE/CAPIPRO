@@ -214,34 +214,14 @@ function confirmOrder() {
   message += `\nTOTAL: ${totalKGS} сом / $${totalUSD.toFixed(2)}`;
 
   const encodedMsg = encodeURIComponent(message);
-  const phoneKG = "996559500551";
-  const phoneUS = "17866514487";
 
-  const whatsappAppKG = `whatsapp://send?phone=${phoneKG}&text=${encodedMsg}`;
-  const whatsappAppUS = `whatsapp://send?phone=${phoneUS}&text=${encodedMsg}`;
-  const whatsappWebKG = `https://wa.me/${phoneKG}?text=${encodedMsg}`;
-  const whatsappWebUS = `https://wa.me/${phoneUS}?text=${encodedMsg}`;
+  // Puedes elegir cuál número usar como destino principal
+  const phone = "996559500551"; // Kirguistán (o cambia por 17866514487 para EE. UU.)
 
-  const popup = window.open("", "WhatsApp", "width=320,height=260");
-  popup.document.write(`
-    <html>
-      <head><title>Confirmar Pedido</title></head>
-      <body style="font-family:sans-serif;padding:20px;text-align:center;">
-        <h3>📦 Enviar pedido por WhatsApp:</h3>
-        <p>
-          <a href="${whatsappAppKG}" onclick="setTimeout(() => { window.open('${whatsappWebKG}', '_blank'); }, 1000); window.close();">
-            🇰🇬 Enviar a Kirguistán
-          </a>
-        </p>
-        <p>
-          <a href="${whatsappAppUS}" onclick="setTimeout(() => { window.open('${whatsappWebUS}', '_blank'); }, 1000); window.close();">
-            🇺🇸 Enviar a Estados Unidos
-          </a>
-        </p>
-      </body>
-    </html>
-  `);
+  // Redirigir directamente a la app de WhatsApp (móvil) o WhatsApp Web (navegador)
+  window.location.href = `https://wa.me/${phone}?text=${encodedMsg}`;
 
+  // Limpia el carrito después de enviar
   cart = [];
   renderCart();
 }
