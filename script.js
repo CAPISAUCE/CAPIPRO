@@ -1,6 +1,11 @@
 let cart = [];
 let currentLang = 'ky';
 
+// === CONFIGURACIÓN WHATSAPP + GOOGLE SHEETS ===
+const PHONE_KG = "996559500551";   // Kyrgyzstan
+const PHONE_US = "17866514487";    // Estados Unidos
+const SHEETS_WEBAPP_URL = "https://script.google.com/macros/s/TU_SCRIPT_ID/exec"; // ← REEMPLAZA
+
 const translations = {
   honey: {
     ky: "Бал",
@@ -79,6 +84,9 @@ const products = [
 
 function setLanguage(lang) {
   currentLang = lang;
+  // (Opcional) actualizar el atributo lang del <html>
+  document.documentElement.lang = lang;
+
   // Actualiza textos con data-i18n
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.getAttribute('data-i18n');
@@ -226,6 +234,7 @@ function confirmOrder() {
     return;
   }
 
+  // Mensaje y totales
   let message = "🧾 " + translations["your_cart"][currentLang] + ":\n";
   let totalKGS = 0;
   let totalUSD = 0;
@@ -238,21 +247,51 @@ function confirmOrder() {
 
   message += `\nTOTAL: ${totalKGS} сом / $${totalUSD.toFixed(2)}`;
 
+  // ---- Registro en Google Sheets ----
+  const order = {
+    order_id: "CAPI-" + Date.now(),
+    language: currentLang,
+    items: cart.map(i => ({
+      name: i.name,
+      size_ml: i.size,
+      quantity: i.quantity,
+      unit_kgs: i.price.kgs,
+      unit_usd: i.price.usd,
+      subtotal_kgs: i.price.kgs * i.quantity,
+      subtotal_usd: +(i.price.usd * i.quantity).toFixed(2)
+    })),
+    total_kgs: totalKGS,
+    total_usd: +totalUSD.toFixed(2),
+    wa_phone: `${PHONE_KG},${PHONE_US}`,
+    source: "CAPIPro"
+  };
+
+  if (SHEETS_WEBAPP_URL && SHEETS_WEBAPP_URL.includes("/exec")) {
+    fetch(SHEETS_WEBAPP_URL, {
+      method: "POST",
+      body: JSON.stringify(order),
+      headers: { "Content-Type": "application/json" }
+    }).catch(() => {});
+  }
+
+  // ---- Enviar a ambos WhatsApp ----
   const encodedMsg = encodeURIComponent(message);
-  const phoneKG = "996559500551";
-
   const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-  const whatsappURL = isMobile
-    ? `whatsapp://send?phone=${phoneKG}&text=${encodedMsg}`
-    : `https://wa.me/${phoneKG}?text=${encodedMsg}`;
 
-  // Ir directo a WhatsApp (una sola ventana)
-  window.location.href = whatsappURL;
+  const urlKG = isMobile
+    ? `whatsapp://send?phone=${PHONE_KG}&text=${encodedMsg}`
+    : `https://wa.me/${PHONE_KG}?text=${encodedMsg}`;
+  window.open(urlKG, "_blank");
 
-  // Vaciar el carrito y actualizar UI
+  const urlUS = isMobile
+    ? `whatsapp://send?phone=${PHONE_US}&text=${encodedMsg}`
+    : `https://wa.me/${PHONE_US}?text=${encodedMsg}`;
+  window.open(urlUS, "_blank");
+
+  // Limpiar carrito y UI
   cart = [];
-  renderCart();           // actualiza lista y total a 0
-  updateCartCount();      // actualiza el badge
+  renderCart();
+  updateCartCount();
   const popup = document.getElementById("cart-popup");
   if (popup && !popup.classList.contains("hidden")) {
     popup.classList.add("hidden");
