@@ -5,7 +5,6 @@ let currentLang = 'ky';
 const PHONE_KG = "996559500551";   // Kyrgyzstan
 const PHONE_US = "17866514487";    // Estados Unidos
 const SHEETS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwBknRYS4JlpNS3TEceuH7Eu48cl7JQh4-Vj2G70rBc1DiH8XyDvnKUKej3WKqXObHG/exec";
-
 const translations = {
   honey: {
     ky: "Бал",
