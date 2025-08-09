@@ -5,6 +5,8 @@ let currentLang = 'ky';
 const PHONE_KG = "996559500551";   // Kyrgyzstan
 const PHONE_US = "17866514487";    // Estados Unidos
 const SHEETS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwFpJmySLLtnb8vUneSGyYjyu2RN8Adfx4MeIdGRxBk-qDfChQ8-iPYG9593Y0vS8Xc/exec";
+console.log("Sheets URL:", SHEETS_WEBAPP_URL);
+fetch(SHEETS_WEBAPP_URL).then(r => r.text()).then(t => console.log("Ping /exec:", t));
 
 const translations = {
   honey: { ky:"Бал", ru:"Мёд", es:"Miel", en:"Honey" },
