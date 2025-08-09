@@ -4,7 +4,7 @@ let currentLang = 'ky';
 // === CONFIGURACIÓN WHATSAPP + GOOGLE SHEETS ===
 const PHONE_KG = "996559500551";   // Kyrgyzstan
 const PHONE_US = "17866514487";    // Estados Unidos
-const SHEETS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwBknRYS4JlpNS3TEceuH7Eu48cl7JQh4-Vj2G70rBc1DiH8XyDvnKUKej3WKqXObHG/exec";
+const SHEETS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwBknRYS4JlpNS3TEceuH7Eu48cl7JQh4-Vj2G70rBc1DiH8XyDvnKUKej3WKqXObHG/exec"; // <-- si tu /exec cambia, pega aquí el nuevo
 
 const translations = {
   honey: { ky:"Бал", ru:"Мёд", es:"Miel", en:"Honey" },
@@ -25,7 +25,7 @@ const products = [
 
 function setLanguage(lang) {
   currentLang = lang;
-  document.documentElement.lang = lang; // opcional pero útil
+  document.documentElement.lang = lang;
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.getAttribute('data-i18n');
     if (translations[key] && translations[key][lang]) el.textContent = translations[key][lang];
@@ -171,7 +171,6 @@ function confirmOrder() {
 
   message += `\nTOTAL: ${totalKGS} сом / $${totalUSD.toFixed(2)}`;
 
-  // ---- Registro en Google Sheets ----
   const order = {
     order_id: "CAPI-" + Date.now(),
     language: currentLang,
@@ -190,18 +189,17 @@ function confirmOrder() {
     source: "CAPIPRO"
   };
 
+  // ---- Enviar a Google Sheets (no-cors para evitar bloqueos) ----
   if (SHEETS_WEBAPP_URL && SHEETS_WEBAPP_URL.includes("/exec")) {
     fetch(SHEETS_WEBAPP_URL, {
       method: "POST",
-      body: JSON.stringify(order),
-      headers: { "Content-Type": "application/json" }
-    })
-    .then(async (r) => {
-      const txt = await r.text();
-      console.log("Sheets response:", txt);
+      mode: "no-cors",
+      redirect: "follow",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(order)
     })
     .catch((err) => {
-      console.warn("Sheets fetch failed, queued locally:", err);
+      // guardar para reintentar luego
       const q = JSON.parse(localStorage.getItem("sales_pending") || "[]");
       q.push(order);
       localStorage.setItem("sales_pending", JSON.stringify(q));
@@ -230,15 +228,16 @@ function confirmOrder() {
   if (popup && !popup.classList.contains("hidden")) popup.classList.add("hidden");
 }
 
-// Reintento manual de ventas pendientes (llámalo desde un botón oculto si quieres)
+// Reintento manual de ventas pendientes (puedes llamarlo desde un botón oculto)
 function retryPendingSales() {
   const q = JSON.parse(localStorage.getItem("sales_pending") || "[]");
   if (!q.length) { alert("No hay ventas pendientes."); return; }
   const next = q.shift();
   fetch(SHEETS_WEBAPP_URL, {
     method: "POST",
-    body: JSON.stringify(next),
-    headers: { "Content-Type": "application/json" }
+    mode: "no-cors",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify(next)
   })
   .then(() => alert("Venta reenviada a Sheets."))
   .catch(() => alert("Sigue fallando, intenta más tarde."))
