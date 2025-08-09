@@ -4,7 +4,7 @@ let currentLang = 'ky';
 // === CONFIGURACIÓN WHATSAPP + GOOGLE SHEETS ===
 const PHONE_KG = "996559500551";   // Kyrgyzstan
 const PHONE_US = "17866514487";    // Estados Unidos
-const SHEETS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwBknRYS4JlpNS3TEceuH7Eu48cl7JQh4-Vj2G70rBc1DiH8XyDvnKUKej3WKqXObHG/exec"; // <-- si tu /exec cambia, pega aquí el nuevo
+const SHEETS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxBK791_jnvb-TRKVSNHX4y7iSIA2G-pTTv1YqBYpv72yNksQHBBV_QLo7LIQL-8F1M/exec; // <-- si tu /exec cambia, pega aquí el nuevo
 
 const translations = {
   honey: { ky:"Бал", ru:"Мёд", es:"Miel", en:"Honey" },
