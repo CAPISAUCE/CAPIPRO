@@ -5,48 +5,57 @@ const translations = {
   honey: {
     ky: "Бал",
     ru: "Мёд",
-    es: "Miel"
+    es: "Miel",
+    en: "Honey"
   },
   mango_sauce: {
     ky: "Ачытуу манго соусу",
     ru: "Острый соус из манго",
-    es: "Salsa Picante de Mango Verde"
+    es: "Salsa Picante de Mango Verde",
+    en: "Green Mango Hot Sauce"
   },
   slogan: {
     ky: "100% табигый продуктылар",
     ru: "100% натуральные продукты",
-    es: "Productos 100% Naturales"
+    es: "Productos 100% Naturales",
+    en: "100% Natural Products"
   },
   price: {
     ky: "Баасы:",
     ru: "Цена:",
-    es: "Precio:"
+    es: "Precio:",
+    en: "Price:"
   },
   confirm_order: {
     ky: "Буйрутманы ырастоо",
     ru: "Подтвердить заказ",
-    es: "Confirmar pedido"
+    es: "Confirmar pedido",
+    en: "Confirm order"
   },
   your_cart: {
     ky: "Себетиңиз",
     ru: "Ваша корзина",
-    es: "Tu carrito"
+    es: "Tu carrito",
+    en: "Your cart"
   },
   add_to_cart: {
     ky: "Себетке кошуу",
     ru: "Добавить в корзину",
-    es: "Agregar al carrito"
+    es: "Agregar al carrito",
+    en: "Add to cart"
   },
   remove: {
     ky: "Өчүрүү",
     ru: "Удалить",
-    es: "Eliminar"
+    es: "Eliminar",
+    en: "Remove"
   },
   cart_empty: {
-  ky: "Себетиңиз бош",
-  ru: "Ваша корзина пустая",
-  es: "Tu carrito está vacío"
-},
+    ky: "Себетиңиз бош",
+    ru: "Ваша корзина пустая",
+    es: "Tu carrito está vacío",
+    en: "Your cart is empty"
+  },
 };
 
 const products = [
@@ -69,6 +78,7 @@ const products = [
 
 function setLanguage(lang) {
   currentLang = lang;
+  // Actualiza textos con data-i18n
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.getAttribute('data-i18n');
     if (translations[key] && translations[key][lang]) {
@@ -87,35 +97,56 @@ function renderProducts() {
     div.className = "product";
 
     const name = translations[product.id][currentLang];
+
+    // Imagen
+    const img = document.createElement("img");
+    img.src = product.id === "honey" ? "honey_logo.png" : "mango_logo.png";
+    img.alt = name;
+    img.className = "product-image";
+    div.appendChild(img);
+
+    // Título
+    const title = document.createElement("h2");
+    title.textContent = name;
+    div.appendChild(title);
+
+    // Selector de tamaño
     const selector = document.createElement("select");
     selector.className = "size-selector";
-
     for (let size in product.sizes) {
       const opt = document.createElement("option");
       opt.value = size;
       opt.textContent = size + " ml";
       selector.appendChild(opt);
     }
+    div.appendChild(selector);
 
+    // Etiqueta de precio
     const priceLabel = document.createElement("p");
     priceLabel.className = "price-label";
     const firstSize = Object.keys(product.sizes)[0];
-    priceLabel.textContent = translations["price"][currentLang] + " " +
+    priceLabel.textContent =
+      translations["price"][currentLang] + " " +
       product.sizes[firstSize].kgs + " сом / $" + product.sizes[firstSize].usd;
+    div.appendChild(priceLabel);
 
+    // Recalcular precio al cambiar tamaño
     selector.onchange = () => {
       const size = selector.value;
       const price = product.sizes[size];
-      priceLabel.textContent = translations["price"][currentLang] + " " +
+      priceLabel.textContent =
+        translations["price"][currentLang] + " " +
         price.kgs + " сом / $" + price.usd;
     };
 
+    // Controles de cantidad
     const controls = document.createElement("div");
     controls.innerHTML = `
       <button class="decrease">−</button>
       <span class="quantity">1</span>
       <button class="increase">+</button>
     `;
+    div.appendChild(controls);
 
     controls.querySelector(".decrease").onclick = () => {
       let q = controls.querySelector(".quantity");
@@ -127,6 +158,7 @@ function renderProducts() {
       q.textContent = parseInt(q.textContent) + 1;
     };
 
+    // Botón agregar al carrito
     const addBtn = document.createElement("button");
     addBtn.textContent = translations["add_to_cart"][currentLang];
     addBtn.onclick = () => {
@@ -136,21 +168,8 @@ function renderProducts() {
       const price = product.sizes[size];
       addToCart(name, size, quantity, price);
     };
-
-    
-    const img = document.createElement("img");
-    img.src = product.id === "honey" ? "honey_logo.png" : "mango_logo.png";
-    img.alt = name;
-    img.className = "product-image";
-    div.appendChild(img);
-    const title = document.createElement("h2");
-    title.textContent = name;
-    div.appendChild(title);
-    
-    div.appendChild(selector);
-    div.appendChild(priceLabel);
-    div.appendChild(controls);
     div.appendChild(addBtn);
+
     list.appendChild(div);
   });
 }
@@ -192,7 +211,7 @@ function renderCart() {
   });
 
   document.getElementById("cart-total").innerHTML =
-    `<strong>Total: ${totalKGS} сом / $${totalUSD.toFixed(2)}</strong>`;
+    `<strong>TOTAL: ${totalKGS} сом / $${totalUSD.toFixed(2)}</strong>`;
   updateCartCount();
 }
 
@@ -229,15 +248,20 @@ function confirmOrder() {
   // Ir directo a WhatsApp (una sola ventana)
   window.location.href = whatsappURL;
 
-  // Vaciar el carrito
+  // Vaciar el carrito y actualizar UI
   cart = [];
-  localStorage.removeItem("cart");
-  updateCartDisplay();
+  renderCart();           // actualiza lista y total a 0
+  updateCartCount();      // actualiza el badge
+  const popup = document.getElementById("cart-popup");
+  if (popup && !popup.classList.contains("hidden")) {
+    popup.classList.add("hidden");
+  }
 }
 
 function updateCartCount() {
   const count = cart.reduce((sum, item) => sum + item.quantity, 0);
   const badge = document.getElementById("cart-count");
+  if (!badge) return;
   if (count > 0) {
     badge.style.display = "inline-block";
     badge.textContent = count;
@@ -248,6 +272,7 @@ function updateCartCount() {
 
 function animateCartBadge() {
   const badge = document.getElementById('cart-count');
+  if (!badge) return;
   badge.classList.remove("bounce");
   void badge.offsetWidth;
   badge.classList.add("bounce");
@@ -255,6 +280,7 @@ function animateCartBadge() {
 
 function shakeCartBadge() {
   const badge = document.getElementById('cart-count');
+  if (!badge) return;
   badge.classList.remove("shake");
   void badge.offsetWidth;
   badge.classList.add("shake");
@@ -263,8 +289,3 @@ function shakeCartBadge() {
 window.onload = () => {
   setLanguage(currentLang);
 };
-
-function removeFromCart(index) {
-  cart.splice(index, 1);
-  updateCart();
-}
