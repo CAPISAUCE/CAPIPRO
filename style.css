@@ -213,3 +213,16 @@ button:hover { background-color: #ffa000; }
 @media (max-width: 600px){
   :root { --img-size: 76%; }
 }
+/* Marco fijo de 240px para que la imagen encaje completa */
+.product-image,
+.product .media img,
+.product img.product-image {
+  display: block;
+  width: 100% !important;
+  height: 240px !important;   /* ← recuadro/alto fijo */
+  object-fit: contain;         /* encaja sin recortar */
+  object-position: center;
+  background: #fff;
+  border: 1px solid #ffe0b2;
+  border-radius: 12px;
+}
