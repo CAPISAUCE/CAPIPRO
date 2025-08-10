@@ -192,6 +192,46 @@ function confirmOrder() {
     totals: { kgs: Number(totalKGS), usd: Number(totalUSD.toFixed(2)) }
   };
 
+  function genOrderId(){
+  return "CAPI-" + Math.random().toString(16).slice(2,10).toUpperCase();
+}
+
+// Arma el payload EXACTO que espera tu Apps Script
+function buildOrderPayload(cart, lang){
+  let totalUSD = 0, totalKGS = 0;
+  const items = cart.map(i=>{
+    const lineUSD = i.price.usd * i.quantity;
+    const lineKGS = i.price.kgs * i.quantity;
+    totalUSD += lineUSD; totalKGS += lineKGS;
+    return {
+      id:   i.id,
+      name: i.name,
+      ml:   Number(i.size),
+      qty:  Number(i.quantity),
+      usd:  Number(i.price.usd),
+      kgs:  Number(i.price.kgs)
+    };
+  });
+  return {
+    orderId:  genOrderId(),
+    alive:    true,
+    version:  "orders-v3-clean",
+    to:       "996559500551,17866514487",
+    totalUSD: Number(totalUSD.toFixed(2)),
+    totalKGS: Number(totalKGS),
+    currency: "USD/KGS",
+    lang,
+    items,
+    created_at: new Date().toISOString()
+  };
+}
+
+// Envío sin preflight (sin headers), no leemos respuesta
+function sendToSheets(order){
+  try{
+    fetch(SHEETS_WEBAPP_URL, { method:"POST", mode:"no-cors", body: JSON.stringify(order) });
+  }catch(_){}
+}
   // ---- Enviar a Google Sheets ----
   fetch(SHEETS_WEBAPP_URL, {
   method: "POST",
