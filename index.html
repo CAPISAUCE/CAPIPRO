@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ky">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>CAPI — Productos 100% Natural</title>
   <meta name="theme-color" content="#d86916"/>
@@ -15,15 +15,19 @@
     .brand-name{font-weight:800} .slogan{font-size:12px;color:var(--muted)}
     .controls{display:flex;align-items:center;gap:8px}
     select,.btn{border:1px solid #ffd489;background:#fff;color:var(--ink);padding:8px 10px;border-radius:12px;font:inherit}
-    .btn.mango{background:linear-gradient(180deg,#fff8eb,#ffe3b3)}
+    .btn.mango{background:linear-gradient(180deg,#fff8eb,#ffe3b3);font-weight:700;cursor:pointer}
     .shell{max-width:1100px;margin:0 auto;padding:16px}
     .notice{margin:10px 16px;padding:10px 12px;border:1px dashed #ffd08a;border-radius:12px;background:#fff7e8;color:#6a3c13;font-weight:600}
     .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
     .card{background:var(--card);border:1px solid #ffe1ad;border-radius:18px;padding:14px;box-shadow:0 6px 16px rgba(243,162,27,.08);display:flex;flex-direction:column;gap:10px}
+    .card img{width:100%;height:160px;object-fit:cover;border-radius:12px;border:1px solid #ffe1ad}
     .qty{display:flex;align-items:center;gap:8px}.qty .q{min-width:22px;text-align:center;display:inline-block}
-    .popup{position:fixed;inset:0;display:none}.popup.open{display:block}
+    .popup{position:fixed;inset:0;display:none}
+    .popup.open{display:block}
+    .backdrop{position:absolute;inset:0;background:rgba(0,0,0,.35)}
     .panel{position:absolute;right:0;top:0;bottom:0;width:min(480px,92%);background:#fff;border-left:1px solid #ffe1ad;box-shadow:-6px 0 20px rgba(0,0,0,.12);display:flex;flex-direction:column;padding:12px}
-    .panel h2{margin:10px 0} .row{display:flex;justify-content:space-between;border:1px solid #ffe1ad;border-radius:12px;padding:8px;margin:6px 0}
+    .panel h2{margin:10px 0}
+    .row{display:flex;justify-content:space-between;align-items:center;border:1px solid #ffe1ad;border-radius:12px;padding:8px;margin:6px 0}
     .badge{background:#dc2626;color:#fff;border-radius:999px;min-width:18px;padding:2px 6px;font-size:12px}
     .foot{color:var(--muted);text-align:center;padding:16px}
   </style>
@@ -40,32 +44,32 @@
     <div class="controls">
       <label for="lang">🌐</label>
       <select id="lang" aria-label="Language">
-        <option value="ky">🇰🇬 Кыргызча</option>
+        <option value="ky" selected>🇰🇬 Кыргызча</option>
         <option value="ru">🇷🇺 Русский</option>
-        <option value="es" selected>🇪🇸 Español</option>
+        <option value="es">🇪🇸 Español</option>
         <option value="en">🇬🇧 English</option>
       </select>
-      <button id="btnCart" class="btn mango">🛒 <span id="cartTxt">Tu carrito</span> <span id="cartCount" class="badge" style="display:none">0</span></button>
+      <button id="btnCart" class="btn mango">🛒 <span id="cartTxt">Себет</span> <span id="cartCount" class="badge" style="display:none">0</span></button>
     </div>
   </header>
 
   <main class="shell">
-    <div class="notice" id="pricesNote">Precios en USD y KGS. Cambia el tamaño para ver el precio.</div>
+    <div class="notice" id="pricesNote">Баалар USD жана KGS менен. Өлчөмдү өзгөртүп бааны көрүңүз.</div>
     <section id="products" class="grid"></section>
   </main>
 
   <!-- Cart -->
-  <aside id="cart" class="popup" role="dialog" aria-modal="true">
+  <aside id="cart" class="popup" role="dialog" aria-modal="true" aria-labelledby="cartTitle">
+    <div class="backdrop" id="backdrop"></div>
     <div class="panel">
       <div style="display:flex;justify-content:space-between;align-items:center">
-        <h2 id="cartTitle">Tu carrito</h2>
-        <button class="btn" id="closeCart">✕</button>
+        <h2 id="cartTitle">Себет</h2>
+        <button class="btn" id="closeCart" aria-label="Cerrar">✕</button>
       </div>
       <div id="cartItems"></div>
       <div id="totals" style="margin-top:8px;font-weight:800">TOTAL: 0 сом / $0.00</div>
       <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
-        <button id="confirm" class="btn mango">✅ Confirmar pedido</button>
-        <button id="retry" class="btn">↻</button>
+        <button id="confirm" class="btn mango">✅ Буйрутманы тастыктоо</button>
       </div>
       <small id="postNote" style="color:#64748b"></small>
     </div>
@@ -73,190 +77,214 @@
 
   <footer class="foot">© CAPI</footer>
 
-  <script>
-    // -------- CONFIG --------
-    const SHEETS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwh0COks2zW82RXr9_3li-XNuixON0yI5wMOoNps74HC4z6eitTW_NEgD7CYWmwN7nX/exec";
-    const PHONE_KG = "996559500551";
-    const PHONE_US = "17866514487";
-    const EXCHANGE_KGS_PER_USD = 89;
+<script>
+/* ================== CONFIG ================== */
+const SHEETS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwh0COks2zW82RXr9_3li-XNuixON0yI5wMOoNps74HC4z6eitTW_NEgD7CYWmwN7nX/exec";
+const PHONE_KG = "996559500551";
+const PHONE_US = "17866514487";
+const EXCHANGE_KGS_PER_USD = 89;
 
-    // Mata cualquier SW viejo para evitar pantallas en blanco por caché
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.getRegistrations().then(regs => regs.forEach(r => r.unregister()));
+/* Idioma por defecto: KY (respeta localStorage si ya existe) */
+let lang = localStorage.getItem("capi_lang") || "ky";
+
+/* ================== DATA ================== */
+// RUTAS DE TUS IMÁGENES (ajústalas a tus nombres reales en el repo)
+const PRODUCTS = [
+  {
+    id:"honey",
+    img:"images/miel.png", // <-- cambia si tu archivo se llama distinto
+    name:{ky:"Бал",ru:"Мёд",es:"Miel",en:"Honey"},
+    sizes:[{ml:230,usd:3.0},{ml:500,usd:5.0},{ml:1000,usd:10.0}]
+  },
+  {
+    id:"mango",
+    img:"images/salsa-mango.png", // <-- cambia si tu archivo se llama distinto
+    name:{ky:"Жаш манго ачуу соусу",ru:"Острый соус из зелёного манго",es:"Salsa Picante de Mango Verde",en:"Green Mango Hot Sauce"},
+    sizes:[{ml:230,usd:3.5},{ml:500,usd:8.0},{ml:1000,usd:20.0}]
+  }
+];
+
+const T = {
+  title:       { ky:"Продукциялар 100% табигый", ru:"Продукция 100% натуральная", es:"Productos 100% Natural", en:"100% Natural Products" },
+  prices_note: { ky:"Баалар USD жана KGS менен. Өлчөмдү өзгөртүп бааны көрүңүз.", ru:"Цены в USD и сомах. Меняйте объём, чтобы увидеть цену.", es:"Precios en USD y KGS. Cambia el tamaño para ver el precio.", en:"Prices in USD and KGS. Change size to see price." },
+  cart:        { ky:"Себет", ru:"Корзина", es:"Tu carrito", en:"Your cart" },
+  add:         { ky:"Себетке кошуу", ru:"В корзину", es:"Agregar al carrito", en:"Add to cart" },
+  remove:      { ky:"Өчүрүү", ru:"Удалить", es:"Eliminar", en:"Remove" },
+  empty_cart:  { ky:"Себет бош", ru:"Корзина пуста", es:"El carrito está vacío", en:"Cart is empty" },
+  confirm:     { ky:"Буйрутманы тастыктоо", ru:"Подтвердить заказ", es:"Confirmar pedido", en:"Confirm order" },
+  price_lbl:   { ky:"Баасы:", ru:"Цена:", es:"Precio:", en:"Price:" }
+};
+
+/* ================== HELPERS ================== */
+function kgs(usd){ return Math.round(usd*EXCHANGE_KGS_PER_USD); }
+function money(n){ return (Math.round(n*100)/100).toFixed(2); }
+function genOrderId(){ return "CAPI-" + Math.random().toString(16).slice(2,10).toUpperCase(); }
+function sendToSheets(order){
+  try{
+    fetch(SHEETS_WEBAPP_URL, { method:"POST", mode:"no-cors", body: JSON.stringify(order) });
+  }catch(_){}
+}
+
+/* ================== STATE ================== */
+let cart = [];
+
+/* ================== UI ================== */
+function i18n(){
+  document.getElementById("slogan").textContent = T.title[lang];
+  document.getElementById("pricesNote").textContent = T.prices_note[lang];
+  document.getElementById("cartTxt").textContent = T.cart[lang];
+  document.getElementById("cartTitle").textContent = T.cart[lang];
+  document.getElementById("confirm").textContent = "✅ " + T.confirm[lang];
+}
+
+function renderProducts(){
+  const root = document.getElementById("products");
+  root.innerHTML = "";
+  PRODUCTS.forEach(p=>{
+    const card = document.createElement("div"); card.className="card";
+
+    // Imagen con fallback (si no existe archivo, se oculta)
+    if (p.img) {
+      const img = document.createElement("img");
+      img.src = p.img; img.alt = p.name[lang];
+      img.onerror = ()=>{ img.remove(); };
+      card.appendChild(img);
     }
 
-    // -------- DATA --------
-    const t = {
-      title:       { ky:"Продукциялар 100% табигый", ru:"Продукция 100% натуральная", es:"Productos 100% Natural", en:"100% Natural Products" },
-      prices_note: { ky:"Баалар USD жана KGS менен. Өлчөмдү өзгөртүп бааны көрүңүз.", ru:"Цены в USD и сомах. Меняйте объём, чтобы увидеть цену.", es:"Precios en USD y KGS. Cambia el tamaño para ver el precio.", en:"Prices in USD and KGS. Change size to see price." },
-      cart:        { ky:"Себет", ru:"Корзина", es:"Tu carrito", en:"Your cart" },
-      empty_cart:  { ky:"Себет бош", ru:"Корзина пуста", es:"El carrito está vacío", en:"Cart is empty" },
-      add:         { ky:"Себетке кошуу", ru:"В корзину", es:"Agregar al carrito", en:"Add to cart" },
-      remove:      { ky:"Өчүрүү", ru:"Удалить", es:"Eliminar", en:"Remove" },
+    const h3 = document.createElement("h3"); h3.textContent = p.name[lang]; card.appendChild(h3);
+
+    const sel = document.createElement("select");
+    p.sizes.forEach((s,i)=>{ const o=document.createElement("option"); o.value=s.ml; o.textContent=`${s.ml} ml`; sel.appendChild(o); if(i===0) sel.value=s.ml; });
+    card.appendChild(sel);
+
+    const price = document.createElement("div");
+    const s0 = p.sizes[0]; price.innerHTML = `${T.price_lbl[lang]} ${kgs(s0.usd)} сом / $${money(s0.usd)}`;
+    card.appendChild(price);
+
+    sel.onchange = ()=> {
+      const s = p.sizes.find(x=>x.ml==sel.value);
+      price.innerHTML = `${T.price_lbl[lang]} ${kgs(s.usd)} сом / $${money(s.usd)}`;
     };
-    const products = [
-      { id:"honey", name:{ky:"Бал",ru:"Мёд",es:"Miel",en:"Honey"}, sizes:[{ml:230,usd:3.0},{ml:500,usd:5.0},{ml:1000,usd:10.0}] },
-      { id:"mango", name:{ky:"Жаш манго ачуу соусу",ru:"Острый соус из зелёного манго",es:"Salsa Picante de Mango Verde",en:"Green Mango Hot Sauce"}, sizes:[{ml:230,usd:3.5},{ml:500,usd:8.0},{ml:1000,usd:20.0}] }
-    ];
-    function kgs(usd){ return Math.round(usd*EXCHANGE_KGS_PER_USD); }
-    function money(n){ return (Math.round(n*100)/100).toFixed(2); }
 
-    // -------- STATE --------
-    let cart = [];
-    let lang = (localStorage.getItem("capi_lang") || "es");
+    const controls = document.createElement("div"); controls.className="qty";
+    const dec = document.createElement("button"); dec.textContent="−";
+    const q = document.createElement("span"); q.className="q"; q.textContent="1";
+    const inc = document.createElement("button"); inc.textContent="+";
+    dec.onclick = ()=>{ q.textContent = Math.max(1, parseInt(q.textContent)-1); };
+    inc.onclick = ()=>{ q.textContent = parseInt(q.textContent)+1; };
+    controls.append(dec,q,inc); card.appendChild(controls);
 
-    // -------- UI --------
-    function i18n(){
-      document.getElementById("slogan").textContent = t.title[lang];
-      document.getElementById("pricesNote").textContent = t.prices_note[lang];
-      document.getElementById("cartTxt").textContent = t.cart[lang];
-      document.getElementById("cartTitle").textContent = t.cart[lang];
-    }
+    const add = document.createElement("button"); add.className="btn mango"; add.textContent = T.add[lang];
+    add.onclick = ()=>{
+      const size = parseInt(sel.value,10);
+      const unit = p.sizes.find(x=>x.ml===size).usd;
+      addToCart(p.id, p.name[lang], size, parseInt(q.textContent,10), {usd:unit,kgs:kgs(unit)});
+    };
+    card.appendChild(add);
 
-    function renderProducts(){
-      const root = document.getElementById("products");
-      root.innerHTML = "";
-      products.forEach(p=>{
-        const card = document.createElement("div"); card.className="card";
-        const h3 = document.createElement("h3"); h3.textContent = p.name[lang]; card.appendChild(h3);
+    root.appendChild(card);
+  });
+}
 
-        const sel = document.createElement("select");
-        p.sizes.forEach((s,i)=>{ const o=document.createElement("option"); o.value=s.ml; o.textContent=`${s.ml} ml`; sel.appendChild(o); if(i===0) sel.value=s.ml; });
-        card.appendChild(sel);
+function addToCart(id, name, size, qty, price){
+  const key = id+"-"+size;
+  const i = cart.findIndex(x=>x.key===key);
+  if(i>-1){ cart[i].qty += qty; } else { cart.push({key,id,name,size,qty,price}); }
+  updateCart();
+}
 
-        const price = document.createElement("div");
-        price.innerHTML = `Precio: ${kgs(p.sizes[0].usd)} сом / $${money(p.sizes[0].usd)}`;
-        card.appendChild(price);
+function updateCart(){
+  const items = document.getElementById("cartItems");
+  const count = document.getElementById("cartCount");
+  items.innerHTML = "";
+  let totUSD=0, totKGS=0;
+  cart.forEach((it,idx)=>{
+    const row = document.createElement("div"); row.className="row";
+    row.innerHTML = `<span>${it.name} ${it.size} ml x${it.qty} (${it.price.kgs} сом / $${money(it.price.usd)})</span>`;
+    const rm = document.createElement("button"); rm.className="btn"; rm.textContent=T.remove[lang]; rm.onclick=()=>{ cart.splice(idx,1); updateCart(); };
+    row.appendChild(rm);
+    items.appendChild(row);
+    totUSD += it.price.usd*it.qty; totKGS += it.price.kgs*it.qty;
+  });
+  document.getElementById("totals").textContent = `TOTAL: ${totKGS} сом / $${money(totUSD)}`;
+  if(cart.length>0){ count.style.display="inline-block"; count.textContent = cart.reduce((a,c)=>a+c.qty,0); }
+  else { count.style.display="none"; }
+}
 
-        sel.onchange = ()=> {
-          const s = p.sizes.find(x=>x.ml==sel.value);
-          price.innerHTML = `Precio: ${kgs(s.usd)} сом / $${money(s.usd)}`;
-        };
+function openCart(){ document.getElementById("cart").classList.add("open"); }
+function closeCart(){ document.getElementById("cart").classList.remove("open"); }
+function toggleCart(){ document.getElementById("cart").classList.toggle("open"); }
 
-        const controls = document.createElement("div"); controls.className="qty";
-        const dec = document.createElement("button"); dec.textContent="−";
-        const q = document.createElement("span"); q.className="q"; q.textContent="1";
-        const inc = document.createElement("button"); inc.textContent="+";
-        dec.onclick = ()=>{ q.textContent = Math.max(1, parseInt(q.textContent)-1); };
-        inc.onclick = ()=>{ q.textContent = parseInt(q.textContent)+1; };
-        controls.append(dec,q,inc); card.appendChild(controls);
+/* Confirmar pedido: envía a Sheets y a WhatsApp, y cierra el carrito */
+function confirmOrder(){
+  if(cart.length===0){ alert(T.empty_cart[lang] + " — TOTAL: $0 / 0 сом"); return; }
 
-        const add = document.createElement("button"); add.className="btn"; add.textContent = t.add[lang];
-        add.onclick = ()=>{
-          const size = parseInt(sel.value,10);
-          const unit = p.sizes.find(x=>x.ml===size).usd;
-          addToCart(p.id, p.name[lang], size, parseInt(q.textContent,10), {usd:unit,kgs:kgs(unit)});
-        };
-        card.appendChild(add);
+  let msg = "🧾 " + T.cart[lang] + ":\n";
+  let totUSD=0, totKGS=0;
+  cart.forEach(it=>{
+    const subU = it.price.usd*it.qty, subK = it.price.kgs*it.qty;
+    msg += `• ${it.name} (${it.size} ml) x${it.qty} = ${subK} сом / $${money(subU)}\n`;
+    totUSD += subU; totKGS += subK;
+  });
+  msg += `\nTOTAL: ${totKGS} сом / $${money(totUSD)}`;
 
-        root.appendChild(card);
-      });
-    }
+  const orderId = genOrderId();
+  msg += `\n\nID: ${orderId}`;
 
-    function addToCart(id, name, size, qty, price){
-      const key = id+"-"+size;
-      const i = cart.findIndex(x=>x.key===key);
-      if(i>-1){ cart[i].qty += qty; } else { cart.push({key,id,name,size,qty,price}); }
-      updateCart();
-    }
+  const payload = {
+    orderId, alive:true, version:"orders-v3-clean",
+    to: PHONE_KG + "," + PHONE_US,
+    totalUSD: Number(money(totUSD)),
+    totalKGS: Number(totKGS),
+    currency:"USD/KGS",
+    lang,
+    items: cart.map(it=>({id:it.id,name:it.name,ml:Number(it.size),qty:Number(it.qty),usd:Number(it.price.usd),kgs:Number(it.price.kgs)})),
+    created_at: new Date().toISOString()
+  };
+  sendToSheets(payload);
 
-    function updateCart(){
-      const items = document.getElementById("cartItems");
-      const count = document.getElementById("cartCount");
-      items.innerHTML = "";
-      let totUSD=0, totKGS=0;
-      cart.forEach((it,idx)=>{
-        const row = document.createElement("div"); row.className="row";
-        row.innerHTML = `<span>${it.name} ${it.size} ml x${it.qty} (${it.price.kgs} сом / $${money(it.price.usd)})</span>`;
-        const rm = document.createElement("button"); rm.className="btn"; rm.textContent=t.remove[lang]; rm.onclick=()=>{ cart.splice(idx,1); updateCart(); };
-        row.appendChild(rm);
-        items.appendChild(row);
-        totUSD += it.price.usd*it.qty; totKGS += it.price.kgs*it.qty;
-      });
-      document.getElementById("totals").textContent = `TOTAL: ${totKGS} сом / $${money(totUSD)}`;
-      if(cart.length>0){ count.style.display="inline-block"; count.textContent = cart.reduce((a,c)=>a+c.qty,0); }
-      else { count.style.display="none"; }
-    }
+  const enc = encodeURIComponent(msg);
+  const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  const urlKG = isMobile ? `whatsapp://send?phone=${PHONE_KG}&text=${enc}` : `https://wa.me/${PHONE_KG}?text=${enc}`;
+  window.open(urlKG,"_blank");
+  const urlUS = isMobile ? `whatsapp://send?phone=${PHONE_US}&text=${enc}` : `https://wa.me/${PHONE_US}?text=${enc}`;
+  setTimeout(()=>window.open(urlUS,"_blank"),500);
 
-    function toggleCart(open){
-      const c = document.getElementById("cart");
-      if(open===true) c.classList.add("open");
-      else if(open===false) c.classList.remove("open");
-      else c.classList.toggle("open");
-    }
+  cart = []; updateCart(); closeCart();
+}
 
-    function genOrderId(){ return "CAPI-" + Math.random().toString(16).slice(2,10).toUpperCase(); }
+/* ================== INIT (robusto) ================== */
+// Desregistra SW viejos para evitar pantallas en blanco por caché
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister()));
+}
 
-    function sendToSheets(payload){
-      try{
-        fetch(SHEETS_WEBAPP_URL, { method:"POST", mode:"no-cors", body: JSON.stringify(payload) });
-      }catch(_){}
-    }
+window.addEventListener("load", () => {
+  try{
+    // Idioma por defecto (ky)
+    const sel = document.getElementById("lang");
+    sel.value = lang;
+    sel.onchange = (e)=>{ lang=e.target.value; localStorage.setItem("capi_lang",lang); i18n(); renderProducts(); updateCart(); };
 
-    function confirmOrder(){
-      if(cart.length===0){ alert(t.empty_cart[lang] + " — TOTAL: $0 / 0 сом"); return; }
-      // Mensaje WA
-      let msg = "🧾 " + t.cart[lang] + ":\n";
-      let totUSD=0, totKGS=0;
-      cart.forEach(it=>{
-        const subU = it.price.usd*it.qty, subK = it.price.kgs*it.qty;
-        msg += `• ${it.name} (${it.size} ml) x${it.qty} = ${subK} сом / $${money(subU)}\n`;
-        totUSD += subU; totKGS += subK;
-      });
-      msg += `\nTOTAL: ${totKGS} сом / $${money(totUSD)}`;
+    // Botones carrito
+    document.getElementById("btnCart").onclick = openCart;
+    document.getElementById("closeCart").onclick = closeCart;
+    document.getElementById("confirm").onclick = confirmOrder;
 
-      const orderId = genOrderId();
-      msg += `\n\nID: ${orderId}`;
+    // Cierre al hacer click fuera (backdrop) y con Escape
+    document.getElementById("backdrop").onclick = closeCart;
+    document.addEventListener("keydown", (e)=>{ if(e.key==="Escape") closeCart(); });
 
-      // Payload para Sheets
-      const payload = {
-        orderId, alive:true, version:"orders-v3-clean",
-        to: PHONE_KG + "," + PHONE_US,
-        totalUSD: Number(money(totUSD)),
-        totalKGS: Number(totKGS),
-        currency:"USD/KGS",
-        lang,
-        items: cart.map(it=>({id:it.id,name:it.name,ml:Number(it.size),qty:Number(it.qty),usd:Number(it.price.usd),kgs:Number(it.price.kgs)})),
-        created_at: new Date().toISOString()
-      };
-      sendToSheets(payload);
+    // Pintar
+    i18n(); renderProducts(); updateCart();
 
-      // Abrir WhatsApp a ambos
-      const enc = encodeURIComponent(msg);
-      const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-      const urlKG = isMobile ? `whatsapp://send?phone=${PHONE_KG}&text=${enc}` : `https://wa.me/${PHONE_KG}?text=${enc}`;
-      window.open(urlKG,"_blank");
-      const urlUS = isMobile ? `whatsapp://send?phone=${PHONE_US}&text=${enc}` : `https://wa.me/${PHONE_US}?text=${enc}`;
-      setTimeout(()=>window.open(urlUS,"_blank"),500);
-
-      cart = []; updateCart(); toggleCart(false);
-    }
-
-    // -------- INIT (robusto) --------
-    window.addEventListener("load", () => {
-      try{
-        // Idioma
-        const sel = document.getElementById("lang");
-        sel.value = lang;
-        sel.onchange = (e)=>{ lang=e.target.value; localStorage.setItem("capi_lang",lang); i18n(); renderProducts(); updateCart(); };
-
-        // Botones carrito
-        document.getElementById("btnCart").onclick = ()=>toggleCart(true);
-        document.getElementById("closeCart").onclick = ()=>toggleCart(false);
-        document.getElementById("confirm").onclick = confirmOrder;
-        document.getElementById("retry").onclick = ()=>alert("Reintento no necesario en este modo.");
-
-        // Pintar
-        i18n(); renderProducts(); updateCart();
-
-        // Ping de salud (opcional)
-        fetch(SHEETS_WEBAPP_URL+"?route=health").catch(()=>{});
-      }catch(e){
-        console.error("Init error:", e);
-        // fallback mínimo para que no quede en blanco
-        document.getElementById("products").innerHTML = "<div class='card'>Recarga la página. Si persiste, borra caché del navegador.</div>";
-      }
-    });
-  </script>
+    // (Opcional) ping de salud
+    fetch(SHEETS_WEBAPP_URL).catch(()=>{});
+  }catch(e){
+    console.error("Init error:", e);
+    document.getElementById("products").innerHTML = "<div class='card'>Перезагрузите страницу / Vuelva a cargar la página.</div>";
+  }
+});
+</script>
 </body>
 </html>
