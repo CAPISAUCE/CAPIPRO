@@ -6,7 +6,7 @@ const PHONE_KG = "996559500551";   // Kyrgyzstan
 const PHONE_US = "17866514487";    // Estados Unidos
 const SHEETS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwh0COks2zW82RXr9_3li-XNuixON0yI5wMOoNps74HC4z6eitTW_NEgD7CYWmwN7nX/exec";
 console.log("Sheets URL:", SHEETS_WEBAPP_URL);
-fetch(SHEETS_WEBAPP_URL).then(r => r.text()).then(t => console.log("Ping /exec:", t));
+fetch(SHEETS_WEBAPP_URL + "?route=health").then(r => r.text()).then(t => console.log("Ping /health:", t));
 
 const translations = {
   honey: { ky:"Бал", ru:"Мёд", es:"Miel", en:"Honey" },
@@ -155,11 +155,14 @@ function toggleCart() {
   document.getElementById("cart-popup").classList.toggle("hidden");
 }
 
+let sending = false;
 function confirmOrder() {
+  if (sending) return;
   if (cart.length === 0) {
     alert("🛒 " + translations["cart_empty"][currentLang]);
     return;
   }
+  sending = true;
 
   // Armar mensaje y totales
   let message = "🧾 " + translations["your_cart"][currentLang] + ":\n";
@@ -174,7 +177,6 @@ function confirmOrder() {
   });
   message += `\nTOTAL: ${totalKGS} сом / $${totalUSD.toFixed(2)}`;
 
-  // Payload para Google Sheets (coincide con el backend)
   const orderPayload = {
     route: "order",
     language: currentLang,
@@ -196,7 +198,10 @@ function confirmOrder() {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(orderPayload)
   })
-  .then(r => r.json())
+  .then(r => {
+    const ct = r.headers.get("content-type") || "";
+    return ct.includes("application/json") ? r.json() : Promise.resolve({ok:true});
+  })
   .then(resp => {
     console.log("Sheets resp:", resp);
     if (!resp.ok) throw new Error(resp.error || "Sheets error");
@@ -222,27 +227,31 @@ function confirmOrder() {
       : `https://wa.me/${PHONE_US}?text=${encodedMsg}`;
     setTimeout(() => window.open(urlUS, "_blank"), 500);
 
-    // Limpiar carrito y UI
     cart = [];
     renderCart();
     updateCartCount();
     const popup = document.getElementById("cart-popup");
     if (popup && !popup.classList.contains("hidden")) popup.classList.add("hidden");
+    sending = false;
   });
 }
 
-// Reintento manual de ventas pendientes (puedes llamarlo desde un botón oculto)
+// Reintento manual de ventas pendientes
 function retryPendingSales() {
   const q = JSON.parse(localStorage.getItem("sales_pending") || "[]");
   if (!q.length) { alert("No hay ventas pendientes."); return; }
   const next = q.shift();
+
   fetch(SHEETS_WEBAPP_URL, {
     method: "POST",
-    mode: "no-cors",
-    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(next)
   })
-  .then(() => alert("Venta reenviada a Sheets."))
+  .then(r => r.json().catch(()=>({ok:true})))
+  .then(resp => {
+    if (resp.ok) alert("Venta reenviada a Sheets.");
+    else throw new Error(resp.error || "Sheets error");
+  })
   .catch(() => alert("Sigue fallando, intenta más tarde."))
   .finally(() => localStorage.setItem("sales_pending", JSON.stringify(q)));
 }
@@ -258,7 +267,6 @@ function updateCartCount() {
     badge.style.display = "none";
   }
 }
-
 function animateCartBadge() {
   const badge = document.getElementById('cart-count');
   if (!badge) return;
@@ -266,7 +274,6 @@ function animateCartBadge() {
   void badge.offsetWidth;
   badge.classList.add("bounce");
 }
-
 function shakeCartBadge() {
   const badge = document.getElementById('cart-count');
   if (!badge) return;
