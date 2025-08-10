@@ -164,7 +164,7 @@ function confirmOrder() {
   }
   sending = true;
 
-  // Armar mensaje y totales
+  // Mensaje WhatsApp + totales
   let message = "🧾 " + translations["your_cart"][currentLang] + ":\n";
   let totalKGS = 0, totalUSD = 0;
 
@@ -177,20 +177,35 @@ function confirmOrder() {
   });
   message += `\nTOTAL: ${totalKGS} сом / $${totalUSD.toFixed(2)}`;
 
-  const orderPayload = {
-    route: "order",
-    language: currentLang,
-    wa_phone: `${PHONE_KG},${PHONE_US}`,
-    source: "CAPIPRO",
-    items: cart.map(i => ({
-      name: i.name,
-      size_ml: Number(i.size),
-      qty: Number(i.quantity),
-      price_kgs: Number(i.price.kgs),
-      price_usd: Number(i.price.usd)
-    })),
-    totals: { kgs: Number(totalKGS), usd: Number(totalUSD.toFixed(2)) }
-  };
+  // Payload para Sheets
+  const payload = buildOrderPayload(cart, currentLang);
+  message += `\n\nID: ${payload.orderId}`;
+
+  // Enviar a Google Sheets (sin headers, sin then)
+  sendToSheets(payload);
+
+  // Abrir WhatsApp a ambos números
+  const encoded = encodeURIComponent(message);
+  const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+  const urlKG = isMobile
+    ? `whatsapp://send?phone=${PHONE_KG}&text=${encoded}`
+    : `https://wa.me/${PHONE_KG}?text=${encoded}`;
+  window.open(urlKG, "_blank");
+
+  const urlUS = isMobile
+    ? `whatsapp://send?phone=${PHONE_US}&text=${encoded}`
+    : `https://wa.me/${PHONE_US}?text=${encoded}`;
+  setTimeout(()=>window.open(urlUS, "_blank"), 500);
+
+  // Limpiar carrito y UI
+  cart = [];
+  renderCart();
+  updateCartCount();
+  const popup = document.getElementById("cart-popup");
+  if (popup && !popup.classList.contains("hidden")) popup.classList.add("hidden");
+  sending = false;
+}
 
   function genOrderId(){
   return "CAPI-" + Math.random().toString(16).slice(2,10).toUpperCase();
