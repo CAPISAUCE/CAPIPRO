@@ -194,10 +194,10 @@ function confirmOrder() {
 
   // ---- Enviar a Google Sheets ----
   fetch(SHEETS_WEBAPP_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(orderPayload)
-  })
+  method: "POST",
+  mode: "no-cors",
+  body: JSON.stringify(payload)    // <-- sin Content-Type
+});
   .then(r => {
     const ct = r.headers.get("content-type") || "";
     return ct.includes("application/json") ? r.json() : Promise.resolve({ok:true});
