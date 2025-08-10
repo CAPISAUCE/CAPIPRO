@@ -141,7 +141,7 @@ html body #product-list .product img.product-image {
   display: block !important;
   width: 100% !important;        /* ocupa el ancho del card */
   max-width: 220px !important;   /* tope en desktop/tablet */
-  height: 320px !important;      /* alto fijo del recuadro */
+  height: 420px !important;      /* alto fijo del recuadro */
   object-fit: contain !important;/* NO recorta ni deforma */
   object-position: center !important;
   margin: 0 auto 10px !important;
