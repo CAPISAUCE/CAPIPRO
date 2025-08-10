@@ -194,3 +194,14 @@ button:hover { background-color: #ffa000; }
 @media (max-width: 600px){
   .product .product-image{ aspect-ratio: 16 / 9; }  /* marco más alto */
 }
+:root { --img-scale: .92; }   /* 92% del tamaño actual (ajusta a gusto) */
+
+.product-image,
+.product .media img,
+.product img.product-image {
+  transform: scale(var(--img-scale));
+  transform-origin: center center;
+}
+@media (max-width: 600px){
+  :root { --img-scale: .88; } /* 88% en pantallas chicas */
+}
