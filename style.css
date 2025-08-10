@@ -195,7 +195,7 @@ button:hover { background-color: #ffa000; }
   .product .product-image{ aspect-ratio: 16 / 9; }  /* marco más alto */
 }
 /* tamaño sólo de la imagen dentro del marco */
-:root { --img-size: 85%; }  /* cambia este % a lo que quieras: 95, 85, 80... */
+:root { --img-size: 70%; }  /* cambia este % a lo que quieras: 95, 85, 80... */
 
 .product .media > img,
 .product img.product-image,
@@ -211,5 +211,5 @@ button:hover { background-color: #ffa000; }
 
 /* opcional: un poco más chica en móvil */
 @media (max-width: 600px){
-  :root { --img-size: 82%; }
+  :root { --img-size: 76%; }
 }
