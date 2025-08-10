@@ -194,14 +194,22 @@ button:hover { background-color: #ffa000; }
 @media (max-width: 600px){
   .product .product-image{ aspect-ratio: 16 / 9; }  /* marco más alto */
 }
-:root { --img-scale: .92; }   /* 92% del tamaño actual (ajusta a gusto) */
+/* tamaño sólo de la imagen dentro del marco */
+:root { --img-size: 85%; }  /* cambia este % a lo que quieras: 95, 85, 80... */
 
-.product-image,
-.product .media img,
-.product img.product-image {
-  transform: scale(var(--img-scale));
-  transform-origin: center center;
+.product .media > img,
+.product img.product-image,
+.product-image {
+  width: var(--img-size) !important;
+  max-width: var(--img-size) !important;
+  height: auto !important;
+  display: block;
+  margin: 0 auto;              /* centrada */
+  object-fit: contain;
+  object-position: center;
 }
+
+/* opcional: un poco más chica en móvil */
 @media (max-width: 600px){
-  :root { --img-scale: .88; } /* 88% en pantallas chicas */
+  :root { --img-size: 82%; }
 }
