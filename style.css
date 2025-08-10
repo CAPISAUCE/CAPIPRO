@@ -137,28 +137,36 @@ button:hover { background-color: #ffa000; }
 }
 
 /* ——— Ajustes móviles iOS/Android ——— */
-@media (max-width: 600px){
+/* === Arreglo de proporción para imágenes de producto === */
+/* Marco uniforme (5:3 = 600x360, 1200x720) */
+.product .media,
+.image-frame {
+  width: 100%;
+  aspect-ratio: 5 / 3;
+  border: 1px solid #ffe0b2;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+}
 
-  /* cards más fluidos en móvil */
-  .product{
-    width: calc(50% - 24px);      /* 2 columnas */
-  }
-  @media (max-width: 420px){
-    .product{
-      width: calc(100% - 24px);   /* 1 columna en pantallas muy chicas */
-    }
-  }
+/* Si tu HTML no usa .media, aplica directo a la imagen */
+.product-image,
+.product .media img,
+.product img.product-image {
+  display: block;
+  width: 100%;
+  height: auto !important;     /* evita estiramientos */
+  max-width: 100%;
+  /* Muestra TODO el contenido sin recortar */
+  object-fit: contain;
+  object-position: center;
+  border-radius: 12px;         /* mismo redondeado del marco */
+}
 
-  .product-image{
-    max-width: 160px;             /* imagen un poco más pequeña para equilibrio visual */
-  }
-
-  /* popup ocupa casi todo el ancho con márgenes y respeta safe areas */
-  #cart-popup{
-    left: 16px;
-    right: 16px;
-    bottom: max(16px, calc(16px + var(--safe-bottom)));
-    width: auto;
-    max-width: 520px;
+/* En móviles, limita altura para evitar que se vean gigantes */
+@media (max-width: 480px){
+  .product .media,
+  .image-frame {
+    max-height: 220px;
   }
 }
