@@ -225,3 +225,15 @@ button:hover { background-color: #ffa000; }
   border: 1px solid #ffe0b2;
   border-radius: 12px;
 }
+/* —— IMAGEN de producto (override simple y definitivo) —— */
+html body #product-list .product img.product-image {
+  display: block !important;
+  width: 100% !important;
+  max-width: 220px !important;   /* tope en pantallas grandes */
+  height: 240px !important;      /* alto del recuadro: AJUSTA AQUÍ (p.ej. 220/260) */
+  object-fit: contain !important;/* encaja completa sin recortar */
+  object-position: center !important;
+  margin: 0 auto 10px !important;
+  border: 1px solid #ffe0b2 !important;
+  border-radius: 12px !important;
+}
