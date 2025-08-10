@@ -170,3 +170,27 @@ button:hover { background-color: #ffa000; }
     max-height: 220px;
   }
 }
+/* Calcula la altura desde el ancho y mantiene proporción */
+.product .product-image{
+  display: block;
+  width: 100%;
+  height: auto;                  /* fallback */
+  border-radius: 12px;
+}
+
+@supports (aspect-ratio: 1){
+  .product .product-image{
+    aspect-ratio: 5 / 3;         /* alto se calcula con el ancho */
+    height: auto;
+    object-fit: contain;         /* la imagen entra completa */
+    object-position: center;
+    background: #fff;
+    border: 1px solid #ffe0b2;
+    padding: 0;
+  }
+}
+
+/* Para hacer el “recuadro” más alto en móvil (opcional) */
+@media (max-width: 600px){
+  .product .product-image{ aspect-ratio: 16 / 9; }  /* marco más alto */
+}
