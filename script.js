@@ -161,73 +161,74 @@ function confirmOrder() {
     return;
   }
 
-  // Mensaje y totales
+  // Armar mensaje y totales
   let message = "🧾 " + translations["your_cart"][currentLang] + ":\n";
   let totalKGS = 0, totalUSD = 0;
 
   cart.forEach(item => {
-    message += `• ${item.name} (${item.size} ml) x${item.quantity} = ${item.price.kgs * item.quantity} сом / $${(item.price.usd * item.quantity).toFixed(2)}\n`;
-    totalKGS += item.price.kgs * item.quantity;
-    totalUSD += item.price.usd * item.quantity;
+    const subKGS = item.price.kgs * item.quantity;
+    const subUSD = item.price.usd * item.quantity;
+    message += `• ${item.name} (${item.size} ml) x${item.quantity} = ${subKGS} сом / $${subUSD.toFixed(2)}\n`;
+    totalKGS += subKGS;
+    totalUSD += subUSD;
   });
-
   message += `\nTOTAL: ${totalKGS} сом / $${totalUSD.toFixed(2)}`;
 
-  const order = {
-    order_id: "CAPI-" + Date.now(),
+  // Payload para Google Sheets (coincide con el backend)
+  const orderPayload = {
+    route: "order",
     language: currentLang,
+    wa_phone: `${PHONE_KG},${PHONE_US}`,
+    source: "CAPIPRO",
     items: cart.map(i => ({
       name: i.name,
-      size_ml: i.size,
-      quantity: i.quantity,
-      unit_kgs: i.price.kgs,
-      unit_usd: i.price.usd,
-      subtotal_kgs: i.price.kgs * i.quantity,
-      subtotal_usd: +(i.price.usd * i.quantity).toFixed(2)
+      size_ml: Number(i.size),
+      qty: Number(i.quantity),
+      price_kgs: Number(i.price.kgs),
+      price_usd: Number(i.price.usd)
     })),
-    total_kgs: totalKGS,
-    total_usd: +totalUSD.toFixed(2),
-    wa_phone: `${PHONE_KG},${PHONE_US}`,
-    source: "CAPIPRO"
+    totals: { kgs: Number(totalKGS), usd: Number(totalUSD.toFixed(2)) }
   };
 
-  // ---- Enviar a Google Sheets (no-cors para evitar bloqueos) ----
-  if (SHEETS_WEBAPP_URL && SHEETS_WEBAPP_URL.includes("/exec")) {
-    fetch(SHEETS_WEBAPP_URL, {
-      method: "POST",
-      mode: "no-cors",
-      redirect: "follow",
-      headers: { "Content-Type": "text/plain;charset=utf-8" },
-      body: JSON.stringify(order)
-    })
-    .catch((err) => {
-      // guardar para reintentar luego
-      const q = JSON.parse(localStorage.getItem("sales_pending") || "[]");
-      q.push(order);
-      localStorage.setItem("sales_pending", JSON.stringify(q));
-    });
-  }
+  // ---- Enviar a Google Sheets ----
+  fetch(SHEETS_WEBAPP_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(orderPayload)
+  })
+  .then(r => r.json())
+  .then(resp => {
+    console.log("Sheets resp:", resp);
+    if (!resp.ok) throw new Error(resp.error || "Sheets error");
+  })
+  .catch(err => {
+    console.warn("No se pudo enviar a Sheets, guardo para reintentar:", err);
+    const q = JSON.parse(localStorage.getItem("sales_pending") || "[]");
+    q.push(orderPayload);
+    localStorage.setItem("sales_pending", JSON.stringify(q));
+  })
+  .finally(() => {
+    // ---- Envío a WhatsApp (ambos números) ----
+    const encodedMsg = encodeURIComponent(message);
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
-  // ---- Enviar a ambos WhatsApp (con delay para evitar bloqueo) ----
-  const encodedMsg = encodeURIComponent(message);
-  const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    const urlKG = isMobile
+      ? `whatsapp://send?phone=${PHONE_KG}&text=${encodedMsg}`
+      : `https://wa.me/${PHONE_KG}?text=${encodedMsg}`;
+    window.open(urlKG, "_blank");
 
-  const urlKG = isMobile
-    ? `whatsapp://send?phone=${PHONE_KG}&text=${encodedMsg}`
-    : `https://wa.me/${PHONE_KG}?text=${encodedMsg}`;
-  window.open(urlKG, "_blank");
+    const urlUS = isMobile
+      ? `whatsapp://send?phone=${PHONE_US}&text=${encodedMsg}`
+      : `https://wa.me/${PHONE_US}?text=${encodedMsg}`;
+    setTimeout(() => window.open(urlUS, "_blank"), 500);
 
-  const urlUS = isMobile
-    ? `whatsapp://send?phone=${PHONE_US}&text=${encodedMsg}`
-    : `https://wa.me/${PHONE_US}?text=${encodedMsg}`;
-  setTimeout(() => window.open(urlUS, "_blank"), 500);
-
-  // Limpiar carrito y UI
-  cart = [];
-  renderCart();
-  updateCartCount();
-  const popup = document.getElementById("cart-popup");
-  if (popup && !popup.classList.contains("hidden")) popup.classList.add("hidden");
+    // Limpiar carrito y UI
+    cart = [];
+    renderCart();
+    updateCartCount();
+    const popup = document.getElementById("cart-popup");
+    if (popup && !popup.classList.contains("hidden")) popup.classList.add("hidden");
+  });
 }
 
 // Reintento manual de ventas pendientes (puedes llamarlo desde un botón oculto)
