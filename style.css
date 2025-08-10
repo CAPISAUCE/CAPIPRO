@@ -197,16 +197,15 @@ button:hover { background-color: #ffa000; }
 /* tamaño sólo de la imagen dentro del marco */
 :root { --img-size: 70%; }  /* cambia este % a lo que quieras: 95, 85, 80... */
 
-.product .media > img,
-.product img.product-image,
-.product-image {
-  width: var(--img-size) !important;
-  max-width: var(--img-size) !important;
+/* reduce SOLO el tamaño visual de la imagen */
+.product-image,
+.product .media img,
+.product img.product-image {
+  width: 80% !important;   /* prueba 80%, 75%, 70%... */
+  max-width: 80% !important;
   height: auto !important;
   display: block;
-  margin: 0 auto;              /* centrada */
-  object-fit: contain;
-  object-position: center;
+  margin: 0 auto;          /* centrada en su recuadro */
 }
 
 /* opcional: un poco más chica en móvil */
