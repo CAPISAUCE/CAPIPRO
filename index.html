@@ -88,17 +88,17 @@ const EXCHANGE_KGS_PER_USD = 89;
 let lang = localStorage.getItem("capi_lang") || "ky";
 
 /* ================== DATA ================== */
-// RUTAS DE TUS IMÁGENES (ajústalas a tus nombres reales en el repo)
+// Imágenes reales en la RAÍZ: honey_logo.png y mango_logo.png
 const PRODUCTS = [
   {
     id:"honey",
-    img:"images/miel.png", // <-- cambia si tu archivo se llama distinto
+    img:"honey_logo.png",
     name:{ky:"Бал",ru:"Мёд",es:"Miel",en:"Honey"},
     sizes:[{ml:230,usd:3.0},{ml:500,usd:5.0},{ml:1000,usd:10.0}]
   },
   {
     id:"mango",
-    img:"images/salsa-mango.png", // <-- cambia si tu archivo se llama distinto
+    img:"mango_logo.png",
     name:{ky:"Жаш манго ачуу соусу",ru:"Острый соус из зелёного манго",es:"Salsa Picante de Mango Verde",en:"Green Mango Hot Sauce"},
     sizes:[{ml:230,usd:3.5},{ml:500,usd:8.0},{ml:1000,usd:20.0}]
   }
@@ -269,11 +269,12 @@ window.addEventListener("load", () => {
     // Botones carrito
     document.getElementById("btnCart").onclick = openCart;
     document.getElementById("closeCart").onclick = closeCart;
-    document.getElementById("confirm").onclick = confirmOrder;
 
-    // Cierre al hacer click fuera (backdrop) y con Escape
+    // Cierre al hacer click en fondo y con Escape
     document.getElementById("backdrop").onclick = closeCart;
     document.addEventListener("keydown", (e)=>{ if(e.key==="Escape") closeCart(); });
+
+    document.getElementById("confirm").onclick = confirmOrder;
 
     // Pintar
     i18n(); renderProducts(); updateCart();
