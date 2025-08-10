@@ -1,9 +1,19 @@
+/* ——— Base ——— */
+:root{
+  /* Safe areas para iPhone/Android con notch */
+  --safe-top: env(safe-area-inset-top);
+  --safe-bottom: env(safe-area-inset-bottom);
+}
+
 body {
   background-color: #fff8e1;
   color: #4e342e;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   margin: 0;
   padding: 0;
+  /* amortigua la barra de estado en iOS/Android PWA */
+  padding-top: max(0px, var(--safe-top));
+  padding-bottom: max(0px, var(--safe-bottom));
 }
 
 header {
@@ -26,24 +36,26 @@ h1 {
 
 button {
   background-color: #ffb300;
-  color: black;
+  color: white;
   border: none;
   padding: 10px 14px;
   border-radius: 6px;
   font-size: 1em;
   cursor: pointer;
   margin-top: 8px;
+  transition: transform .04s ease;
+  touch-action: manipulation;
 }
+button:active { transform: scale(.98); }
+button:hover { background-color: #ffa000; }
 
-button:hover {
-  background-color: #ffa000;
-}
-
+/* ——— Productos ——— */
 #product-list {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   padding: 20px;
+  gap: 12px;
 }
 
 .product {
@@ -53,16 +65,21 @@ button:hover {
   padding: 20px;
   margin: 12px;
   text-align: center;
-  width: 260px;
+  width: 260px;              /* desktop/tablet */
+  max-width: 92vw;           /* evita overflow en móviles */
 }
 
+/* Imagen responsive (usa todo el ancho disponible del card) */
 .product-image {
-  width: 160px;
+  width: 100%;
+  max-width: 220px;          /* tope en pantallas grandes */
   height: auto;
-  margin-bottom: 10px;
+  margin: 0 auto 10px;
   border-radius: 8px;
+  display: block;
 }
 
+/* ——— Carrito flotante ——— */
 #cart-popup {
   background-color: #fff8e1;
   border: 2px solid #ffe0b2;
@@ -74,35 +91,30 @@ button:hover {
   width: 300px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.2);
   border-radius: 10px;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  opacity: 1;
+  transform: translateY(0);
 }
 
-@media (min-width: 768px) {
-  #cart-button {
-    position: static;
-    float: right;
-    margin: 0 20px;
-    width: auto;
-    height: auto;
-    border-radius: 0;
-    font-size: 20px;
-    background-color: transparent;
-    color: black;
-    box-shadow: none;
-  }
-
-  #cart-count {
-    top: -4px;
-    right: -10px;
-    font-size: 12px;
-  }
+/* Animación al ocultar, sin cortar la transición */
+#cart-popup.hidden {
+  opacity: 0;
+  transform: translateY(20px);
+  pointer-events: none;
+  /* clave: mantenemos display para que la transición funcione */
+  display: block;
 }
 
+/* Clase genérica .hidden para el resto de elementos */
+.hidden { display: none; }
+
+/* Botón flotante del carrito */
 #cart-button {
   position: fixed;
   bottom: 20px;
   right: 20px;
   background-color: #ffb300;
-  color: black;
+  color: white;
   border: none;
   border-radius: 50%;
   width: 60px;
@@ -123,19 +135,30 @@ button:hover {
   font-size: 14px;
   display: none;
 }
-.hidden {
-  display: none;
-}
 
-/* Transiciones suaves */
-#cart-popup {
-  transition: all 0.3s ease-in-out;
-  opacity: 1;
-  transform: translateY(0);
-}
+/* ——— Ajustes móviles iOS/Android ——— */
+@media (max-width: 600px){
 
-#cart-popup.hidden {
-  opacity: 0;
-  transform: translateY(20px);
-  pointer-events: none;
+  /* cards más fluidos en móvil */
+  .product{
+    width: calc(50% - 24px);      /* 2 columnas */
+  }
+  @media (max-width: 420px){
+    .product{
+      width: calc(100% - 24px);   /* 1 columna en pantallas muy chicas */
+    }
+  }
+
+  .product-image{
+    max-width: 160px;             /* imagen un poco más pequeña para equilibrio visual */
+  }
+
+  /* popup ocupa casi todo el ancho con márgenes y respeta safe areas */
+  #cart-popup{
+    left: 16px;
+    right: 16px;
+    bottom: max(16px, calc(16px + var(--safe-bottom)));
+    width: auto;
+    max-width: 520px;
+  }
 }
