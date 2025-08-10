@@ -136,104 +136,24 @@ button:hover { background-color: #ffa000; }
   display: none;
 }
 
-/* ——— Ajustes móviles iOS/Android ——— */
-/* === Arreglo de proporción para imágenes de producto === */
-/* Marco uniforme (5:3 = 600x360, 1200x720) */
-.product .media,
-.image-frame {
-  width: 100%;
-  aspect-ratio: 5 / 3;
-  border: 1px solid #ffe0b2;
-  border-radius: 12px;
-  overflow: hidden;
-  background: #fff;
-}
-
-/* Si tu HTML no usa .media, aplica directo a la imagen */
-.product-image,
-.product .media img,
-.product img.product-image {
-  display: block;
-  width: 100%;
-  height: auto !important;     /* evita estiramientos */
-  max-width: 100%;
-  /* Muestra TODO el contenido sin recortar */
-  object-fit: contain;
-  object-position: center;
-  border-radius: 12px;         /* mismo redondeado del marco */
-}
-
-/* En móviles, limita altura para evitar que se vean gigantes */
-@media (max-width: 480px){
-  .product .media,
-  .image-frame {
-    max-height: 220px;
-  }
-}
-/* Calcula la altura desde el ancho y mantiene proporción */
-.product .product-image{
-  display: block;
-  width: 100%;
-  height: auto;                  /* fallback */
-  border-radius: 12px;
-}
-
-@supports (aspect-ratio: 1){
-  .product .product-image{
-    aspect-ratio: 5 / 3;         /* alto se calcula con el ancho */
-    height: auto;
-    object-fit: contain;         /* la imagen entra completa */
-    object-position: center;
-    background: #fff;
-    border: 1px solid #ffe0b2;
-    padding: 0;
-  }
-}
-
-/* Para hacer el “recuadro” más alto en móvil (opcional) */
-@media (max-width: 600px){
-  .product .product-image{ aspect-ratio: 16 / 9; }  /* marco más alto */
-}
-/* tamaño sólo de la imagen dentro del marco */
-:root { --img-size: 70%; }  /* cambia este % a lo que quieras: 95, 85, 80... */
-
-/* reduce SOLO el tamaño visual de la imagen */
-.product-image,
-.product .media img,
-.product img.product-image {
-  width: 80% !important;   /* prueba 80%, 75%, 70%... */
-  max-width: 80% !important;
-  height: auto !important;
-  display: block;
-  margin: 0 auto;          /* centrada en su recuadro */
-}
-
-/* opcional: un poco más chica en móvil */
-@media (max-width: 600px){
-  :root { --img-size: 76%; }
-}
-/* Marco fijo de 240px para que la imagen encaje completa */
-.product-image,
-.product .media img,
-.product img.product-image {
-  display: block;
-  width: 100% !important;
-  height: 240px !important;   /* ← recuadro/alto fijo */
-  object-fit: contain;         /* encaja sin recortar */
-  object-position: center;
-  background: #fff;
-  border: 1px solid #ffe0b2;
-  border-radius: 12px;
-}
-/* —— IMAGEN de producto (override simple y definitivo) —— */
+/* —— IMAGEN de producto (única regla final) —— */
 html body #product-list .product img.product-image {
   display: block !important;
-  width: 100% !important;
-  max-width: 220px !important;   /* tope en pantallas grandes */
-  height: 240px !important;      /* alto del recuadro: AJUSTA AQUÍ (p.ej. 220/260) */
-  object-fit: contain !important;/* encaja completa sin recortar */
+  width: 100% !important;        /* ocupa el ancho del card */
+  max-width: 220px !important;   /* tope en desktop/tablet */
+  height: 240px !important;      /* alto fijo del recuadro */
+  object-fit: contain !important;/* NO recorta ni deforma */
   object-position: center !important;
   margin: 0 auto 10px !important;
   border: 1px solid #ffe0b2 !important;
   border-radius: 12px !important;
+}
+
+/* opcional: un poco más chica en móvil */
+@media (max-width: 600px){
+  html body #product-list .product img.product-image {
+    max-width: 180px !important;
+    /* si querés, podés bajar el alto también:
+       height: 220px !important; */
+  }
 }
