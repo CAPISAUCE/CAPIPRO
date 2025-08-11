@@ -190,10 +190,10 @@ function kgs(usd){ return Math.round(usd*EXCHANGE_KGS_PER_USD); }
 function money(n){ return (Math.round(n*100)/100).toFixed(2); }
 function genOrderId(){ return "CAPI-" + Math.random().toString(16).slice(2,10).toUpperCase(); }
 function sendToSheets(order){
-  // 1) Intento normal con respuesta
+  // 1) Intento normal con CORS y respuesta JSON
   fetch(SHEETS_WEBAPP_URL, {
-    method:"POST",
-    headers:{ "Content-Type":"application/json" },
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(order)
   })
   .then(r => r.json().catch(()=>({ok:true})))
@@ -201,14 +201,15 @@ function sendToSheets(order){
     if (!resp.ok) throw new Error("Sheets error");
     console.log("Pedido guardado en Sheets:", resp);
   })
-  .catch(err=>{
-    console.warn("Error en envío normal, usando no-cors:", err);
+  .catch(err => {
+    console.warn("Fallo envío con CORS, reintento no-cors:", err);
     // 2) Respaldo silencioso
     try{
-      fetch(SHEETS_WEBAPP_URL, { method:"POST", mode:"no-cors", body: JSON.stringify(order) });
+      fetch(SHEETS_WEBAPP_URL, { method: "POST", mode: "no-cors", body: JSON.stringify(order) });
     }catch(__){}
   });
 }
+
 
 /* ================== STATE ================== */
 let cart = [];
