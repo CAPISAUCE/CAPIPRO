@@ -218,7 +218,8 @@ function updateCart(){
   let totUSD=0, totKGS=0;
   cart.forEach((it,idx)=>{
     const row = document.createElement("div"); row.className="row";
-    row.innerHTML = `<span>${it.name} ${it.size} ml x${it.qty} (${it.price.kgs} сом / $${money(it.price.usd)})</span>`;
+    const icon = it.id === "honey" ? "🍯" : it.id === "mango" ? "🌶️" : "•";
+    row.innerHTML = `<span>${icon} ${it.name} ${it.size} ml x${it.qty} (${it.price.kgs} сом / $${money(it.price.usd)})</span>`;
     const rm = document.createElement("button"); rm.className="btn"; rm.textContent=T.remove[lang]; rm.onclick=()=>{ cart.splice(idx,1); updateCart(); };
     row.appendChild(rm);
     items.appendChild(row);
