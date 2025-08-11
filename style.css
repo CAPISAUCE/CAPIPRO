@@ -215,7 +215,8 @@ html{ -webkit-text-size-adjust: 100%; }
 html, body{ max-width:100%; overflow-x:hidden; }
 
 /* Botón de eliminar en el carrito: estilo 3D como "Agregar al carrito" pero rojo claro */
-#cartItems .btn{
+/* Botón de eliminar en el carrito: estilo 3D como "Agregar al carrito" pero rojo claro */
+#cart-items .btn{
   background: linear-gradient(180deg, rgba(255, 0, 0, 0.15), rgba(255, 0, 0, 0.25));
   border: 1px solid rgba(255, 0, 0, 0.25);
   color: #b71c1c;
@@ -224,14 +225,14 @@ html, body{ max-width:100%; overflow-x:hidden; }
   transition: transform 0.05s ease, background 0.2s ease;
 }
 
-#cartItems .btn::before{
+#cart-items .btn::before{
   content: "🗑️ ";
 }
 
-#cartItems .btn:hover{
+#cart-items .btn:hover{
   background: linear-gradient(180deg, rgba(255, 0, 0, 0.25), rgba(255, 0, 0, 0.35));
 }
 
-#cartItems .btn:active{
+#cart-items .btn:active{
   transform: scale(0.97);
 }
