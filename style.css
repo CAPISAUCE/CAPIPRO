@@ -208,3 +208,8 @@ body.no-scroll{
 @media (max-width: 380px){
   .controls select, .controls .btn{ padding:6px 8px; font-size:14px; }
 }
+/* Evita el auto-zoom de texto de iOS en el primer render */
+html{ -webkit-text-size-adjust: 100%; }
+
+/* Evita que cualquier píxel de desborde provoque re-escala inicial */
+html, body{ max-width:100%; overflow-x:hidden; }
