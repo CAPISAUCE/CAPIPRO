@@ -1,7 +1,12 @@
 /* ——— Base ——— */
 :root{
   --safe-top: env(safe-area-inset-top, 0px);
-  --safe-bot: env(safe-area-inset-bottom, 0px);
+}
+
+.topbar{
+  padding-top: calc(12px + var(--safe-top));
+  min-height: calc(56px + var(--safe-top));
+  box-sizing: border-box;
 }
   
 /* Header: deja espacio para el notch/status bar */
