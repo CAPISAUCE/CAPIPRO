@@ -200,7 +200,7 @@ body.no-scroll{
 html{ -webkit-text-size-adjust: 100%; }
 html, body{ max-width:100%; overflow-x:hidden; }
 
-/* Estilo 3D rojo para el botón Eliminar en el carrito */
+/* ===== Estilo 3D rojo para botón Eliminar en el carrito ===== */
 #cart-items button[data-index] {
   background: linear-gradient(180deg, rgba(255,0,0,0.15), rgba(255,0,0,0.25)) !important;
   border: 1px solid rgba(255,0,0,0.28) !important;
@@ -210,6 +210,8 @@ html, body{ max-width:100%; overflow-x:hidden; }
   box-shadow: 0 2px 0 rgba(183,28,28,0.15) !important;
   transition: transform 0.05s ease, background 0.2s ease !important;
   white-space: nowrap;
+  padding: 6px 12px;
+  cursor: pointer;
 }
 
 #cart-items button[data-index]::before {
