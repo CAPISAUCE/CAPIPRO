@@ -252,7 +252,7 @@ function updateCart(){
 
     const rm = document.createElement("button");
     rm.className = "btn-remove";                 // <- solo cambia esto
-    rm.textContent = "🗑 " + T.remove[lang];
+    rm.textContent = "🗑";
     rm.onclick = ()=>{ cart.splice(idx,1); updateCart(); };
 
     row.appendChild(rm);
