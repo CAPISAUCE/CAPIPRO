@@ -157,3 +157,15 @@ html body #product-list .product img.product-image {
        height: 220px !important; */
   }
 }
+/* Carrito siempre por encima y bloquea el scroll del fondo */
+#cart-popup{
+  z-index: 2147483000 !important;   /* por encima de todo */
+  position: fixed !important;       /* evita que “se quede atrás” */
+}
+
+/* cuando el carrito está abierto, el body no se mueve */
+body.no-scroll{
+  overflow: hidden !important;
+  position: fixed !important;
+  width: 100% !important;
+}
