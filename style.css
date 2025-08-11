@@ -200,32 +200,24 @@ body.no-scroll{
 html{ -webkit-text-size-adjust: 100%; }
 html, body{ max-width:100%; overflow-x:hidden; }
 
-/* Botones de ELIMINAR dentro del carrito (cubre ambas variantes de carrito)
-   – excluye el botón Cerrar (✕) y el de Confirmar */
-#cart .btn:not(#confirm):not(#closeCart),
-#cart-popup .btn:not(#confirm):not(#closeCart){
+/* Botón ELIMINAR dentro del carrito (3D rojo claro) */
+#cart .row .btn:not(#confirm):not(#closeCart){
   background: linear-gradient(180deg, rgba(255,0,0,0.15), rgba(255,0,0,0.25)) !important;
   border: 1px solid rgba(255,0,0,0.28) !important;
   color: #b71c1c !important;
   font-weight: 700 !important;
   border-radius: 10px !important;
-  box-shadow: 0 2px 0 rgba(183,28,28,0.15) !important;  /* efecto 3D */
+  box-shadow: 0 2px 0 rgba(183,28,28,0.15) !important;
   transition: transform 0.05s ease, background 0.2s ease !important;
-  white-space: nowrap !important;
+  white-space: nowrap;
 }
-
-#cart .btn:not(#confirm):not(#closeCart)::before,
-#cart-popup .btn:not(#confirm):not(#closeCart)::before{
+#cart .row .btn:not(#confirm):not(#closeCart)::before{
   content: "🗑️ " !important;
 }
-
-#cart .btn:not(#confirm):not(#closeCart):hover,
-#cart-popup .btn:not(#confirm):not(#closeCart):hover{
+#cart .row .btn:not(#confirm):not(#closeCart):hover{
   background: linear-gradient(180deg, rgba(255,0,0,0.25), rgba(255,0,0,0.35)) !important;
 }
-
-#cart .btn:not(#confirm):not(#closeCart):active,
-#cart-popup .btn:not(#confirm):not(#closeCart):active{
-  transform: translateY(1px) !important; /* click 3D */
+#cart .row .btn:not(#confirm):not(#closeCart):active{
+  transform: translateY(1px) !important;
   box-shadow: 0 1px 0 rgba(183,28,28,0.15) !important;
 }
