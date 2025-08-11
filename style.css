@@ -183,3 +183,7 @@ body.no-scroll{
   position: fixed !important;
   width: 100% !important;
 }
+/* FIX header fuera de pantalla en iPhone (safe area) */
+.topbar{
+  top: env(safe-area-inset-top, 0px) !important; /* antes estaba top:0 */
+}
