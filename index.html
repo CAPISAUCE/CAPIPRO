@@ -205,9 +205,9 @@ function renderProducts(){
 }
 
 function addToCart(id, name, size, qty, price){
-  const key = id+"-"+size;
-  const i = cart.findIndex(x=>x.key===key);
-  if(i>-1){ cart[i].qty += qty; } else { cart.push({key,id,name,size,qty,price}); }
+  // clave única por línea (no combinar)
+  const key = id + "-" + size + "-" + Date.now() + "-" + Math.random().toString(16).slice(2,6);
+  cart.push({ key, id, name, size, qty, price });
   updateCart();
 }
 
