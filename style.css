@@ -187,3 +187,24 @@ body.no-scroll{
 .topbar{
   top: env(safe-area-inset-top, 0px) !important; /* antes estaba top:0 */
 }
+/* Mantener select + carrito dentro del header en todos los idiomas */
+.controls{
+  display:flex; align-items:center; gap:8px;
+  flex-wrap:wrap;              /* permite que baje a segunda línea si falta espacio */
+  max-width:100%;
+}
+.controls > *{ flex:0 0 auto; } /* que ninguno intente estirarse raro */
+#lang{
+  max-width: clamp(120px, 52vw, 240px); /* el select se acorta antes de empujar el carrito */
+}
+#btnCart{
+  margin-left:auto;            /* lo pega a la derecha */
+  white-space:nowrap;          /* evita saltos feos dentro del botón */
+}
+/* safe area a la derecha en iPhone */
+.topbar{ padding-right: calc(16px + env(safe-area-inset-right,0px)); }
+
+/* un poco más compacto en pantallas muy pequeñas */
+@media (max-width: 380px){
+  .controls select, .controls .btn{ padding:6px 8px; font-size:14px; }
+}
