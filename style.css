@@ -213,3 +213,25 @@ html{ -webkit-text-size-adjust: 100%; }
 
 /* Evita que cualquier píxel de desborde provoque re-escala inicial */
 html, body{ max-width:100%; overflow-x:hidden; }
+
+/* Botón de eliminar en el carrito: estilo 3D como "Agregar al carrito" pero rojo claro */
+#cartItems .btn{
+  background: linear-gradient(180deg, rgba(255, 0, 0, 0.15), rgba(255, 0, 0, 0.25));
+  border: 1px solid rgba(255, 0, 0, 0.25);
+  color: #b71c1c;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.05s ease, background 0.2s ease;
+}
+
+#cartItems .btn::before{
+  content: "🗑️ ";
+}
+
+#cartItems .btn:hover{
+  background: linear-gradient(180deg, rgba(255, 0, 0, 0.25), rgba(255, 0, 0, 0.35));
+}
+
+#cartItems .btn:active{
+  transform: scale(0.97);
+}
