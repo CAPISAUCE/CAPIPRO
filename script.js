@@ -106,7 +106,7 @@ function renderProducts() {
       const quantity = parseInt(controls.querySelector(".quantity").textContent);
       const name = translations[product.id][currentLang];
       const price = product.sizes[size];
-      addToCart(name, size, quantity, price);
+      addToCart(product.id, name, size, quantity, price); // ← ahora pasa el id
     };
     div.appendChild(addBtn);
 
@@ -114,10 +114,10 @@ function renderProducts() {
   });
 }
 
-function addToCart(name, size, quantity, price) {
-  const index = cart.findIndex(item => item.name === name && item.size === size);
+function addToCart(id, name, size, quantity, price) {
+  const index = cart.findIndex(item => item.id === id && item.name === name && item.size === size);
   if (index > -1) cart[index].quantity += quantity;
-  else cart.push({ name, size, quantity, price });
+  else cart.push({ id, name, size, quantity, price }); // ← guarda el id
   renderCart();
   animateCartBadge();
 }
@@ -135,11 +135,18 @@ function renderCart() {
 
   cart.forEach((item, index) => {
     const li = document.createElement("li");
-    li.textContent = `${item.name} ${item.size} ml x${item.quantity} (${item.price.kgs} сом / $${item.price.usd}) `;
-    const btn = document.createElement("button");
-    btn.textContent = translations["remove"][currentLang];
-    btn.onclick = () => removeItem(index);
-    li.appendChild(btn);
+
+    // Icono por tipo
+    const icon = item.id === "honey" ? "🍯" : item.id === "mango_sauce" ? "🌶️" : "•";
+
+    li.innerHTML = `
+      <span>${icon} ${item.name} ${item.size} ml x${item.quantity}
+        (${item.price.kgs} сом / $${item.price.usd})
+      </span>
+      <button class="btn" data-index="${index}">${translations["remove"][currentLang]}</button>
+    `;
+    li.querySelector("button.btn").onclick = () => removeItem(index);
+
     list.appendChild(li);
 
     totalKGS += item.quantity * item.price.kgs;
@@ -157,8 +164,8 @@ function toggleCart(){
   if (isHidden){
     pop.classList.remove("hidden");
     document.body.classList.add("no-scroll");
-    pop.scrollTop = 0;                 // sube el carrito al inicio
-    window.scrollTo(0,0);              // y fija la página arriba
+    pop.scrollTop = 0;
+    window.scrollTo(0,0);
   }else{
     pop.classList.add("hidden");
     document.body.classList.remove("no-scroll");
@@ -174,7 +181,6 @@ function confirmOrder() {
   }
   sending = true;
 
-  // Mensaje WhatsApp + totales
   let message = "🧾 " + translations["your_cart"][currentLang] + ":\n";
   let totalKGS = 0, totalUSD = 0;
 
@@ -187,14 +193,11 @@ function confirmOrder() {
   });
   message += `\nTOTAL: ${totalKGS} сом / $${totalUSD.toFixed(2)}`;
 
-  // Payload para Sheets
   const payload = buildOrderPayload(cart, currentLang);
   message += `\n\nID: ${payload.orderId}`;
 
-  // Enviar a Google Sheets (sin headers, sin then)
   sendToSheets(payload);
 
-  // Abrir WhatsApp a ambos números
   const encoded = encodeURIComponent(message);
   const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
@@ -208,7 +211,6 @@ function confirmOrder() {
     : `https://wa.me/${PHONE_US}?text=${encoded}`;
   setTimeout(()=>window.open(urlUS, "_blank"), 500);
 
-  // Limpiar carrito y UI
   cart = [];
   renderCart();
   updateCartCount();
@@ -217,11 +219,10 @@ function confirmOrder() {
   sending = false;
 }
 
-  function genOrderId(){
+function genOrderId(){
   return "CAPI-" + Math.random().toString(16).slice(2,10).toUpperCase();
 }
 
-// Arma el payload EXACTO que espera tu Apps Script
 function buildOrderPayload(cart, lang){
   let totalUSD = 0, totalKGS = 0;
   const items = cart.map(i=>{
@@ -251,57 +252,12 @@ function buildOrderPayload(cart, lang){
   };
 }
 
-// Envío sin preflight (sin headers), no leemos respuesta
 function sendToSheets(order){
   try{
     fetch(SHEETS_WEBAPP_URL, { method:"POST", mode:"no-cors", body: JSON.stringify(order) });
   }catch(_){}
 }
-  // ---- Enviar a Google Sheets ----
-  fetch(SHEETS_WEBAPP_URL, {
-  method: "POST",
-  mode: "no-cors",
-  body: JSON.stringify(payload)    // <-- sin Content-Type
-});
-  .then(r => {
-    const ct = r.headers.get("content-type") || "";
-    return ct.includes("application/json") ? r.json() : Promise.resolve({ok:true});
-  })
-  .then(resp => {
-    console.log("Sheets resp:", resp);
-    if (!resp.ok) throw new Error(resp.error || "Sheets error");
-  })
-  .catch(err => {
-    console.warn("No se pudo enviar a Sheets, guardo para reintentar:", err);
-    const q = JSON.parse(localStorage.getItem("sales_pending") || "[]");
-    q.push(orderPayload);
-    localStorage.setItem("sales_pending", JSON.stringify(q));
-  })
-  .finally(() => {
-    // ---- Envío a WhatsApp (ambos números) ----
-    const encodedMsg = encodeURIComponent(message);
-    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
-    const urlKG = isMobile
-      ? `whatsapp://send?phone=${PHONE_KG}&text=${encodedMsg}`
-      : `https://wa.me/${PHONE_KG}?text=${encodedMsg}`;
-    window.open(urlKG, "_blank");
-
-    const urlUS = isMobile
-      ? `whatsapp://send?phone=${PHONE_US}&text=${encodedMsg}`
-      : `https://wa.me/${PHONE_US}?text=${encodedMsg}`;
-    setTimeout(() => window.open(urlUS, "_blank"), 500);
-
-    cart = [];
-    renderCart();
-    updateCartCount();
-    const popup = document.getElementById("cart-popup");
-    if (popup && !popup.classList.contains("hidden")) popup.classList.add("hidden");
-    sending = false;
-  });
-}
-
-// Reintento manual de ventas pendientes
 function retryPendingSales() {
   const q = JSON.parse(localStorage.getItem("sales_pending") || "[]");
   if (!q.length) { alert("No hay ventas pendientes."); return; }
