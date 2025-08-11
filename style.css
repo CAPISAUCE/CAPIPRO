@@ -1,23 +1,17 @@
 /* ——— Base ——— */
 :root{
   --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bot: env(safe-area-inset-bottom, 0px);
 }
 
 .topbar{
   padding-top: calc(12px + var(--safe-top));
-  min-height: calc(56px + var(--safe-top));
-  box-sizing: border-box;
-}
-  
-/* Header: deja espacio para el notch/status bar */
-.topbar{
-  padding-top: calc(12px + var(--safe-top));
   min-height: calc(56px + var(--safe-top)); /* asegura que no quede recortado */
+  box-sizing: border-box;
 }
 
 /* (Opcional) un poco de aire abajo por la barra home en PWA */
 .shell{ padding-bottom: calc(16px + var(--safe-bot)); }
-}
 
 body {
   background-color: #fff8e1;
@@ -27,7 +21,7 @@ body {
   padding: 0;
   /* amortigua la barra de estado en iOS/Android PWA */
   padding-top: max(0px, var(--safe-top));
-  padding-bottom: max(0px, var(--safe-bottom));
+  padding-bottom: max(0px, var(--safe-bot));
 }
 
 header {
@@ -79,14 +73,13 @@ button:hover { background-color: #ffa000; }
   padding: 20px;
   margin: 12px;
   text-align: center;
-  width: 260px;              /* desktop/tablet */
-  max-width: 92vw;           /* evita overflow en móviles */
+  width: 260px;
+  max-width: 92vw;
 }
 
-/* Imagen responsive (usa todo el ancho disponible del card) */
 .product-image {
   width: 100%;
-  max-width: 220px;          /* tope en pantallas grandes */
+  max-width: 220px;
   height: auto;
   margin: 0 auto 10px;
   border-radius: 8px;
@@ -110,19 +103,16 @@ button:hover { background-color: #ffa000; }
   transform: translateY(0);
 }
 
-/* Animación al ocultar, sin cortar la transición */
+/* Animación al ocultar */
 #cart-popup.hidden {
   opacity: 0;
   transform: translateY(20px);
   pointer-events: none;
-  /* clave: mantenemos display para que la transición funcione */
   display: block;
 }
 
-/* Clase genérica .hidden para el resto de elementos */
 .hidden { display: none; }
 
-/* Botón flotante del carrito */
 #cart-button {
   position: fixed;
   bottom: 20px;
@@ -150,73 +140,67 @@ button:hover { background-color: #ffa000; }
   display: none;
 }
 
-/* —— IMAGEN de producto (única regla final) —— */
+/* Imagen de producto */
 html body #product-list .product img.product-image {
   display: block !important;
-  width: 100% !important;        /* ocupa el ancho del card */
-  max-width: 220px !important;   /* tope en desktop/tablet */
-  height: 420px !important;      /* alto fijo del recuadro */
-  object-fit: contain !important;/* NO recorta ni deforma */
+  width: 100% !important;
+  max-width: 220px !important;
+  height: 420px !important;
+  object-fit: contain !important;
   object-position: center !important;
   margin: 0 auto 10px !important;
   border: 1px solid #ffe0b2 !important;
   border-radius: 12px !important;
 }
 
-/* opcional: un poco más chica en móvil */
 @media (max-width: 600px){
   html body #product-list .product img.product-image {
     max-width: 180px !important;
-    /* si querés, podés bajar el alto también:
-       height: 220px !important; */
   }
 }
-/* Carrito siempre por encima y bloquea el scroll del fondo */
+
+/* Carrito por encima */
 #cart-popup{
-  z-index: 2147483000 !important;   /* por encima de todo */
-  position: fixed !important;       /* evita que “se quede atrás” */
+  z-index: 2147483000 !important;
+  position: fixed !important;
 }
 
-/* cuando el carrito está abierto, el body no se mueve */
 body.no-scroll{
   overflow: hidden !important;
   position: fixed !important;
   width: 100% !important;
 }
-/* FIX header fuera de pantalla en iPhone (safe area) */
+
+/* FIX header en iPhone */
 .topbar{
-  top: env(safe-area-inset-top, 0px) !important; /* antes estaba top:0 */
+  top: env(safe-area-inset-top, 0px) !important;
 }
-/* Mantener select + carrito dentro del header en todos los idiomas */
+
+/* Controles del header */
 .controls{
   display:flex; align-items:center; gap:8px;
-  flex-wrap:wrap;              /* permite que baje a segunda línea si falta espacio */
+  flex-wrap:wrap;
   max-width:100%;
 }
-.controls > *{ flex:0 0 auto; } /* que ninguno intente estirarse raro */
+.controls > *{ flex:0 0 auto; }
 #lang{
-  max-width: clamp(120px, 52vw, 240px); /* el select se acorta antes de empujar el carrito */
+  max-width: clamp(120px, 52vw, 240px);
 }
 #btnCart{
-  margin-left:auto;            /* lo pega a la derecha */
-  white-space:nowrap;          /* evita saltos feos dentro del botón */
+  margin-left:auto;
+  white-space:nowrap;
 }
-/* safe area a la derecha en iPhone */
+
 .topbar{ padding-right: calc(16px + env(safe-area-inset-right,0px)); }
 
-/* un poco más compacto en pantallas muy pequeñas */
 @media (max-width: 380px){
   .controls select, .controls .btn{ padding:6px 8px; font-size:14px; }
 }
-/* Evita el auto-zoom de texto de iOS en el primer render */
-html{ -webkit-text-size-adjust: 100%; }
 
-/* Evita que cualquier píxel de desborde provoque re-escala inicial */
+html{ -webkit-text-size-adjust: 100%; }
 html, body{ max-width:100%; overflow-x:hidden; }
 
-/* Botón de eliminar en el carrito: estilo 3D como "Agregar al carrito" pero rojo claro */
-/* Botón de eliminar en el carrito: estilo 3D como "Agregar al carrito" pero rojo claro */
-/* Eliminar (3D rojo) dentro del carrito — robusto */
+/* Botón eliminar carrito */
 #cart-items button.btn,
 #cartItems button.btn{
   background: linear-gradient(180deg, rgba(255,0,0,0.15), rgba(255,0,0,0.25)) !important;
