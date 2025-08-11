@@ -190,26 +190,25 @@ function kgs(usd){ return Math.round(usd*EXCHANGE_KGS_PER_USD); }
 function money(n){ return (Math.round(n*100)/100).toFixed(2); }
 function genOrderId(){ return "CAPI-" + Math.random().toString(16).slice(2,10).toUpperCase(); }
 function sendToSheets(order){
-  // 1) Intento normal con CORS y respuesta JSON
-  fetch(SHEETS_WEBAPP_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(order)
-  })
-  .then(r => r.json().catch(()=>({ok:true})))
-  .then(resp => {
-    if (!resp.ok) throw new Error("Sheets error");
-    console.log("Pedido guardado en Sheets:", resp);
-  })
-  .catch(err => {
-    console.warn("Fallo envío con CORS, reintento no-cors:", err);
-    // 2) Respaldo silencioso
-    try{
-      fetch(SHEETS_WEBAPP_URL, { method: "POST", mode: "no-cors", body: JSON.stringify(order) });
-    }catch(__){}
-  });
-}
+  try{
+    // Intento 1: sendBeacon (no bloquea la UI y evita CORS preflight)
+    if (navigator.sendBeacon) {
+      const blob = new Blob([JSON.stringify(order)], { type: "text/plain;charset=utf-8" });
+      navigator.sendBeacon(SHEETS_WEBAPP_URL, blob);
+      return;
+    }
+  }catch(_){}
 
+  // Intento 2: fetch sin preflight (Content-Type text/plain)
+  try{
+    fetch(SHEETS_WEBAPP_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(order)
+    });
+  }catch(_){}
+}
 
 /* ================== STATE ================== */
 let cart = [];
