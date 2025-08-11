@@ -216,23 +216,24 @@ html, body{ max-width:100%; overflow-x:hidden; }
 
 /* Botón de eliminar en el carrito: estilo 3D como "Agregar al carrito" pero rojo claro */
 /* Botón de eliminar en el carrito: estilo 3D como "Agregar al carrito" pero rojo claro */
-#cart-items .btn{
-  background: linear-gradient(180deg, rgba(255, 0, 0, 0.15), rgba(255, 0, 0, 0.25));
-  border: 1px solid rgba(255, 0, 0, 0.25);
-  color: #b71c1c;
-  font-weight: 600;
-  cursor: pointer;
-  transition: transform 0.05s ease, background 0.2s ease;
+/* Eliminar (3D rojo) dentro del carrito — robusto */
+#cart-items button.btn,
+#cartItems button.btn{
+  background: linear-gradient(180deg, rgba(255,0,0,0.15), rgba(255,0,0,0.25)) !important;
+  border: 1px solid rgba(255,0,0,0.25) !important;
+  color: #b71c1c !important;
+  font-weight: 600 !important;
+  transition: transform 0.05s ease, background 0.2s ease !important;
 }
-
-#cart-items .btn::before{
-  content: "🗑️ ";
+#cart-items button.btn::before,
+#cartItems button.btn::before{
+  content: "🗑️ " !important;
 }
-
-#cart-items .btn:hover{
-  background: linear-gradient(180deg, rgba(255, 0, 0, 0.25), rgba(255, 0, 0, 0.35));
+#cart-items button.btn:hover,
+#cartItems button.btn:hover{
+  background: linear-gradient(180deg, rgba(255,0,0,0.25), rgba(255,0,0,0.35)) !important;
 }
-
-#cart-items .btn:active{
-  transform: scale(0.97);
+#cart-items button.btn:active,
+#cartItems button.btn:active{
+  transform: scale(0.97) !important;
 }
