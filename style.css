@@ -200,8 +200,8 @@ body.no-scroll{
 html{ -webkit-text-size-adjust: 100%; }
 html, body{ max-width:100%; overflow-x:hidden; }
 
-/* Botón ELIMINAR dentro del carrito (3D rojo claro) */
-#cart .row .btn:not(#confirm):not(#closeCart){
+/* Estilo 3D rojo para el botón Eliminar en el carrito */
+#cart-items button[data-index] {
   background: linear-gradient(180deg, rgba(255,0,0,0.15), rgba(255,0,0,0.25)) !important;
   border: 1px solid rgba(255,0,0,0.28) !important;
   color: #b71c1c !important;
@@ -211,13 +211,16 @@ html, body{ max-width:100%; overflow-x:hidden; }
   transition: transform 0.05s ease, background 0.2s ease !important;
   white-space: nowrap;
 }
-#cart .row .btn:not(#confirm):not(#closeCart)::before{
+
+#cart-items button[data-index]::before {
   content: "🗑️ " !important;
 }
-#cart .row .btn:not(#confirm):not(#closeCart):hover{
+
+#cart-items button[data-index]:hover {
   background: linear-gradient(180deg, rgba(255,0,0,0.25), rgba(255,0,0,0.35)) !important;
 }
-#cart .row .btn:not(#confirm):not(#closeCart):active{
+
+#cart-items button[data-index]:active {
   transform: translateY(1px) !important;
   box-shadow: 0 1px 0 rgba(183,28,28,0.15) !important;
 }
