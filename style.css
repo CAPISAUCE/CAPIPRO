@@ -1,8 +1,17 @@
 /* ——— Base ——— */
 :root{
-  /* Safe areas para iPhone/Android con notch */
-  --safe-top: env(safe-area-inset-top);
-  --safe-bottom: env(safe-area-inset-bottom);
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bot: env(safe-area-inset-bottom, 0px);
+}
+  
+/* Header: deja espacio para el notch/status bar */
+.topbar{
+  padding-top: calc(12px + var(--safe-top));
+  min-height: calc(56px + var(--safe-top)); /* asegura que no quede recortado */
+}
+
+/* (Opcional) un poco de aire abajo por la barra home en PWA */
+.shell{ padding-bottom: calc(16px + var(--safe-bot)); }
 }
 
 body {
