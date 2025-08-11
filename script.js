@@ -151,8 +151,18 @@ function renderCart() {
   updateCartCount();
 }
 
-function toggleCart() {
-  document.getElementById("cart-popup").classList.toggle("hidden");
+function toggleCart(){
+  const pop = document.getElementById("cart-popup");
+  const isHidden = pop.classList.contains("hidden");
+  if (isHidden){
+    pop.classList.remove("hidden");
+    document.body.classList.add("no-scroll");
+    pop.scrollTop = 0;                 // sube el carrito al inicio
+    window.scrollTo(0,0);              // y fija la página arriba
+  }else{
+    pop.classList.add("hidden");
+    document.body.classList.remove("no-scroll");
+  }
 }
 
 let sending = false;
