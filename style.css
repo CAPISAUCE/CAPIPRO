@@ -200,24 +200,22 @@ body.no-scroll{
 html{ -webkit-text-size-adjust: 100%; }
 html, body{ max-width:100%; overflow-x:hidden; }
 
-/* Botón eliminar carrito */
-#cart-items button.btn,
-#cartItems button.btn{
+/* Estilo 3D rojo SOLO para los botones de eliminar dentro del carrito,
+   identificados por el atributo data-index */
+#cart-popup button[data-index]{
   background: linear-gradient(180deg, rgba(255,0,0,0.15), rgba(255,0,0,0.25)) !important;
   border: 1px solid rgba(255,0,0,0.25) !important;
   color: #b71c1c !important;
   font-weight: 600 !important;
+  border-radius: 6px !important;
   transition: transform 0.05s ease, background 0.2s ease !important;
 }
-#cart-items button.btn::before,
-#cartItems button.btn::before{
+#cart-popup button[data-index]::before{
   content: "🗑️ " !important;
 }
-#cart-items button.btn:hover,
-#cartItems button.btn:hover{
+#cart-popup button[data-index]:hover{
   background: linear-gradient(180deg, rgba(255,0,0,0.25), rgba(255,0,0,0.35)) !important;
 }
-#cart-items button.btn:active,
-#cartItems button.btn:active{
+#cart-popup button[data-index]:active{
   transform: scale(0.97) !important;
 }
