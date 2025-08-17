@@ -1,3 +1,4 @@
+<script>
 let cart = [];
 let currentLang = 'ky';
 
@@ -172,6 +173,15 @@ function toggleCart(){
   }
 }
 
+// ===================== AÑADIDO: helper para datos de cliente =====================
+function getFieldOrPrompt(inputId, promptLabel, def="") {
+  const el = document.getElementById(inputId);
+  if (el && el.value && el.value.trim()) return el.value.trim();
+  const v = window.prompt(promptLabel, def);
+  return (v && v.trim()) ? v.trim() : def;
+}
+
+// ===================== ACTUALIZADO: confirmOrder() =====================
 let sending = false;
 function confirmOrder() {
   if (sending) return;
@@ -179,6 +189,12 @@ function confirmOrder() {
     alert("🛒 " + translations["cart_empty"][currentLang]);
     return;
   }
+
+  // Pide/lee datos del cliente (usa inputs si existen; si no, prompt)
+  const customerName = getFieldOrPrompt("customerName", "Nombre del cliente:", "");
+  const customerEmail = getFieldOrPrompt("customerEmail", "Email del cliente:", "");
+  const customerAddress = getFieldOrPrompt("customerAddress", "Dirección del cliente:", "");
+
   sending = true;
 
   let message = "🧾 " + translations["your_cart"][currentLang] + ":\n";
@@ -193,11 +209,18 @@ function confirmOrder() {
   });
   message += `\nTOTAL: ${totalKGS} сом / $${totalUSD.toFixed(2)}`;
 
-  const payload = buildOrderPayload(cart, currentLang);
+  // Construye payload con datos de cliente y autoInvoice:true
+  const payload = buildOrderPayload(cart, currentLang, {
+    customer: customerName,
+    email: customerEmail,
+    address: customerAddress
+  });
   message += `\n\nID: ${payload.orderId}`;
 
+  // Envía a Sheets (tu Apps Script generará la factura automáticamente)
   sendToSheets(payload);
 
+  // WhatsApp (igual que ya lo tenías)
   const encoded = encodeURIComponent(message);
   const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
@@ -219,11 +242,12 @@ function confirmOrder() {
   sending = false;
 }
 
+// ===================== ACTUALIZADO: buildOrderPayload() =====================
 function genOrderId(){
   return "CAPI-" + Math.random().toString(16).slice(2,10).toUpperCase();
 }
 
-function buildOrderPayload(cart, lang){
+function buildOrderPayload(cart, lang, client = {}) {
   let totalUSD = 0, totalKGS = 0;
   const items = cart.map(i=>{
     const lineUSD = i.price.usd * i.quantity;
@@ -248,7 +272,13 @@ function buildOrderPayload(cart, lang){
     currency: "USD/KGS",
     lang,
     items,
-    created_at: new Date().toISOString()
+    created_at: new Date().toISOString(),
+
+    // NUEVO: datos del cliente + bandera para generar factura automática
+    customer: client.customer || "",
+    email:    client.email || "",
+    address:  client.address || "",
+    autoInvoice: true
   };
 }
 
@@ -306,3 +336,4 @@ function shakeCartBadge() {
 window.onload = () => {
   setLanguage(currentLang);
 };
+</script>
