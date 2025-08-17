@@ -190,7 +190,7 @@ function confirmOrder() {
     return;
   }
 
-  // Pide/lee datos del cliente (usa inputs si existen; si no, prompt)
+  // Lee de inputs si existen o pregunta por prompt
   const customerName = getFieldOrPrompt("customerName", "Nombre del cliente:", "");
   const customerEmail = getFieldOrPrompt("customerEmail", "Email del cliente:", "");
   const customerAddress = getFieldOrPrompt("customerAddress", "Dirección del cliente:", "");
@@ -209,7 +209,7 @@ function confirmOrder() {
   });
   message += `\nTOTAL: ${totalKGS} сом / $${totalUSD.toFixed(2)}`;
 
-  // Construye payload con datos de cliente y autoInvoice:true
+  // Construye payload con datos del cliente y autoInvoice:true
   const payload = buildOrderPayload(cart, currentLang, {
     customer: customerName,
     email: customerEmail,
@@ -217,10 +217,10 @@ function confirmOrder() {
   });
   message += `\n\nID: ${payload.orderId}`;
 
-  // Envía a Sheets (tu Apps Script generará la factura automáticamente)
+  // Envía a Sheets (Apps Script generará la factura si autoInvoice:true)
   sendToSheets(payload);
 
-  // WhatsApp (igual que ya lo tenías)
+  // WhatsApp (igual que lo tenías)
   const encoded = encodeURIComponent(message);
   const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
@@ -274,12 +274,27 @@ function buildOrderPayload(cart, lang, client = {}) {
     items,
     created_at: new Date().toISOString(),
 
-    // NUEVO: datos del cliente + bandera para generar factura automática
+    // Datos del cliente + bandera para generar factura
     customer: client.customer || "",
     email:    client.email || "",
     address:  client.address || "",
     autoInvoice: true
   };
+}
+
+function sendToSheets(order){
+  fetch(SHEETS_WEBAPP_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(order)
+  })
+  .then(r => r.json())
+  .then(res => {
+    console.log("Sheets response:", res);
+    if (!res.ok) console.warn("Apps Script error:", res.error);
+    if (res.pdfUrl) console.log("Invoice PDF:", res.pdfUrl);
+  })
+  .catch(err => console.error("Fetch error:", err));
 }
 
 function sendToSheets(order){
