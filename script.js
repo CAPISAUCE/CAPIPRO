@@ -172,12 +172,7 @@ function toggleCart(){
     document.body.classList.remove("no-scroll");
   }
 }
-function getFieldOrPrompt(inputId, promptLabel, def="") {
-  const el = document.getElementById(inputId);
-  if (el && el.value && el.value.trim()) return el.value.trim();
-  const v = window.prompt(promptLabel, def);
-  return (v && v.trim()) ? v.trim() : def;
-}
+
 // ===================== AÑADIDO: helper para datos de cliente =====================
 function getFieldOrPrompt(inputId, promptLabel, def="") {
   const el = document.getElementById(inputId);
