@@ -297,12 +297,6 @@ function sendToSheets(order){
   .catch(err => console.error("Fetch error:", err));
 }
 
-function sendToSheets(order){
-  try{
-    fetch(SHEETS_WEBAPP_URL, { method:"POST", mode:"no-cors", body: JSON.stringify(order) });
-  }catch(_){}
-}
-
 function retryPendingSales() {
   const q = JSON.parse(localStorage.getItem("sales_pending") || "[]");
   if (!q.length) { alert("No hay ventas pendientes."); return; }
