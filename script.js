@@ -22,8 +22,8 @@ const translations = {
 };
 
 const products = [
-  { id:"honey", sizes: { "230":{kgs:307,usd:3.5}, "500":{kgs:550,usd:6.3}, "1000":{kgs:874,usd:10.0} } },
-  { id:"mango_sauce", sizes: { "230":{kgs:307,usd:3.5}, "500":{kgs:699,usd:8.0}, "1000":{kgs:1750,usd:20.0} } }
+  { id:"honey", sizes: { "350":{kgs:349,usd:4.0}, "500":{kgs:550,usd:6.3}, "1000":{kgs:874,usd:10.0} } },
+  { id:"mango_sauce", sizes: { "350":{kgs:349,usd:4.0}, "500":{kgs:787,usd:9.0}, "1000":{kgs:1748,usd:20.0} } }
 ];
 
 function setLanguage(lang) {
