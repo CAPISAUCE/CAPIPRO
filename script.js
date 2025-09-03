@@ -244,7 +244,7 @@ function confirmOrder() {
 
 // ===================== ACTUALIZADO: buildOrderPayload() =====================
 function genOrderId(){
-  return "CAPI-" + Math.random().toString(16).slice(2,10).toUpperCase();
+  return "CAPIFAN-" + Math.random().toString(16).slice(2,10).toUpperCase();
 }
 
 function buildOrderPayload(cart, lang, client = {}) {
