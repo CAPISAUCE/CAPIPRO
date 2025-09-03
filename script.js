@@ -186,7 +186,7 @@ let sending = false;
 function confirmOrder() {
   if (sending) return;
   if (cart.length === 0) {
-    alert("🛒 " + translations["cart_empty"][currentLang]);
+    alert("🛒 CAPIFAN" + translations["cart_empty"][currentLang]);
     return;
   }
 
