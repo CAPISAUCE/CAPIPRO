@@ -197,7 +197,7 @@ function confirmOrder() {
 
   sending = true;
 
-  let message = "🧾 " + translations["your_cart"][currentLang] + ":\n";
+  let message = "🧾 CAPIFAN " + translations["your_cart"][currentLang] + ":\n";
   let totalKGS = 0, totalUSD = 0;
 
   cart.forEach(item => {
