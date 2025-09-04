@@ -10,7 +10,7 @@ console.log("Sheets URL:", SHEETS_WEBAPP_URL);
 fetch(SHEETS_WEBAPP_URL + "?route=health").then(r => r.text()).then(t => console.log("Ping /health:", t));
 
 const translations = {
-  honey: { ky:"Бал", ru:"Мёд", es:"Miel", en:"Honey" },
+  honey: { ky:"таза Бал Issyk-Kul", ru:"Чистый мед Issyk-Kul", es:"Miel Pura Issyk-Kul", en:"Pure Honey Issyk-Kul" },
   mango_sauce: { ky:"Ачытуу манго соусу", ru:"Острый соус из манго", es:"Salsa Picante de Mango Verde", en:"Green Mango Hot Sauce" },
   slogan: { ky:"100% табигый продуктылар", ru:"100% натуральные продукты", es:"Productos 100% Naturales", en:"100% Natural Products" },
   price: { ky:"Баасы:", ru:"Цена:", es:"Precio:", en:"Price:" },
