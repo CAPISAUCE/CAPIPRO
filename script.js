@@ -186,14 +186,14 @@ let sending = false;
 function confirmOrder() {
   if (sending) return;
   if (cart.length === 0) {
-    alert("🛒 CAPIFAN" + translations["cart_empty"][currentLang]);
+    alert("🛒 CAPIFAN " + translations["cart_empty"][currentLang]);
     return;
   }
 
   // Lee de inputs si existen o pregunta por prompt
   const customerName = getFieldOrPrompt("customerName", "Nombre del cliente:", "");
   const customerEmail = getFieldOrPrompt("customerEmail", "Email del cliente:", "");
-  const customerAddress = getFieldOrPrompt("customerAddress", "Dirección del cliente:", "");
+  const customerPhone = getFieldOrPrompt("customerPhone", "Teléfono del cliente:", ""); // ✅
 
   sending = true;
 
@@ -213,7 +213,7 @@ function confirmOrder() {
   const payload = buildOrderPayload(cart, currentLang, {
     customer: customerName,
     email: customerEmail,
-    address: customerAddress
+    phone: customerPhone   // ✅
   });
   message += `\n\nID: ${payload.orderId}`;
 
@@ -277,7 +277,7 @@ function buildOrderPayload(cart, lang, client = {}) {
     // Datos del cliente + bandera para generar factura
     customer: client.customer || "",
     email:    client.email || "",
-    address:  client.address || "",
+    phone:    client.phone || "",   // ✅ cambiado
     autoInvoice: true
   };
 }
