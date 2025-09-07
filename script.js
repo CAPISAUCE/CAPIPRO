@@ -5,7 +5,7 @@ let currentLang = 'ky';
 // === CONFIGURACIÓN WHATSAPP + GOOGLE SHEETS ===
 const PHONE_KG = "996559500551";   // Kyrgyzstan
 const PHONE_US = "17866514487";    // Estados Unidos
-const SHEETS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwh0COks2zW82RXr9_3li-XNuixON0yI5wMOoNps74HC4z6eitTW_NEgD7CYWmwN7nX/exec";
+const SHEETS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzd7c-3ydfb-HD2mMvYVDxOIc6rgEbcbYktfU5z6WCSDXdGItuiU9Vx8K6onKh0_8tw/exec";
 console.log("Sheets URL:", SHEETS_WEBAPP_URL);
 fetch(SHEETS_WEBAPP_URL + "?route=health").then(r => r.text()).then(t => console.log("Ping /health:", t));
 
