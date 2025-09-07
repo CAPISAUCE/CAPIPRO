@@ -331,7 +331,7 @@ function confirmOrder(){
     totUSD += subU; totKGS += subK; });
   msg += `\nTOTAL: ${totKGS} сом / $${money(totUSD)}`;
   const orderId = genOrderId(); msg += `\n\nID: ${orderId}`;
-  const payload = { orderId, alive:true, version:"orders-v3-clean", to: PHONE_KG + "," + PHONE_US,
+  const payload = { orderId, alive:true, version:"orders-v4-clean+invoices", to: PHONE_KG + "," + PHONE_US,
     totalUSD:Number(money(totUSD)), totalKGS:Number(totKGS), currency:"USD/KGS", lang,
     items: cart.map(it=>({id:it.id,name:it.name,ml:Number(it.size),qty:Number(it.qty),usd:Number(it.price.usd),kgs:Number(it.price.kgs)})),
     created_at:new Date().toISOString() };
