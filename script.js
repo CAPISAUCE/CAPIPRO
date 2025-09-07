@@ -265,7 +265,7 @@ function buildOrderPayload(cart, lang, client = {}) {
   return {
     orderId:  genOrderId(),
     alive:    true,
-    version:  "orders-v3-clean",
+    version: "orders-v4-clean+invoices",
     to:       "996559500551,17866514487",
     totalUSD: Number(totalUSD.toFixed(2)),
     totalKGS: Number(totalKGS),
