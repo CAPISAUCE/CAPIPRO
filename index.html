@@ -12,7 +12,7 @@
   <link rel="apple-touch-icon" sizes="180x180" href="icons/ios-180x180.png?v=2">
   <link rel="apple-touch-icon" sizes="1024x1024" href="icons/ios-1024x1024.png?v=2">
 
-  <!-- PWA meta (opcional pero útil) -->
+  <!-- PWA meta -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -35,70 +35,47 @@
     .card img{width:100%;height:160px;object-fit:cover;border-radius:12px;border:1px solid #ffe1ad}
     .qty{display:flex;align-items:center;gap:8px}.qty .q{min-width:22px;text-align:center;display:inline-block}
 
-    /* ===== AJUSTE CARRITO PARA CELULARES (bottom sheet) ===== */
-    .popup{
-      position:fixed; inset:0; z-index:1000;
-      display:block; pointer-events:none;
-    }
+    /* ===== CARRITO (bottom sheet) ===== */
+    .popup{position:fixed; inset:0; z-index:1000; display:block; pointer-events:none;}
     .popup.open{ pointer-events:auto; }
-    .backdrop{
-      position:absolute; inset:0; background:rgba(0,0,0,.35);
-      opacity:0; transition:opacity .2s ease;
-    }
+    .backdrop{position:absolute; inset:0; background:rgba(0,0,0,.35); opacity:0; transition:opacity .2s ease;}
     .popup.open .backdrop{ opacity:1; }
     .panel{
       position:fixed; left:0; right:0; bottom:0;
-      top: calc(env(safe-area-inset-top, 0px) + 64px); /* ≈ alto header */
+      top: calc(env(safe-area-inset-top, 0px) + 64px);
       background:#fff; border-top-left-radius:18px; border-top-right-radius:18px;
       border-left:0; box-shadow:0 -10px 30px rgba(0,0,0,.15);
       width:auto; max-height: calc(100dvh - env(safe-area-inset-top) - 64px);
-      transform: translateY(100%);
-      transition: transform .25s ease;
+      transform: translateY(100%); transition: transform .25s ease;
       display:flex; flex-direction:column;
-      padding:
-        calc(12px + env(safe-area-inset-top, 0px))
-        16px
-        calc(14px + env(safe-area-inset-bottom, 0px));
+      padding: calc(12px + env(safe-area-inset-top, 0px)) 16px calc(14px + env(safe-area-inset-bottom, 0px));
       overflow:hidden;
     }
     .popup.open .panel{ transform: translateY(0); }
     .panel #cartItems{ flex:1; overflow:auto; -webkit-overflow-scrolling:touch; }
     body.no-scroll{ overflow:hidden; height:100dvh; }
-    /* ===== FIN AJUSTE CARRITO ===== */
+    /* ===== FIN CARRITO ===== */
 
     .badge{background:#dc2626;color:#fff;border-radius:999px;min-width:18px;padding:2px 6px;font-size:12px}
     .foot{color:var(--muted);text-align:center;padding:16px}
 
-    /* Botón eliminar especial (solo para eliminar en carrito) */
-    .btn-remove {
+    /* Botón eliminar del carrito */
+    .btn-remove{
       background: linear-gradient(180deg, rgba(255, 0, 0, 0.12), rgba(255, 0, 0, 0.18));
       border: 1px solid rgba(255, 0, 0, 0.25);
-      color: #000000 !important;
-      font-weight: 600;
-      cursor: pointer;
+      color: #000; font-weight: 600; cursor: pointer;
       transition: transform 0.05s ease, background 0.2s ease;
-      border-radius: 12px;
-      padding: 8px 10px;
+      border-radius: 12px; padding: 8px 10px;
     }
-    .btn-remove:hover { background: linear-gradient(180deg, rgba(255, 0, 0, 0.18), rgba(255, 0, 0, 0.25)); }
-    .btn-remove:active { transform: scale(0.97); }
-     
-    /* Botón cerrar carrito estilo verde */
-    #closeCart {
-      background: linear-gradient(180deg, #d1f7d1, #a6e3a6);
-      border: 1px solid #6ccf6c;
-      color: #000;
-      font-weight: 700;
-      cursor: pointer;
-      border-radius: 12px;
-      padding: 8px 10px;
-    }
-    #closeCart:hover {
-      background: linear-gradient(180deg, #a6e3a6, #8cd88c);
-    }
+    .btn-remove:hover{ background: linear-gradient(180deg, rgba(255,0,0,.18), rgba(255,0,0,.25)); }
+    .btn-remove:active{ transform: scale(0.97); }
+
+    /* Botón cerrar carrito */
+    #closeCart{ background: linear-gradient(180deg, #d1f7d1, #a6e3a6); border: 1px solid #6ccf6c; color:#000; font-weight:700; border-radius:12px; padding:8px 10px; }
+    #closeCart:hover{ background: linear-gradient(180deg, #a6e3a6, #8cd88c); }
   </style>
 
-  <!-- OVERRIDE imágenes: hace el recuadro más alto y la imagen encaja sin recortar -->
+  <!-- OVERRIDE imágenes -->
   <style id="imgfix-override">
     #product-list .product img,
     .product img,
@@ -140,241 +117,325 @@
   </main>
 
   <!-- Cart -->
-<aside id="cart" class="popup" role="dialog" aria-modal="true" aria-labelledby="cartTitle">
-  <div class="backdrop" id="backdrop"></div>
-  <div class="panel">
-    <div style="display:flex;justify-content:space-between;align-items:center">
-      <h2 id="cartTitle">Себет</h2>
-      <button class="btn" id="closeCart" aria-label="Cerrar">✕</button>
+  <aside id="cart" class="popup" role="dialog" aria-modal="true" aria-labelledby="cartTitle">
+    <div class="backdrop" id="backdrop"></div>
+    <div class="panel">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <h2 id="cartTitle">Себет</h2>
+        <button class="btn" id="closeCart" aria-label="Cerrar">✕</button>
+      </div>
+
+      <div id="cartItems"></div>
+      <div id="totals" style="margin-top:8px;font-weight:800">TOTAL: 0 сом / $0.00</div>
+
+      <!-- ✅ Campos de cliente -->
+      <div id="customerFields" style="margin-top:10px; display:flex; flex-direction:column; gap:6px">
+        <input id="customerName"  type="text"  data-i18n-ph="ph_name"  required
+               style="padding:8px; border:1px solid #ccc; border-radius:8px;">
+        <input id="customerPhone" type="tel"   data-i18n-ph="ph_phone" required
+               style="padding:8px; border:1px solid #ccc; border-radius:8px;">
+        <input id="customerEmail" type="email" data-i18n-ph="ph_email" required
+               style="padding:8px; border:1px solid #ccc; border-radius:8px;">
+      </div>
+
+      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+        <button id="confirm" class="btn mango">✅ Буйрутманы тастыктоо</button>
+      </div>
+      <small id="postNote" style="color:#64748b"></small>
     </div>
-    <div id="cartItems"></div>
-    <div id="totals" style="margin-top:8px;font-weight:800">TOTAL: 0 сом / $0.00</div>
-
-    <!-- Campos de cliente -->
-<!-- Campos de cliente -->
-<div id="customerFields" style="margin-top:10px; display:flex; flex-direction:column; gap:6px">
-  <input id="customerName" type="text" data-i18n-ph="ph_name" required
-         style="padding:8px; border:1px solid #ccc; border-radius:8px;">
-  <input id="customerPhone" type="tel" data-i18n-ph="ph_phone" required
-         style="padding:8px; border:1px solid #ccc; border-radius:8px;">
-  <input id="customerEmail" type="email" data-i18n-ph="ph_email" required
-         style="padding:8px; border:1px solid #ccc; border-radius:8px;">
-</div>
-
-    <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
-      <button id="confirm" class="btn mango">✅ Буйрутманы тастыктоо</button>
-    </div>
-    <small id="postNote" style="color:#64748b"></small>
-  </div>
-</aside>
-
+  </aside>
 
   <footer class="foot">© 2025 CAPIFAN – elcapiproduct@gmail.com</footer>
 
-<script>
-/* ================== CONFIG ================== */
-const SHEETS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzd7c-3ydfb-HD2mMvYVDxOIc6rgEbcbYktfU5z6WCSDXdGItuiU9Vx8K6onKh0_8tw/exec";
-const PHONE_KG = "996559500551";
-const PHONE_US = "17866514487";
-const EXCHANGE_KGS_PER_USD = 89;
+  <script>
+  /* ================== CONFIG ================== */
+  const SHEETS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzd7c-3ydfb-HD2mMvYVDxOIc6rgEbcbYktfU5z6WCSDXdGItuiU9Vx8K6onKh0_8tw/exec";
+  const PHONE_KG = "996559500551";
+  const PHONE_US = "17866514487";
 
-/* Idioma por defecto: KY (respeta localStorage si ya existe) */
-let lang = localStorage.getItem("capi_lang") || "ky";
+  /* Idioma por defecto: KY */
+  let currentLang = 'ky';
 
-/* ================== DATA ================== */
-const PRODUCTS = [
-  { id:"honey", img:"honey_logo.png", name:{ky:"Таза бал Issyk Kul", ru:"Чистый мёд Issyk Kul", es:"Miel Pura Issyk Kul", en:"Pure Honey Issyk Kul"}, sizes:[{ml:350,usd:4.0},{ml:500,usd:6.3},{ml:1000,usd:10.0}] },
-  { id:"mango", img:"mango_logo.png", name:{ky:"Жашыл манго ачуу соусу",ru:"Острый соус из зелёного манго",es:"Salsa Picante de Mango Verde",en:"Green Mango Hot Sauce"}, sizes:[{ml:350,usd:4.0},{ml:500,usd:9.0},{ml:1000,usd:20.0}] }
-];
+  /* ================== DATA ================== */
+  const products = [
+    { id:"honey", sizes: { "350":{kgs:349,usd:4.0}, "500":{kgs:550,usd:6.3}, "1000":{kgs:874,usd:10.0} } },
+    { id:"mango_sauce", sizes: { "350":{kgs:349,usd:4.0}, "500":{kgs:787,usd:9.0}, "1000":{kgs:1748,usd:20.0} } }
+  ];
 
-const T = {
-  title:{ ky:"Продукциялар 100% табигый", ru:"Продукция 100% натуральная", es:"Productos 100% Natural", en:"100% Natural Products" },
-  prices_note:{ ky:"Баалар USD жана KGS менен. Өлчөмдү өзгөртүп бааны көрүңүз.", ru:"Цены в USD и сомах. Меняйте объём, чтобы увидеть цену.", es:"Precios en USD y KGS. Cambia el tamaño para ver el precio.", en:"Prices in USD and KGS. Change size to see price." },
-  cart:{ ky:"Себет", ru:"Корзина", es:"Tu carrito", en:"Your cart" },
-  add:{ ky:"Себетке кошуу", ru:"В корзину", es:"Agregar al carrito", en:"Add to cart" },
-  remove:{ ky:"Өчүрүү", ru:"Удалить", es:"Eliminar", en:"Remove" },
-  empty_cart:{ ky:"Себет бош", ru:"Корзина пуста", es:"El carrito está vacío", en:"Cart is empty" },
-  confirm:{ ky:"Буйрутманы тастыктоо", ru:"Подтвердить заказ", es:"Confirmar pedido", en:"Confirm order" },
-  price_lbl:{ ky:"Баасы:", ru:"Цена:", es:"Precio:", en:"Price:" }
-};
+  const translations = {
+    honey: { ky:"таза Бал Issyk-Kul", ru:"Чистый мед Issyk-Kul", es:"Miel Pura Issyk-Kul", en:"Pure Honey Issyk-Kul" },
+    mango_sauce: { ky:"Ачытуу манго соусу", ru:"Острый соус из манго", es:"Salsa Picante de Mango Verde", en:"Green Mango Hot Sauce" },
+    slogan: { ky:"100% табигый продуктылар", ru:"100% натуральные продукты", es:"Productos 100% Naturales", en:"100% Natural Products" },
+    price: { ky:"Баасы:", ru:"Цена:", es:"Precio:", en:"Price:" },
+    confirm_order: { ky:"Буйрутманы ырастоо", ru:"Подтвердить заказ", es:"Confirmar pedido", en:"Confirm order" },
+    your_cart: { ky:"Себетиңиз", ru:"Ваша корзина", es:"Tu carrito", en:"Your cart" },
+    add_to_cart: { ky:"Себетке кошуу", ru:"Добавить в корзину", es:"Agregar al carrito", en:"Add to cart" },
+    remove: { ky:"Өчүрүү", ru:"Удалить", es:"Eliminar", en:"Remove" },
+    cart_empty: { ky:"Себетиңиз бош", ru:"Ваша корзина пустая", es:"Tu carrito está vacío", en:"Your cart is empty" },
 
-/* ================== HELPERS ================== */
-function kgs(usd){ return Math.round(usd*EXCHANGE_KGS_PER_USD); }
-function money(n){ return (Math.round(n*100)/100).toFixed(2); }
-function genOrderId(){ return "CAPI-" + Math.random().toString(16).slice(2,10).toUpperCase(); }
-function sendToSheets(order){
-  try{
-    // Intento 1: sendBeacon (no bloquea la UI y evita CORS preflight)
-    if (navigator.sendBeacon) {
-      const blob = new Blob([JSON.stringify(order)], { type: "text/plain;charset=utf-8" });
-      navigator.sendBeacon(SHEETS_WEBAPP_URL, blob);
+    required_fields: {
+      ky: "Талап кылынган талааларды толтуруңуз (аты, телефон, email).",
+      ru: "Пожалуйста, заполните обязательные поля (имя, телефон, email).",
+      es: "Debe completar los campos obligatorios (nombre, teléfono, email).",
+      en: "Please fill in the required fields (name, phone, email)."
+    },
+
+    ph_name:  { ky:"Атыңыз", ru:"Имя", es:"Nombre",   en:"Name"  },
+    ph_phone: { ky:"Телефон", ru:"Телефон", es:"Teléfono", en:"Phone" },
+    ph_email: { ky:"Электрондук почта", ru:"Эл. почта", es:"Email", en:"Email" }
+  };
+
+  /* ================== STATE ================== */
+  let cart = [];
+
+  /* ================== I18N ================== */
+  function setLanguage(lang){
+    currentLang = lang;
+    document.documentElement.lang = lang;
+
+    // Textos
+    document.querySelectorAll('[data-i18n]').forEach(el=>{
+      const key = el.getAttribute('data-i18n');
+      if (translations[key] && translations[key][lang]) el.textContent = translations[key][lang];
+    });
+
+    // Placeholders
+    document.querySelectorAll('[data-i18n-ph]').forEach(el=>{
+      const key = el.getAttribute('data-i18n-ph');
+      if (translations[key] && translations[key][lang]) el.placeholder = translations[key][lang];
+    });
+
+    renderProducts();
+    renderCart();
+  }
+
+  /* ================== PRODUCTS ================== */
+  function renderProducts() {
+    const list = document.getElementById("products");
+    list.innerHTML = "";
+    products.forEach(product => {
+      const div = document.createElement("div");
+      div.className = "product";
+
+      const name = translations[product.id][currentLang];
+
+      const img = document.createElement("img");
+      img.src = product.id === "honey" ? "honey_logo.png" : "mango_logo.png";
+      img.alt = name;
+      img.className = "product-image";
+      div.appendChild(img);
+
+      const title = document.createElement("h2");
+      title.textContent = name;
+      div.appendChild(title);
+
+      const selector = document.createElement("select");
+      selector.className = "size-selector";
+      for (let size in product.sizes) {
+        const opt = document.createElement("option");
+        opt.value = size;
+        opt.textContent = size + " ml";
+        selector.appendChild(opt);
+      }
+      div.appendChild(selector);
+
+      const priceLabel = document.createElement("p");
+      priceLabel.className = "price-label";
+      const firstSize = Object.keys(product.sizes)[0];
+      priceLabel.textContent = translations["price"][currentLang] + " " +
+        product.sizes[firstSize].kgs + " сом / $" + product.sizes[firstSize].usd;
+      div.appendChild(priceLabel);
+
+      selector.onchange = () => {
+        const size = selector.value;
+        const price = product.sizes[size];
+        priceLabel.textContent = translations["price"][currentLang] + " " +
+          price.kgs + " сом / $" + price.usd;
+      };
+
+      const controls = document.createElement("div");
+      controls.className = "qty";
+      controls.innerHTML = `
+        <button class="decrease">−</button>
+        <span class="quantity">1</span>
+        <button class="increase">+</button>
+      `;
+      div.appendChild(controls);
+
+      controls.querySelector(".decrease").onclick = () => {
+        let q = controls.querySelector(".quantity");
+        let val = parseInt(q.textContent);
+        if (val > 1) q.textContent = val - 1;
+      };
+      controls.querySelector(".increase").onclick = () => {
+        let q = controls.querySelector(".quantity");
+        q.textContent = parseInt(q.textContent) + 1;
+      };
+
+      const addBtn = document.createElement("button");
+      addBtn.className = "btn mango";
+      addBtn.textContent = translations["add_to_cart"][currentLang];
+      addBtn.onclick = () => {
+        const size = selector.value;
+        const quantity = parseInt(controls.querySelector(".quantity").textContent);
+        const name = translations[product.id][currentLang];
+        const price = product.sizes[size];
+        addToCart(product.id, name, size, quantity, price);
+      };
+      div.appendChild(addBtn);
+
+      list.appendChild(div);
+    });
+  }
+
+  /* ================== CART ================== */
+  function addToCart(id, name, size, quantity, price) {
+    const idx = cart.findIndex(it => it.id === id && it.size === size);
+    if (idx > -1) cart[idx].quantity += quantity;
+    else cart.push({ id, name, size, quantity, price });
+    renderCart();
+  }
+
+  function removeItem(index) {
+    cart.splice(index, 1);
+    renderCart();
+  }
+
+  function renderCart() {
+    const list = document.getElementById("cartItems");
+    list.innerHTML = "";
+    let totalKGS = 0, totalUSD = 0;
+
+    cart.forEach((item, index) => {
+      const row = document.createElement("div");
+      const icon = item.id === "honey" ? "🍯" : "🌶️";
+      row.innerHTML = `
+        <span>${icon} ${item.name} ${item.size} ml x${item.quantity}
+          (${item.price.kgs} сом / $${item.price.usd})
+        </span>
+      `;
+      const rm = document.createElement("button");
+      rm.className = "btn-remove";
+      rm.textContent = "🗑";
+      rm.onclick = () => removeItem(index);
+      row.appendChild(rm);
+      list.appendChild(row);
+
+      totalKGS += item.quantity * item.price.kgs;
+      totalUSD += item.quantity * item.price.usd;
+    });
+
+    document.getElementById("totals").innerHTML =
+      `TOTAL: ${totalKGS} сом / $${totalUSD.toFixed(2)}`;
+
+    // badge
+    const badge = document.getElementById("cartCount");
+    const count = cart.reduce((s,i)=>s+i.quantity,0);
+    if (count>0){ badge.style.display="inline-block"; badge.textContent = count; }
+    else { badge.style.display="none"; }
+  }
+
+  function openCart(){
+    document.getElementById("cart").classList.add("open");
+    document.body.classList.add("no-scroll");
+  }
+  function closeCart(){
+    document.getElementById("cart").classList.remove("open");
+    document.body.classList.remove("no-scroll");
+  }
+
+  /* ================== CONFIRM ================== */
+  let sending = false;
+  function genOrderId(){ return "CAPIFAN-" + Math.random().toString(16).slice(2,10).toUpperCase(); }
+
+  function confirmOrder(){
+    if (sending) return;
+    if (cart.length === 0){
+      alert(translations.cart_empty[currentLang]);
       return;
     }
-  }catch(_){}
 
-  // Intento 2: fetch sin preflight (Content-Type text/plain)
-  try{
+    const customerName  = document.getElementById("customerName").value.trim();
+    const customerPhone = document.getElementById("customerPhone").value.trim();
+    const customerEmail = document.getElementById("customerEmail").value.trim();
+
+    if (!customerName || !customerPhone || !customerEmail){
+      alert("⚠️ " + translations.required_fields[currentLang]);
+      return;
+    }
+
+    sending = true;
+
+    // Mensaje WhatsApp
+    let msg = "🧾 CAPIFAN " + translations["your_cart"][currentLang] + ":\n";
+    let totalKGS = 0, totalUSD = 0;
+    cart.forEach(item=>{
+      const subK = item.price.kgs * item.quantity;
+      const subU = item.price.usd * item.quantity;
+      msg += `• ${item.name} (${item.size} ml) x${item.quantity} = ${subK} сом / $${subU.toFixed(2)}\n`;
+      totalKGS += subK; totalUSD += subU;
+    });
+    msg += `\nTOTAL: ${totalKGS} сом / $${totalUSD.toFixed(2)}`;
+
+    const orderId = genOrderId();
+    msg += `\n\nID: ${orderId}`;
+
+    // Payload a Sheets
+    const payload = {
+      orderId,
+      alive: true,
+      version: "orders-v4-clean+invoices",
+      to: PHONE_KG + "," + PHONE_US,
+      totalUSD: Number(totalUSD.toFixed(2)),
+      totalKGS: Number(totalKGS),
+      currency: "USD/KGS",
+      lang: currentLang,
+      items: cart.map(it=>({
+        id: it.id, name: it.name, ml: Number(it.size),
+        qty: Number(it.quantity), usd: Number(it.price.usd), kgs: Number(it.price.kgs)
+      })),
+      created_at: new Date().toISOString(),
+      customer: customerName,
+      phone: customerPhone,
+      email: customerEmail,
+      autoInvoice: true
+    };
+
+    // Enviar
     fetch(SHEETS_WEBAPP_URL, {
       method: "POST",
-      mode: "no-cors",
-      headers: { "Content-Type": "text/plain;charset=utf-8" },
-      body: JSON.stringify(order)
-    });
-  }catch(_){}
-}
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    }).catch(()=>{});
 
-/* ================== STATE ================== */
-let cart = [];
+    // WhatsApp
+    const encoded = encodeURIComponent(msg);
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    const urlKG = isMobile ? `whatsapp://send?phone=${PHONE_KG}&text=${encoded}` : `https://wa.me/${PHONE_KG}?text=${encoded}`;
+    const urlUS = isMobile ? `whatsapp://send?phone=${PHONE_US}&text=${encoded}` : `https://wa.me/${PHONE_US}?text=${encoded}`;
+    window.open(urlKG, "_blank");
+    setTimeout(()=>window.open(urlUS, "_blank"), 500);
 
-/* ================== UI ================== */
-function i18n(){
-  document.getElementById("slogan").textContent = T.title[lang];
-  document.getElementById("pricesNote").textContent = T.prices_note[lang];
-  document.getElementById("cartTxt").textContent = T.cart[lang];
-  document.getElementById("cartTitle").textContent = T.cart[lang];
-  document.getElementById("confirm").textContent = "✅ " + T.confirm[lang];
-}
-
-function renderProducts(){
-  const root = document.getElementById("products");
-  root.innerHTML = "";
-  PRODUCTS.forEach(p=>{
-    const card = document.createElement("div"); card.className="card";
-    if (p.img) {
-      const img = document.createElement("img");
-      img.src = p.img; img.alt = p.name[lang];
-      img.onerror = ()=>{ img.remove(); };
-      img.className = "product-image"; // para coincidir con el override
-      card.appendChild(img);
-    }
-    const h3 = document.createElement("h3"); h3.textContent = p.name[lang]; card.appendChild(h3);
-    const sel = document.createElement("select");
-    p.sizes.forEach((s,i)=>{ const o=document.createElement("option"); o.value=s.ml; o.textContent=`${s.ml} ml`; sel.appendChild(o); if(i===0) sel.value=s.ml; });
-    card.appendChild(sel);
-    const price = document.createElement("div");
-    const s0 = p.sizes[0]; price.innerHTML = `${T.price_lbl[lang]} ${kgs(s0.usd)} сом / $${money(s0.usd)}`;
-    card.appendChild(price);
-    sel.onchange = ()=> {
-      const s = p.sizes.find(x=>x.ml==sel.value);
-      price.innerHTML = `${T.price_lbl[lang]} ${kgs(s.usd)} сом / $${money(s.usd)}`;
-    };
-    const controls = document.createElement("div"); controls.className="qty";
-    const dec = document.createElement("button"); dec.textContent="−";
-    const q = document.createElement("span"); q.className="q"; q.textContent="1";
-    const inc = document.createElement("button"); inc.textContent="+";
-    dec.onclick = ()=>{ q.textContent = Math.max(1, parseInt(q.textContent)-1); };
-    inc.onclick = ()=>{ q.textContent = parseInt(q.textContent)+1; };
-    controls.append(dec,q,inc); card.appendChild(controls);
-    const add = document.createElement("button"); add.className="btn mango"; add.textContent = T.add[lang];
-    add.onclick = ()=>{
-      const size = parseInt(sel.value,10);
-      const unit = p.sizes.find(x=>x.ml===size).usd;
-      addToCart(p.id, p.name[lang], size, parseInt(q.textContent,10), {usd:unit,kgs:kgs(unit)});
-    };
-    card.appendChild(add);
-    root.appendChild(card);
-  });
-}
-
-function addToCart(id, name, size, qty, price){
-  // clave única por línea (no combinar)
-  const key = id + "-" + size + "-" + Date.now() + "-" + Math.random().toString(16).slice(2,6);
-  cart.push({ key, id, name, size, qty, price });
-  updateCart();
-}
-
-function updateCart(){
-  const items = document.getElementById("cartItems");
-  const count = document.getElementById("cartCount");
-  items.innerHTML = "";
-  let totUSD=0, totKGS=0;
-
-  cart.forEach((it,idx)=>{
-    const row = document.createElement("div");
-    row.className = "row";
-
-    const icon = it.id === "honey" ? "🍯" : it.id === "mango" ? "🌶️" : "•";
-    row.innerHTML = `<span>${icon} ${it.name} ${it.size} ml x${it.qty} (${it.price.kgs} сом / $${money(it.price.usd)})</span>`;
-
-    const rm = document.createElement("button");
-    rm.className = "btn-remove";                 // <- solo cambia esto
-    rm.textContent = "🗑";
-    rm.onclick = ()=>{ cart.splice(idx,1); updateCart(); };
-
-    row.appendChild(rm);
-    items.appendChild(row);
-
-    totUSD += it.price.usd * it.qty;
-    totKGS += it.price.kgs * it.qty;
-  });
-
-  document.getElementById("totals").textContent = `TOTAL: ${totKGS} сом / $${money(totUSD)}`;
-
-  if(cart.length > 0){
-    count.style.display = "inline-block";
-    count.textContent = cart.reduce((a,c)=>a+c.qty,0);
-  } else {
-    count.style.display = "none";
+    // Reset
+    cart = [];
+    renderCart();
+    closeCart();
+    sending = false;
   }
-}
 
-/* === SOLO AJUSTE: manejo de clase no-scroll al abrir/cerrar === */
-function openCart(){
-  document.getElementById("cart").classList.add("open");
-  document.body.classList.add("no-scroll");
-}
-function closeCart(){
-  document.getElementById("cart").classList.remove("open");
-  document.body.classList.remove("no-scroll");
-}
-function toggleCart(){
-  const el = document.getElementById("cart");
-  const willOpen = !el.classList.contains("open");
-  el.classList.toggle("open");
-  document.body.classList.toggle("no-scroll", willOpen);
-}
-/* === FIN AJUSTE === */
-
-function confirmOrder(){
-  if(cart.length===0){ alert(T.empty_cart[lang] + " — TOTAL: $0 / 0 сом"); return; }
-  let msg = "🧾 " + T.cart[lang] + ":\n";
-  let totUSD=0, totKGS=0;
-  cart.forEach(it=>{ const subU=it.price.usd*it.qty, subK=it.price.kgs*it.qty;
-    msg += `• ${it.name} (${it.size} ml) x${it.qty} = ${subK} сом / $${money(subU)}\n`;
-    totUSD += subU; totKGS += subK; });
-  msg += `\nTOTAL: ${totKGS} сом / $${money(totUSD)}`;
-  const orderId = genOrderId(); msg += `\n\nID: ${orderId}`;
-  const payload = { orderId, alive:true, version:"orders-v4-clean+invoices", to: PHONE_KG + "," + PHONE_US,
-    totalUSD:Number(money(totUSD)), totalKGS:Number(totKGS), currency:"USD/KGS", lang,
-    items: cart.map(it=>({id:it.id,name:it.name,ml:Number(it.size),qty:Number(it.qty),usd:Number(it.price.usd),kgs:Number(it.price.kgs)})),
-    created_at:new Date().toISOString() };
-  sendToSheets(payload);
-  const enc = encodeURIComponent(msg);
-  const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-  const urlKG = isMobile ? `whatsapp://send?phone=${PHONE_KG}&text=${enc}` : `https://wa.me/${PHONE_KG}?text=${enc}`; window.open(urlKG,"_blank");
-  const urlUS = isMobile ? `whatsapp://send?phone=${PHONE_US}&text=${enc}` : `https://wa.me/${PHONE_US}?text=${enc}`; setTimeout(()=>window.open(urlUS,"_blank"),500);
-  cart = []; updateCart(); closeCart();
-}
-
-/* ================== INIT (robusto) ================== */
-if ('serviceWorker' in navigator) { navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister())); }
-window.addEventListener("load", () => {
-  try{
-    const sel = document.getElementById("lang");
-    sel.value = lang;
-    sel.onchange = (e)=>{ lang=e.target.value; localStorage.setItem("capi_lang",lang); i18n(); renderProducts(); updateCart(); };
+  /* ================== INIT ================== */
+  window.addEventListener("load", ()=>{
+    // listeners
     document.getElementById("btnCart").onclick = openCart;
     document.getElementById("closeCart").onclick = closeCart;
     document.getElementById("backdrop").onclick = closeCart;
-    document.addEventListener("keydown", (e)=>{ if(e.key==="Escape") closeCart(); });
     document.getElementById("confirm").onclick = confirmOrder;
-    i18n(); renderProducts(); updateCart();
-    fetch(SHEETS_WEBAPP_URL).catch(()=>{});
-  }catch(e){
-    console.error("Init error:", e);
-    document.getElementById("products").innerHTML = "<div class='card'>Перезагрузите страницу / Vuelva a cargar la página.</div>";
-  }
-});
-</script>
+    document.getElementById("lang").onchange = (e)=> setLanguage(e.target.value);
+
+    // iniciar
+    setLanguage(currentLang);
+    try{ fetch(SHEETS_WEBAPP_URL).catch(()=>{}); }catch(_){}
+  });
+  </script>
 </body>
 </html>
