@@ -6,13 +6,11 @@ let currentLang = 'ky';
 const PHONE_KG = "996559500551";   // Kyrgyzstan
 const PHONE_US = "17866514487";    // Estados Unidos
 const SHEETS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzd7c-3ydfb-HD2mMvYVDxOIc6rgEbcbYktfU5z6WCSDXdGItuiU9Vx8K6onKh0_8tw/exec";
-console.log("Sheets URL:", SHEETS_WEBAPP_URL);
-fetch(SHEETS_WEBAPP_URL + "?route=health").then(r => r.text()).then(t => console.log("Ping /health:", t));
 
+// === Traducciones ===
 const translations = {
   honey: { ky:"таза Бал Issyk-Kul", ru:"Чистый мед Issyk-Kul", es:"Miel Pura Issyk-Kul", en:"Pure Honey Issyk-Kul" },
   mango_sauce: { ky:"Ачытуу манго соусу", ru:"Острый соус из манго", es:"Salsa Picante de Mango Verde", en:"Green Mango Hot Sauce" },
-  slogan: { ky:"100% табигый продуктылар", ru:"100% натуральные продукты", es:"Productos 100% Naturales", en:"100% Natural Products" },
   price: { ky:"Баасы:", ru:"Цена:", es:"Precio:", en:"Price:" },
   confirm_order: { ky:"Буйрутманы ырастоо", ru:"Подтвердить заказ", es:"Confirmar pedido", en:"Confirm order" },
   your_cart: { ky:"Себетиңиз", ru:"Ваша корзина", es:"Tu carrito", en:"Your cart" },
@@ -20,13 +18,18 @@ const translations = {
   remove: { ky:"Өчүрүү", ru:"Удалить", es:"Eliminar", en:"Remove" },
   cart_empty: { ky:"Себетиңиз бош", ru:"Ваша корзина пустая", es:"Tu carrito está vacío", en:"Your cart is empty" },
 
-  // ✅ Mensaje de campos obligatorios
+  // Campos obligatorios
   required_fields: {
-    ky: "Талап кылынган талааларды толтуруңуз (аты, телефон, email).",
-    ru: "Пожалуйста, заполните обязательные поля (имя, телефон, email).",
-    es: "Debe completar los campos obligatorios (nombre, teléfono, email).",
-    en: "Please fill in the required fields (name, phone, email)."
-  }
+    ky: "⚠️ Талап кылынган талааларды толтуруңуз (аты, телефон, email).",
+    ru: "⚠️ Пожалуйста, заполните обязательные поля (имя, телефон, email).",
+    es: "⚠️ Debe completar los campos obligatorios (nombre, teléfono, email).",
+    en: "⚠️ Please fill in the required fields (name, phone, email)."
+  },
+
+  // Placeholders
+  ph_name:   { ky:"Атыңыз", ru:"Имя", es:"Nombre", en:"Name" },
+  ph_phone:  { ky:"Телефон", ru:"Телефон", es:"Teléfono", en:"Phone" },
+  ph_email:  { ky:"Электрондук почта", ru:"Эл. почта", es:"Email", en:"Email" }
 };
 
 const products = [
@@ -34,17 +37,28 @@ const products = [
   { id:"mango_sauce", sizes: { "350":{kgs:349,usd:4.0}, "500":{kgs:787,usd:9.0}, "1000":{kgs:1748,usd:20.0} } }
 ];
 
+// === Traducción dinámica ===
 function setLanguage(lang) {
   currentLang = lang;
   document.documentElement.lang = lang;
+
+  // Actualiza textos
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.getAttribute('data-i18n');
     if (translations[key] && translations[key][lang]) el.textContent = translations[key][lang];
   });
+
+  // Actualiza placeholders
+  document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+    const key = el.getAttribute('data-i18n-ph');
+    if (translations[key] && translations[key][lang]) el.placeholder = translations[key][lang];
+  });
+
   renderProducts();
   renderCart();
 }
 
+// === Render productos ===
 function renderProducts() {
   const list = document.getElementById("product-list");
   list.innerHTML = "";
@@ -123,18 +137,17 @@ function renderProducts() {
   });
 }
 
+// === Carrito ===
 function addToCart(id, name, size, quantity, price) {
-  const index = cart.findIndex(item => item.id === id && item.name === name && item.size === size);
+  const index = cart.findIndex(item => item.id === id && item.size === size);
   if (index > -1) cart[index].quantity += quantity;
   else cart.push({ id, name, size, quantity, price });
   renderCart();
-  animateCartBadge();
 }
 
 function removeItem(index) {
   cart.splice(index, 1);
   renderCart();
-  shakeCartBadge();
 }
 
 function renderCart() {
@@ -144,9 +157,7 @@ function renderCart() {
 
   cart.forEach((item, index) => {
     const li = document.createElement("li");
-
-    const icon = item.id === "honey" ? "🍯" : item.id === "mango_sauce" ? "🌶️" : "•";
-
+    const icon = item.id === "honey" ? "🍯" : "🌶️";
     li.innerHTML = `
       <span>${icon} ${item.name} ${item.size} ml x${item.quantity}
         (${item.price.kgs} сом / $${item.price.usd})
@@ -154,7 +165,6 @@ function renderCart() {
       <button class="btn" data-index="${index}">${translations["remove"][currentLang]}</button>
     `;
     li.querySelector("button.btn").onclick = () => removeItem(index);
-
     list.appendChild(li);
 
     totalKGS += item.quantity * item.price.kgs;
@@ -163,32 +173,9 @@ function renderCart() {
 
   document.getElementById("cart-total").innerHTML =
     `<strong>TOTAL: ${totalKGS} сом / $${totalUSD.toFixed(2)}</strong>`;
-  updateCartCount();
 }
 
-function toggleCart(){
-  const pop = document.getElementById("cart-popup");
-  const isHidden = pop.classList.contains("hidden");
-  if (isHidden){
-    pop.classList.remove("hidden");
-    document.body.classList.add("no-scroll");
-    pop.scrollTop = 0;
-    window.scrollTo(0,0);
-  }else{
-    pop.classList.add("hidden");
-    document.body.classList.remove("no-scroll");
-  }
-}
-
-// ===================== helper para datos de cliente =====================
-function getFieldOrPrompt(inputId, promptLabel, def="") {
-  const el = document.getElementById(inputId);
-  if (el && el.value && el.value.trim()) return el.value.trim();
-  const v = window.prompt(promptLabel, def);
-  return (v && v.trim()) ? v.trim() : def;
-}
-
-// ===================== confirmOrder() =====================
+// === Confirmar pedido ===
 let sending = false;
 function confirmOrder() {
   if (sending) return;
@@ -197,14 +184,13 @@ function confirmOrder() {
     return;
   }
 
-  // === Leer campos de cliente ===
+  // Datos cliente
   const customerName  = document.getElementById("customerName").value.trim();
   const customerPhone = document.getElementById("customerPhone").value.trim();
   const customerEmail = document.getElementById("customerEmail").value.trim();
 
-  // ✅ Validación obligatoria con alerta en idioma actual
   if (!customerName || !customerPhone || !customerEmail) {
-    alert("⚠️ " + translations.required_fields[currentLang]);
+    alert(translations.required_fields[currentLang]);
     return;
   }
 
@@ -222,98 +208,47 @@ function confirmOrder() {
   });
   message += `\nTOTAL: ${totalKGS} сом / $${totalUSD.toFixed(2)}`;
 
-  // Genera ID del pedido
   const orderId = genOrderId();
   message += `\n\nID: ${orderId}`;
 
-  // Construye payload
-  const payload = { 
+  const payload = {
     orderId,
     alive:true,
     version:"orders-v4-clean+invoices",
     to: PHONE_KG + "," + PHONE_US,
-    totalUSD:Number(totalUSD.toFixed(2)), 
-    totalKGS:Number(totalKGS), 
-    currency:"USD/KGS", 
-    lang,
-    items: cart.map(it=>({
-      id:it.id,
-      name:it.name,
-      ml:Number(it.size),
-      qty:Number(it.quantity),
-      usd:Number(it.price.usd),
-      kgs:Number(it.price.kgs)
-    })),
+    totalUSD:Number(totalUSD.toFixed(2)),
+    totalKGS:Number(totalKGS),
+    currency:"USD/KGS",
+    lang: currentLang,
+    items: cart,
     created_at:new Date().toISOString(),
     customer: customerName,
     phone: customerPhone,
-    email: customerEmail
+    email: customerEmail,
+    autoInvoice: true
   };
 
-  // Envía a Google Sheets
   sendToSheets(payload);
 
-  // WhatsApp
   const encoded = encodeURIComponent(message);
   const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
-  const urlKG = isMobile
-    ? `whatsapp://send?phone=${PHONE_KG}&text=${encoded}`
-    : `https://wa.me/${PHONE_KG}?text=${encoded}`;
+  const urlKG = isMobile ? `whatsapp://send?phone=${PHONE_KG}&text=${encoded}`
+                         : `https://wa.me/${PHONE_KG}?text=${encoded}`;
   window.open(urlKG, "_blank");
 
-  const urlUS = isMobile
-    ? `whatsapp://send?phone=${PHONE_US}&text=${encoded}`
-    : `https://wa.me/${PHONE_US}?text=${encoded}`;
+  const urlUS = isMobile ? `whatsapp://send?phone=${PHONE_US}&text=${encoded}`
+                         : `https://wa.me/${PHONE_US}?text=${encoded}`;
   setTimeout(()=>window.open(urlUS, "_blank"), 500);
 
-  // Reset carrito
   cart = [];
   renderCart();
-  updateCartCount();
-  const popup = document.getElementById("cart-popup");
-  if (popup && !popup.classList.contains("hidden")) popup.classList.add("hidden");
   sending = false;
 }
 
-// ===================== buildOrderPayload() =====================
+// === Helpers ===
 function genOrderId(){
   return "CAPIFAN-" + Math.random().toString(16).slice(2,10).toUpperCase();
-}
-
-function buildOrderPayload(cart, lang, client = {}) {
-  let totalUSD = 0, totalKGS = 0;
-  const items = cart.map(i=>{
-    const lineUSD = i.price.usd * i.quantity;
-    const lineKGS = i.price.kgs * i.quantity;
-    totalUSD += lineUSD; totalKGS += lineKGS;
-    return {
-      id:   i.id,
-      name: i.name,
-      ml:   Number(i.size),
-      qty:  Number(i.quantity),
-      usd:  Number(i.price.usd),
-      kgs:  Number(i.price.kgs)
-    };
-  });
-  return {
-    orderId:  genOrderId(),
-    alive:    true,
-    version: "orders-v4-clean+invoices",
-    to:       "996559500551,17866514487",
-    totalUSD: Number(totalUSD.toFixed(2)),
-    totalKGS: Number(totalKGS),
-    currency: "USD/KGS",
-    lang,
-    items,
-    created_at: new Date().toISOString(),
-
-    // ✅ Incluye datos de cliente
-    customer: client.customer || "",
-    email:    client.email || "",
-    phone:    client.phone || "",
-    autoInvoice: true
-  };
 }
 
 function sendToSheets(order){
@@ -321,62 +256,8 @@ function sendToSheets(order){
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(order)
-  })
-  .then(r => r.json())
-  .then(res => {
-    console.log("Sheets response:", res);
-    if (!res.ok) console.warn("Apps Script error:", res.error);
-    if (res.pdfUrl) console.log("Invoice PDF:", res.pdfUrl);
-  })
-  .catch(err => console.error("Fetch error:", err));
+  }).catch(err => console.error("Fetch error:", err));
 }
 
-function retryPendingSales() {
-  const q = JSON.parse(localStorage.getItem("sales_pending") || "[]");
-  if (!q.length) { alert("No hay ventas pendientes."); return; }
-  const next = q.shift();
-
-  fetch(SHEETS_WEBAPP_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(next)
-  })
-  .then(r => r.json().catch(()=>({ok:true})))
-  .then(resp => {
-    if (resp.ok) alert("Venta reenviada a Sheets.");
-    else throw new Error(resp.error || "Sheets error");
-  })
-  .catch(() => alert("Sigue fallando, intenta más tarde."))
-  .finally(() => localStorage.setItem("sales_pending", JSON.stringify(q)));
-}
-
-function updateCartCount() {
-  const count = cart.reduce((sum, item) => sum + item.quantity, 0);
-  const badge = document.getElementById("cart-count");
-  if (!badge) return;
-  if (count > 0) {
-    badge.style.display = "inline-block";
-    badge.textContent = count;
-  } else {
-    badge.style.display = "none";
-  }
-}
-function animateCartBadge() {
-  const badge = document.getElementById('cart-count');
-  if (!badge) return;
-  badge.classList.remove("bounce");
-  void badge.offsetWidth;
-  badge.classList.add("bounce");
-}
-function shakeCartBadge() {
-  const badge = document.getElementById('cart-count');
-  if (!badge) return;
-  badge.classList.remove("shake");
-  void badge.offsetWidth;
-  badge.classList.add("shake");
-}
-
-window.onload = () => {
-  setLanguage(currentLang);
-};
+window.onload = () => setLanguage(currentLang);
 </script>
