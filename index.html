@@ -149,10 +149,21 @@
       </div>
       <div id="cartItems"></div>
       <div id="totals" style="margin-top:8px;font-weight:800">TOTAL: 0 сом / $0.00</div>
-      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
-        <button id="confirm" class="btn mango">✅ Буйрутманы тастыктоо</button>
-      </div>
-      <small id="postNote" style="color:#64748b"></small>
+
+<!-- Campos de cliente -->
+<div id="customerFields" style="margin-top:10px; display:flex; flex-direction:column; gap:6px">
+  <input id="customerName" type="text" placeholder="Nombre" required
+         style="padding:8px; border:1px solid #ccc; border-radius:8px;">
+  <input id="customerPhone" type="tel" placeholder="Teléfono" required
+         style="padding:8px; border:1px solid #ccc; border-radius:8px;">
+  <input id="customerEmail" type="email" placeholder="Email" required
+         style="padding:8px; border:1px solid #ccc; border-radius:8px;">
+</div>
+
+<div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+  <button id="confirm" class="btn mango">✅ Буйрутманы тастыктоо</button>
+</div>
+<small id="postNote" style="color:#64748b"></small>
     </div>
   </aside>
 
