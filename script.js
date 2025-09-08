@@ -6,11 +6,13 @@ let currentLang = 'ky';
 const PHONE_KG = "996559500551";   // Kyrgyzstan
 const PHONE_US = "17866514487";    // Estados Unidos
 const SHEETS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzd7c-3ydfb-HD2mMvYVDxOIc6rgEbcbYktfU5z6WCSDXdGItuiU9Vx8K6onKh0_8tw/exec";
+console.log("Sheets URL:", SHEETS_WEBAPP_URL);
+fetch(SHEETS_WEBAPP_URL + "?route=health").then(r => r.text()).then(t => console.log("Ping /health:", t));
 
-// === Traducciones ===
 const translations = {
   honey: { ky:"таза Бал Issyk-Kul", ru:"Чистый мед Issyk-Kul", es:"Miel Pura Issyk-Kul", en:"Pure Honey Issyk-Kul" },
   mango_sauce: { ky:"Ачытуу манго соусу", ru:"Острый соус из манго", es:"Salsa Picante de Mango Verde", en:"Green Mango Hot Sauce" },
+  slogan: { ky:"100% табигый продуктылар", ru:"100% натуральные продукты", es:"Productos 100% Naturales", en:"100% Natural Products" },
   price: { ky:"Баасы:", ru:"Цена:", es:"Precio:", en:"Price:" },
   confirm_order: { ky:"Буйрутманы ырастоо", ru:"Подтвердить заказ", es:"Confirmar pedido", en:"Confirm order" },
   your_cart: { ky:"Себетиңиз", ru:"Ваша корзина", es:"Tu carrito", en:"Your cart" },
@@ -18,7 +20,7 @@ const translations = {
   remove: { ky:"Өчүрүү", ru:"Удалить", es:"Eliminar", en:"Remove" },
   cart_empty: { ky:"Себетиңиз бош", ru:"Ваша корзина пустая", es:"Tu carrito está vacío", en:"Your cart is empty" },
 
-  // Campos obligatorios
+  // ⚠️ Campos obligatorios
   required_fields: {
     ky: "⚠️ Талап кылынган талааларды толтуруңуз (аты, телефон, email).",
     ru: "⚠️ Пожалуйста, заполните обязательные поля (имя, телефон, email).",
@@ -26,168 +28,46 @@ const translations = {
     en: "⚠️ Please fill in the required fields (name, phone, email)."
   },
 
-  // Placeholders
+  // ✅ Placeholders
   ph_name:   { ky:"Атыңыз", ru:"Имя", es:"Nombre", en:"Name" },
   ph_phone:  { ky:"Телефон", ru:"Телефон", es:"Teléfono", en:"Phone" },
   ph_email:  { ky:"Электрондук почта", ru:"Эл. почта", es:"Email", en:"Email" }
 };
 
-const products = [
-  { id:"honey", sizes: { "350":{kgs:349,usd:4.0}, "500":{kgs:550,usd:6.3}, "1000":{kgs:874,usd:10.0} } },
-  { id:"mango_sauce", sizes: { "350":{kgs:349,usd:4.0}, "500":{kgs:787,usd:9.0}, "1000":{kgs:1748,usd:20.0} } }
-];
-
-// === Traducción dinámica ===
+// === Solo añadimos actualización de placeholders ===
 function setLanguage(lang) {
   currentLang = lang;
   document.documentElement.lang = lang;
-
-  // Actualiza textos
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.getAttribute('data-i18n');
     if (translations[key] && translations[key][lang]) el.textContent = translations[key][lang];
   });
 
-  // Actualiza placeholders
-  document.querySelectorAll('[data-i18n-ph]').forEach(el => {
-    const key = el.getAttribute('data-i18n-ph');
-    if (translations[key] && translations[key][lang]) el.placeholder = translations[key][lang];
-  });
+  // 👉 placeholders
+  const nameInput  = document.getElementById("customerName");
+  const phoneInput = document.getElementById("customerPhone");
+  const emailInput = document.getElementById("customerEmail");
+  if(nameInput)  nameInput.placeholder  = translations.ph_name[currentLang];
+  if(phoneInput) phoneInput.placeholder = translations.ph_phone[currentLang];
+  if(emailInput) emailInput.placeholder = translations.ph_email[currentLang];
 
   renderProducts();
   renderCart();
 }
 
-// === Render productos ===
-function renderProducts() {
-  const list = document.getElementById("product-list");
-  list.innerHTML = "";
-  products.forEach(product => {
-    const div = document.createElement("div");
-    div.className = "product";
-
-    const name = translations[product.id][currentLang];
-
-    const img = document.createElement("img");
-    img.src = product.id === "honey" ? "honey_logo.png" : "mango_logo.png";
-    img.alt = name;
-    img.className = "product-image";
-    div.appendChild(img);
-
-    const title = document.createElement("h2");
-    title.textContent = name;
-    div.appendChild(title);
-
-    const selector = document.createElement("select");
-    selector.className = "size-selector";
-    for (let size in product.sizes) {
-      const opt = document.createElement("option");
-      opt.value = size;
-      opt.textContent = size + " ml";
-      selector.appendChild(opt);
-    }
-    div.appendChild(selector);
-
-    const priceLabel = document.createElement("p");
-    priceLabel.className = "price-label";
-    const firstSize = Object.keys(product.sizes)[0];
-    priceLabel.textContent =
-      translations["price"][currentLang] + " " +
-      product.sizes[firstSize].kgs + " сом / $" + product.sizes[firstSize].usd;
-    div.appendChild(priceLabel);
-
-    selector.onchange = () => {
-      const size = selector.value;
-      const price = product.sizes[size];
-      priceLabel.textContent =
-        translations["price"][currentLang] + " " +
-        price.kgs + " сом / $" + price.usd;
-    };
-
-    const controls = document.createElement("div");
-    controls.innerHTML = `
-      <button class="decrease">−</button>
-      <span class="quantity">1</span>
-      <button class="increase">+</button>
-    `;
-    div.appendChild(controls);
-
-    controls.querySelector(".decrease").onclick = () => {
-      let q = controls.querySelector(".quantity");
-      let val = parseInt(q.textContent);
-      if (val > 1) q.textContent = val - 1;
-    };
-    controls.querySelector(".increase").onclick = () => {
-      let q = controls.querySelector(".quantity");
-      q.textContent = parseInt(q.textContent) + 1;
-    };
-
-    const addBtn = document.createElement("button");
-    addBtn.textContent = translations["add_to_cart"][currentLang];
-    addBtn.onclick = () => {
-      const size = selector.value;
-      const quantity = parseInt(controls.querySelector(".quantity").textContent);
-      const name = translations[product.id][currentLang];
-      const price = product.sizes[size];
-      addToCart(product.id, name, size, quantity, price);
-    };
-    div.appendChild(addBtn);
-
-    list.appendChild(div);
-  });
-}
-
-// === Carrito ===
-function addToCart(id, name, size, quantity, price) {
-  const index = cart.findIndex(item => item.id === id && item.size === size);
-  if (index > -1) cart[index].quantity += quantity;
-  else cart.push({ id, name, size, quantity, price });
-  renderCart();
-}
-
-function removeItem(index) {
-  cart.splice(index, 1);
-  renderCart();
-}
-
-function renderCart() {
-  const list = document.getElementById("cart-items");
-  list.innerHTML = "";
-  let totalKGS = 0, totalUSD = 0;
-
-  cart.forEach((item, index) => {
-    const li = document.createElement("li");
-    const icon = item.id === "honey" ? "🍯" : "🌶️";
-    li.innerHTML = `
-      <span>${icon} ${item.name} ${item.size} ml x${item.quantity}
-        (${item.price.kgs} сом / $${item.price.usd})
-      </span>
-      <button class="btn" data-index="${index}">${translations["remove"][currentLang]}</button>
-    `;
-    li.querySelector("button.btn").onclick = () => removeItem(index);
-    list.appendChild(li);
-
-    totalKGS += item.quantity * item.price.kgs;
-    totalUSD += item.quantity * item.price.usd;
-  });
-
-  document.getElementById("cart-total").innerHTML =
-    `<strong>TOTAL: ${totalKGS} сом / $${totalUSD.toFixed(2)}</strong>`;
-}
-
-// === Confirmar pedido ===
+// ===================== confirmOrder =====================
 let sending = false;
 function confirmOrder() {
   if (sending) return;
   if (cart.length === 0) {
-    alert(translations.cart_empty[currentLang]);
+    alert("🛒 CAPIFAN " + translations["cart_empty"][currentLang]);
     return;
   }
 
-  // Datos cliente
-  const customerName  = document.getElementById("customerName").value.trim();
-  const customerPhone = document.getElementById("customerPhone").value.trim();
-  const customerEmail = document.getElementById("customerEmail").value.trim();
+  // ✅ Validación de campos
+  const customerName  = document.getElementById("customerName")?.value.trim();
+  const customerPhone = document.getElementById("customerPhone")?.value.trim();
+  const customerEmail = document.getElementById("customerEmail")?.value.trim();
 
   if (!customerName || !customerPhone || !customerEmail) {
     alert(translations.required_fields[currentLang]);
@@ -211,22 +91,11 @@ function confirmOrder() {
   const orderId = genOrderId();
   message += `\n\nID: ${orderId}`;
 
-  const payload = {
-    orderId,
-    alive:true,
-    version:"orders-v4-clean+invoices",
-    to: PHONE_KG + "," + PHONE_US,
-    totalUSD:Number(totalUSD.toFixed(2)),
-    totalKGS:Number(totalKGS),
-    currency:"USD/KGS",
-    lang: currentLang,
-    items: cart,
-    created_at:new Date().toISOString(),
+  const payload = buildOrderPayload(cart, currentLang, {
     customer: customerName,
     phone: customerPhone,
-    email: customerEmail,
-    autoInvoice: true
-  };
+    email: customerEmail
+  });
 
   sendToSheets(payload);
 
@@ -243,21 +112,45 @@ function confirmOrder() {
 
   cart = [];
   renderCart();
+  updateCartCount();
   sending = false;
 }
 
-// === Helpers ===
+// ===================== buildOrderPayload =====================
 function genOrderId(){
   return "CAPIFAN-" + Math.random().toString(16).slice(2,10).toUpperCase();
 }
 
-function sendToSheets(order){
-  fetch(SHEETS_WEBAPP_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(order)
-  }).catch(err => console.error("Fetch error:", err));
+function buildOrderPayload(cart, lang, client = {}) {
+  let totalUSD = 0, totalKGS = 0;
+  const items = cart.map(i=>{
+    const lineUSD = i.price.usd * i.quantity;
+    const lineKGS = i.price.kgs * i.quantity;
+    totalUSD += lineUSD; totalKGS += lineKGS;
+    return {
+      id:   i.id,
+      name: i.name,
+      ml:   Number(i.size),
+      qty:  Number(i.quantity),
+      usd:  Number(i.price.usd),
+      kgs:  Number(i.price.kgs)
+    };
+  });
+  return {
+    orderId:  genOrderId(),
+    alive:    true,
+    version: "orders-v4-clean+invoices",
+    to:       "996559500551,17866514487",
+    totalUSD: Number(totalUSD.toFixed(2)),
+    totalKGS: Number(totalKGS),
+    currency: "USD/KGS",
+    lang,
+    items,
+    created_at: new Date().toISOString(),
+    customer: client.customer || "",
+    phone: client.phone || "",
+    email: client.email || "",
+    autoInvoice: true
+  };
 }
-
-window.onload = () => setLanguage(currentLang);
 </script>
