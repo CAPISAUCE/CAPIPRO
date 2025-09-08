@@ -179,7 +179,6 @@ function toggleCart(){
   }
 }
 
-// === VALIDACIÓN CAMPOS + CARRITO ===
 function validateForm(){
   const name  = document.getElementById("custName")?.value.trim();
   const phone = document.getElementById("custPhone")?.value.trim();
@@ -194,7 +193,7 @@ function validateForm(){
 
   if (!ready) {
     if (err) {
-      err.textContent = translations.fill_required[currentLang];
+      err.textContent = "⚠️ " + translations.fill_required[currentLang];
       err.style.display = "block";
     }
   } else {
