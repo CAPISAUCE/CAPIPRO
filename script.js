@@ -19,6 +19,14 @@ const translations = {
   add_to_cart: { ky:"Себетке кошуу", ru:"Добавить в корзину", es:"Agregar al carrito", en:"Add to cart" },
   remove: { ky:"Өчүрүү", ru:"Удалить", es:"Eliminar", en:"Remove" },
   cart_empty: { ky:"Себетиңиз бош", ru:"Ваша корзина пустая", es:"Tu carrito está vacío", en:"Your cart is empty" },
+
+  // ✅ Mensaje de campos obligatorios
+  required_fields: {
+    ky: "Талап кылынган талааларды толтуруңуз (аты, телефон, email).",
+    ru: "Пожалуйста, заполните обязательные поля (имя, телефон, email).",
+    es: "Debe completar los campos obligatorios (nombre, teléfono, email).",
+    en: "Please fill in the required fields (name, phone, email)."
+  }
 };
 
 const products = [
@@ -107,7 +115,7 @@ function renderProducts() {
       const quantity = parseInt(controls.querySelector(".quantity").textContent);
       const name = translations[product.id][currentLang];
       const price = product.sizes[size];
-      addToCart(product.id, name, size, quantity, price); // ← ahora pasa el id
+      addToCart(product.id, name, size, quantity, price);
     };
     div.appendChild(addBtn);
 
@@ -118,7 +126,7 @@ function renderProducts() {
 function addToCart(id, name, size, quantity, price) {
   const index = cart.findIndex(item => item.id === id && item.name === name && item.size === size);
   if (index > -1) cart[index].quantity += quantity;
-  else cart.push({ id, name, size, quantity, price }); // ← guarda el id
+  else cart.push({ id, name, size, quantity, price });
   renderCart();
   animateCartBadge();
 }
@@ -137,7 +145,6 @@ function renderCart() {
   cart.forEach((item, index) => {
     const li = document.createElement("li");
 
-    // Icono por tipo
     const icon = item.id === "honey" ? "🍯" : item.id === "mango_sauce" ? "🌶️" : "•";
 
     li.innerHTML = `
@@ -173,7 +180,7 @@ function toggleCart(){
   }
 }
 
-// ===================== AÑADIDO: helper para datos de cliente =====================
+// ===================== helper para datos de cliente =====================
 function getFieldOrPrompt(inputId, promptLabel, def="") {
   const el = document.getElementById(inputId);
   if (el && el.value && el.value.trim()) return el.value.trim();
@@ -181,7 +188,7 @@ function getFieldOrPrompt(inputId, promptLabel, def="") {
   return (v && v.trim()) ? v.trim() : def;
 }
 
-// ===================== ACTUALIZADO: confirmOrder() =====================
+// ===================== confirmOrder() =====================
 let sending = false;
 function confirmOrder() {
   if (sending) return;
@@ -190,10 +197,15 @@ function confirmOrder() {
     return;
   }
 
-  // Lee de inputs si existen o pregunta por prompt
   const customerName = getFieldOrPrompt("customerName", "Nombre del cliente:", "");
   const customerEmail = getFieldOrPrompt("customerEmail", "Email del cliente:", "");
-  const customerPhone = getFieldOrPrompt("customerPhone", "Teléfono del cliente:", ""); // ✅
+  const customerPhone = getFieldOrPrompt("customerPhone", "Teléfono del cliente:", "");
+
+  // ✅ Validación obligatoria
+  if (!customerName || !customerEmail || !customerPhone) {
+    alert(translations.required_fields[currentLang]);
+    return;
+  }
 
   sending = true;
 
@@ -209,18 +221,15 @@ function confirmOrder() {
   });
   message += `\nTOTAL: ${totalKGS} сом / $${totalUSD.toFixed(2)}`;
 
-  // Construye payload con datos del cliente y autoInvoice:true
   const payload = buildOrderPayload(cart, currentLang, {
     customer: customerName,
     email: customerEmail,
-    phone: customerPhone   // ✅
+    phone: customerPhone
   });
   message += `\n\nID: ${payload.orderId}`;
 
-  // Envía a Sheets (Apps Script generará la factura si autoInvoice:true)
   sendToSheets(payload);
 
-  // WhatsApp (igual que lo tenías)
   const encoded = encodeURIComponent(message);
   const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
@@ -242,7 +251,7 @@ function confirmOrder() {
   sending = false;
 }
 
-// ===================== ACTUALIZADO: buildOrderPayload() =====================
+// ===================== buildOrderPayload() =====================
 function genOrderId(){
   return "CAPIFAN-" + Math.random().toString(16).slice(2,10).toUpperCase();
 }
@@ -274,10 +283,10 @@ function buildOrderPayload(cart, lang, client = {}) {
     items,
     created_at: new Date().toISOString(),
 
-    // Datos del cliente + bandera para generar factura
+    // ✅ Incluye datos de cliente
     customer: client.customer || "",
     email:    client.email || "",
-    phone:    client.phone || "",   // ✅ cambiado
+    phone:    client.phone || "",
     autoInvoice: true
   };
 }
