@@ -227,11 +227,21 @@ if (!customerName || !customerPhone || !customerEmail) {
   });
   message += `\nTOTAL: ${totalKGS} сом / $${totalUSD.toFixed(2)}`;
 
-  const payload = buildOrderPayload(cart, currentLang, {
-    customer: customerName,
-    email: customerEmail,
-    phone: customerPhone
-  });
+  const payload = { 
+  orderId, 
+  alive:true, 
+  version:"orders-v4-clean+invoices", 
+  to: PHONE_KG + "," + PHONE_US,
+  totalUSD:Number(money(totUSD)), 
+  totalKGS:Number(totKGS), 
+  currency:"USD/KGS", 
+  lang,
+  items: cart.map(it=>({id:it.id,name:it.name,ml:Number(it.size),qty:Number(it.qty),usd:Number(it.price.usd),kgs:Number(it.price.kgs)})),
+  created_at:new Date().toISOString(),
+  customer: customerName,   // ✅ nuevo
+  phone: customerPhone,     // ✅ nuevo
+  email: customerEmail      // ✅ nuevo
+};
   message += `\n\nID: ${payload.orderId}`;
 
   sendToSheets(payload);
