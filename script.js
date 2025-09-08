@@ -193,19 +193,18 @@ let sending = false;
 function confirmOrder() {
   if (sending) return;
   if (cart.length === 0) {
-    // === Leer campos de cliente ===
-const customerName  = document.getElementById("customerName").value.trim();
-const customerPhone = document.getElementById("customerPhone").value.trim();
-const customerEmail = document.getElementById("customerEmail").value.trim();
+    alert(translations.cart_empty[currentLang]);
+    return;
+  }
 
-if (!customerName || !customerPhone || !customerEmail) {
-  alert("⚠️ Debe rellenar todos los campos obligatorios para confirmar el pedido.");
-  return;
-}
+  // === Leer campos de cliente ===
+  const customerName  = document.getElementById("customerName").value.trim();
+  const customerPhone = document.getElementById("customerPhone").value.trim();
+  const customerEmail = document.getElementById("customerEmail").value.trim();
 
-  // ✅ Validación obligatoria
-  if (!customerName || !customerEmail || !customerPhone) {
-    alert(translations.required_fields[currentLang]);
+  // ✅ Validación obligatoria con alerta en idioma actual
+  if (!customerName || !customerPhone || !customerEmail) {
+    alert("⚠️ " + translations.required_fields[currentLang]);
     return;
   }
 
@@ -223,25 +222,38 @@ if (!customerName || !customerPhone || !customerEmail) {
   });
   message += `\nTOTAL: ${totalKGS} сом / $${totalUSD.toFixed(2)}`;
 
-  const payload = { 
-  orderId, 
-  alive:true, 
-  version:"orders-v4-clean+invoices", 
-  to: PHONE_KG + "," + PHONE_US,
-  totalUSD:Number(money(totUSD)), 
-  totalKGS:Number(totKGS), 
-  currency:"USD/KGS", 
-  lang,
-  items: cart.map(it=>({id:it.id,name:it.name,ml:Number(it.size),qty:Number(it.qty),usd:Number(it.price.usd),kgs:Number(it.price.kgs)})),
-  created_at:new Date().toISOString(),
-  customer: customerName,   // ✅ nuevo
-  phone: customerPhone,     // ✅ nuevo
-  email: customerEmail      // ✅ nuevo
-};
-  message += `\n\nID: ${payload.orderId}`;
+  // Genera ID del pedido
+  const orderId = genOrderId();
+  message += `\n\nID: ${orderId}`;
 
+  // Construye payload
+  const payload = { 
+    orderId,
+    alive:true,
+    version:"orders-v4-clean+invoices",
+    to: PHONE_KG + "," + PHONE_US,
+    totalUSD:Number(totalUSD.toFixed(2)), 
+    totalKGS:Number(totalKGS), 
+    currency:"USD/KGS", 
+    lang,
+    items: cart.map(it=>({
+      id:it.id,
+      name:it.name,
+      ml:Number(it.size),
+      qty:Number(it.quantity),
+      usd:Number(it.price.usd),
+      kgs:Number(it.price.kgs)
+    })),
+    created_at:new Date().toISOString(),
+    customer: customerName,
+    phone: customerPhone,
+    email: customerEmail
+  };
+
+  // Envía a Google Sheets
   sendToSheets(payload);
 
+  // WhatsApp
   const encoded = encodeURIComponent(message);
   const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
@@ -255,6 +267,7 @@ if (!customerName || !customerPhone || !customerEmail) {
     : `https://wa.me/${PHONE_US}?text=${encoded}`;
   setTimeout(()=>window.open(urlUS, "_blank"), 500);
 
+  // Reset carrito
   cart = [];
   renderCart();
   updateCartCount();
