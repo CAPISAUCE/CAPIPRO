@@ -53,12 +53,29 @@ const products = [
 function setLanguage(lang) {
   currentLang = lang;
   document.documentElement.lang = lang;
+
+  // Actualizar textos con atributo data-i18n
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.getAttribute('data-i18n');
-    if (translations[key] && translations[key][lang]) el.textContent = translations[key][lang];
+    if (translations[key] && translations[key][lang]) {
+      el.textContent = translations[key][lang];
+    }
   });
+
+  // Volver a renderizar productos y carrito
   renderProducts();
   renderCart();
+
+  // === NUEVO: actualizar placeholders de los campos ===
+  const nameInput  = document.getElementById("custName");
+  const phoneInput = document.getElementById("custPhone");
+  const emailInput = document.getElementById("custEmail");
+
+  if (nameInput)  nameInput.placeholder  = translations.name_ph[lang];
+  if (phoneInput) phoneInput.placeholder = translations.phone_ph[lang];
+  if (emailInput) emailInput.placeholder = translations.email_ph[lang];
+
+  // Validar formulario otra vez
   validateForm();
 }
 
