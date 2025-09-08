@@ -203,10 +203,6 @@ if (!customerName || !customerPhone || !customerEmail) {
   return;
 }
 
-  const customerName = getFieldOrPrompt("customerName", "Nombre del cliente:", "");
-  const customerEmail = getFieldOrPrompt("customerEmail", "Email del cliente:", "");
-  const customerPhone = getFieldOrPrompt("customerPhone", "Teléfono del cliente:", "");
-
   // ✅ Validación obligatoria
   if (!customerName || !customerEmail || !customerPhone) {
     alert(translations.required_fields[currentLang]);
