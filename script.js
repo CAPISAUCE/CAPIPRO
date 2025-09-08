@@ -19,22 +19,19 @@ const translations = {
   add_to_cart: { ky:"Себетке кошуу", ru:"Добавить в корзину", es:"Agregar al carrito", en:"Add to cart" },
   remove: { ky:"Өчүрүү", ru:"Удалить", es:"Eliminar", en:"Remove" },
   cart_empty: { ky:"Себетиңиз бош", ru:"Ваша корзина пустая", es:"Tu carrito está vacío", en:"Your cart is empty" },
-
-  // ⚠️ Campos obligatorios
-  required_fields: {
-    ky: "⚠️ Талап кылынган талааларды толтуруңуз (аты, телефон, email).",
-    ru: "⚠️ Пожалуйста, заполните обязательные поля (имя, телефон, email).",
-    es: "⚠️ Debe completar los campos obligatorios (nombre, teléfono, email).",
-    en: "⚠️ Please fill in the required fields (name, phone, email)."
-  },
-
-  // ✅ Placeholders
-  ph_name:   { ky:"Атыңыз", ru:"Имя", es:"Nombre", en:"Name" },
-  ph_phone:  { ky:"Телефон", ru:"Телефон", es:"Teléfono", en:"Phone" },
-  ph_email:  { ky:"Электрондук почта", ru:"Эл. почта", es:"Email", en:"Email" }
+  fill_required: { 
+    ky:"Бардык талааларды толтуруңуз.", 
+    ru:"Пожалуйста, заполните все обязательные поля.", 
+    es:"Por favor, complete todos los campos obligatorios.", 
+    en:"Please fill in all required fields." 
+  }
 };
 
-// === Solo añadimos actualización de placeholders ===
+const products = [
+  { id:"honey", sizes: { "350":{kgs:349,usd:4.0}, "500":{kgs:550,usd:6.3}, "1000":{kgs:874,usd:10.0} } },
+  { id:"mango_sauce", sizes: { "350":{kgs:349,usd:4.0}, "500":{kgs:787,usd:9.0}, "1000":{kgs:1748,usd:20.0} } }
+];
+
 function setLanguage(lang) {
   currentLang = lang;
   document.documentElement.lang = lang;
@@ -42,37 +39,180 @@ function setLanguage(lang) {
     const key = el.getAttribute('data-i18n');
     if (translations[key] && translations[key][lang]) el.textContent = translations[key][lang];
   });
-
-  // 👉 placeholders
-  const nameInput  = document.getElementById("customerName");
-  const phoneInput = document.getElementById("customerPhone");
-  const emailInput = document.getElementById("customerEmail");
-  if(nameInput)  nameInput.placeholder  = translations.ph_name[currentLang];
-  if(phoneInput) phoneInput.placeholder = translations.ph_phone[currentLang];
-  if(emailInput) emailInput.placeholder = translations.ph_email[currentLang];
-
   renderProducts();
   renderCart();
+  validateForm();
 }
 
-// ===================== confirmOrder =====================
+function renderProducts() {
+  const list = document.getElementById("product-list");
+  list.innerHTML = "";
+  products.forEach(product => {
+    const div = document.createElement("div");
+    div.className = "product";
+
+    const name = translations[product.id][currentLang];
+
+    const img = document.createElement("img");
+    img.src = product.id === "honey" ? "honey_logo.png" : "mango_logo.png";
+    img.alt = name;
+    img.className = "product-image";
+    div.appendChild(img);
+
+    const title = document.createElement("h2");
+    title.textContent = name;
+    div.appendChild(title);
+
+    const selector = document.createElement("select");
+    selector.className = "size-selector";
+    for (let size in product.sizes) {
+      const opt = document.createElement("option");
+      opt.value = size;
+      opt.textContent = size + " ml";
+      selector.appendChild(opt);
+    }
+    div.appendChild(selector);
+
+    const priceLabel = document.createElement("p");
+    priceLabel.className = "price-label";
+    const firstSize = Object.keys(product.sizes)[0];
+    priceLabel.textContent =
+      translations["price"][currentLang] + " " +
+      product.sizes[firstSize].kgs + " сом / $" + product.sizes[firstSize].usd;
+    div.appendChild(priceLabel);
+
+    selector.onchange = () => {
+      const size = selector.value;
+      const price = product.sizes[size];
+      priceLabel.textContent =
+        translations["price"][currentLang] + " " +
+        price.kgs + " сом / $" + price.usd;
+    };
+
+    const controls = document.createElement("div");
+    controls.innerHTML = `
+      <button class="decrease">−</button>
+      <span class="quantity">1</span>
+      <button class="increase">+</button>
+    `;
+    div.appendChild(controls);
+
+    controls.querySelector(".decrease").onclick = () => {
+      let q = controls.querySelector(".quantity");
+      let val = parseInt(q.textContent);
+      if (val > 1) q.textContent = val - 1;
+    };
+    controls.querySelector(".increase").onclick = () => {
+      let q = controls.querySelector(".quantity");
+      q.textContent = parseInt(q.textContent) + 1;
+    };
+
+    const addBtn = document.createElement("button");
+    addBtn.textContent = translations["add_to_cart"][currentLang];
+    addBtn.onclick = () => {
+      const size = selector.value;
+      const quantity = parseInt(controls.querySelector(".quantity").textContent);
+      const name = translations[product.id][currentLang];
+      const price = product.sizes[size];
+      addToCart(product.id, name, size, quantity, price);
+    };
+    div.appendChild(addBtn);
+
+    list.appendChild(div);
+  });
+}
+
+function addToCart(id, name, size, quantity, price) {
+  const index = cart.findIndex(item => item.id === id && item.name === name && item.size === size);
+  if (index > -1) cart[index].quantity += quantity;
+  else cart.push({ id, name, size, quantity, price });
+  renderCart();
+  animateCartBadge();
+}
+
+function removeItem(index) {
+  cart.splice(index, 1);
+  renderCart();
+  shakeCartBadge();
+}
+
+function renderCart() {
+  const list = document.getElementById("cart-items");
+  list.innerHTML = "";
+  let totalKGS = 0, totalUSD = 0;
+
+  cart.forEach((item, index) => {
+    const li = document.createElement("li");
+    const icon = item.id === "honey" ? "🍯" : item.id === "mango_sauce" ? "🌶️" : "•";
+
+    li.innerHTML = `
+      <span>${icon} ${item.name} ${item.size} ml x${item.quantity}
+        (${item.price.kgs} сом / $${item.price.usd})
+      </span>
+      <button class="btn" data-index="${index}">${translations["remove"][currentLang]}</button>
+    `;
+    li.querySelector("button.btn").onclick = () => removeItem(index);
+
+    list.appendChild(li);
+
+    totalKGS += item.quantity * item.price.kgs;
+    totalUSD += item.quantity * item.price.usd;
+  });
+
+  document.getElementById("cart-total").innerHTML =
+    `<strong>TOTAL: ${totalKGS} сом / $${totalUSD.toFixed(2)}</strong>`;
+  updateCartCount();
+  validateForm();
+}
+
+function toggleCart(){
+  const pop = document.getElementById("cart-popup");
+  const isHidden = pop.classList.contains("hidden");
+  if (isHidden){
+    pop.classList.remove("hidden");
+    document.body.classList.add("no-scroll");
+    pop.scrollTop = 0;
+    window.scrollTo(0,0);
+  }else{
+    pop.classList.add("hidden");
+    document.body.classList.remove("no-scroll");
+  }
+}
+
+// === VALIDACIÓN CAMPOS + CARRITO ===
+function validateForm(){
+  const name  = document.getElementById("custName")?.value.trim();
+  const phone = document.getElementById("custPhone")?.value.trim();
+  const email = document.getElementById("custEmail")?.value.trim();
+  const btn   = document.getElementById("confirm");
+  const err   = document.getElementById("formError");
+
+  if (!btn) return;
+
+  const ready = (cart.length > 0 && name && phone && email);
+  btn.disabled = !ready;
+
+  if (!ready) {
+    if (err) {
+      err.textContent = translations.fill_required[currentLang];
+      err.style.display = "block";
+    }
+  } else {
+    if (err) err.style.display = "none";
+  }
+}
+
+// === CONFIRMAR PEDIDO ===
 let sending = false;
 function confirmOrder() {
   if (sending) return;
-  if (cart.length === 0) {
-    alert("🛒 CAPIFAN " + translations["cart_empty"][currentLang]);
-    return;
-  }
+  if (cart.length === 0) return;
 
-  // ✅ Validación de campos
-  const customerName  = document.getElementById("customerName")?.value.trim();
-  const customerPhone = document.getElementById("customerPhone")?.value.trim();
-  const customerEmail = document.getElementById("customerEmail")?.value.trim();
+  const customerName  = document.getElementById("custName").value.trim();
+  const customerPhone = document.getElementById("custPhone").value.trim();
+  const customerEmail = document.getElementById("custEmail").value.trim();
 
-  if (!customerName || !customerPhone || !customerEmail) {
-    alert(translations.required_fields[currentLang]);
-    return;
-  }
+  if (!customerName || !customerPhone || !customerEmail) return;
 
   sending = true;
 
@@ -88,35 +228,36 @@ function confirmOrder() {
   });
   message += `\nTOTAL: ${totalKGS} сом / $${totalUSD.toFixed(2)}`;
 
-  const orderId = genOrderId();
-  message += `\n\nID: ${orderId}`;
-
   const payload = buildOrderPayload(cart, currentLang, {
     customer: customerName,
-    phone: customerPhone,
-    email: customerEmail
+    phone:    customerPhone,
+    email:    customerEmail
   });
+  message += `\n\nID: ${payload.orderId}`;
 
   sendToSheets(payload);
 
   const encoded = encodeURIComponent(message);
   const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
-  const urlKG = isMobile ? `whatsapp://send?phone=${PHONE_KG}&text=${encoded}`
-                         : `https://wa.me/${PHONE_KG}?text=${encoded}`;
+  const urlKG = isMobile
+    ? `whatsapp://send?phone=${PHONE_KG}&text=${encoded}`
+    : `https://wa.me/${PHONE_KG}?text=${encoded}`;
   window.open(urlKG, "_blank");
 
-  const urlUS = isMobile ? `whatsapp://send?phone=${PHONE_US}&text=${encoded}`
-                         : `https://wa.me/${PHONE_US}?text=${encoded}`;
+  const urlUS = isMobile
+    ? `whatsapp://send?phone=${PHONE_US}&text=${encoded}`
+    : `https://wa.me/${PHONE_US}?text=${encoded}`;
   setTimeout(()=>window.open(urlUS, "_blank"), 500);
 
   cart = [];
   renderCart();
   updateCartCount();
+  const popup = document.getElementById("cart-popup");
+  if (popup && !popup.classList.contains("hidden")) popup.classList.add("hidden");
   sending = false;
 }
 
-// ===================== buildOrderPayload =====================
 function genOrderId(){
   return "CAPIFAN-" + Math.random().toString(16).slice(2,10).toUpperCase();
 }
@@ -148,9 +289,80 @@ function buildOrderPayload(cart, lang, client = {}) {
     items,
     created_at: new Date().toISOString(),
     customer: client.customer || "",
-    phone: client.phone || "",
-    email: client.email || "",
+    phone:    client.phone || "",
+    email:    client.email || "",
     autoInvoice: true
   };
 }
+
+function sendToSheets(order){
+  fetch(SHEETS_WEBAPP_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(order)
+  })
+  .then(r => r.json())
+  .then(res => {
+    console.log("Sheets response:", res);
+    if (!res.ok) console.warn("Apps Script error:", res.error);
+    if (res.pdfUrl) console.log("Invoice PDF:", res.pdfUrl);
+  })
+  .catch(err => console.error("Fetch error:", err));
+}
+
+function retryPendingSales() {
+  const q = JSON.parse(localStorage.getItem("sales_pending") || "[]");
+  if (!q.length) { alert("No hay ventas pendientes."); return; }
+  const next = q.shift();
+
+  fetch(SHEETS_WEBAPP_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(next)
+  })
+  .then(r => r.json().catch(()=>({ok:true})))
+  .then(resp => {
+    if (resp.ok) alert("Venta reenviada a Sheets.");
+    else throw new Error(resp.error || "Sheets error");
+  })
+  .catch(() => alert("Sigue fallando, intenta más tarde."))
+  .finally(() => localStorage.setItem("sales_pending", JSON.stringify(q)));
+}
+
+function updateCartCount() {
+  const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+  const badge = document.getElementById("cart-count");
+  if (!badge) return;
+  if (count > 0) {
+    badge.style.display = "inline-block";
+    badge.textContent = count;
+  } else {
+    badge.style.display = "none";
+  }
+  validateForm();
+}
+function animateCartBadge() {
+  const badge = document.getElementById('cart-count');
+  if (!badge) return;
+  badge.classList.remove("bounce");
+  void badge.offsetWidth;
+  badge.classList.add("bounce");
+}
+function shakeCartBadge() {
+  const badge = document.getElementById('cart-count');
+  if (!badge) return;
+  badge.classList.remove("shake");
+  void badge.offsetWidth;
+  badge.classList.add("shake");
+}
+
+window.onload = () => {
+  setLanguage(currentLang);
+
+  ["custName","custPhone","custEmail"].forEach(id=>{
+    const el = document.getElementById(id);
+    if (el) el.addEventListener("input", validateForm);
+  });
+  validateForm();
+};
 </script>
