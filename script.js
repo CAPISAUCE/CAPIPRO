@@ -193,9 +193,15 @@ let sending = false;
 function confirmOrder() {
   if (sending) return;
   if (cart.length === 0) {
-    alert("🛒 CAPIFAN " + translations["cart_empty"][currentLang]);
-    return;
-  }
+    // === Leer campos de cliente ===
+const customerName  = document.getElementById("customerName").value.trim();
+const customerPhone = document.getElementById("customerPhone").value.trim();
+const customerEmail = document.getElementById("customerEmail").value.trim();
+
+if (!customerName || !customerPhone || !customerEmail) {
+  alert("⚠️ Debe rellenar todos los campos obligatorios para confirmar el pedido.");
+  return;
+}
 
   const customerName = getFieldOrPrompt("customerName", "Nombre del cliente:", "");
   const customerEmail = getFieldOrPrompt("customerEmail", "Email del cliente:", "");
