@@ -140,32 +140,33 @@
   </main>
 
   <!-- Cart -->
-  <aside id="cart" class="popup" role="dialog" aria-modal="true" aria-labelledby="cartTitle">
-    <div class="backdrop" id="backdrop"></div>
-    <div class="panel">
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <h2 id="cartTitle">Себет</h2>
-        <button class="btn" id="closeCart" aria-label="Cerrar">✕</button>
-      </div>
-      <div id="cartItems"></div>
-      <div id="totals" style="margin-top:8px;font-weight:800">TOTAL: 0 сом / $0.00</div>
-
-<!-- Campos de cliente -->
-<div id="customerFields" style="margin-top:10px; display:flex; flex-direction:column; gap:6px">
-  <input id="customerName" type="text" placeholder="Nombre" required
-         style="padding:8px; border:1px solid #ccc; border-radius:8px;">
-  <input id="customerPhone" type="tel" placeholder="Teléfono" required
-         style="padding:8px; border:1px solid #ccc; border-radius:8px;">
-  <input id="customerEmail" type="email" placeholder="Email" required
-         style="padding:8px; border:1px solid #ccc; border-radius:8px;">
-</div>
-
-<div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
-  <button id="confirm" class="btn mango">✅ Буйрутманы тастыктоо</button>
-</div>
-<small id="postNote" style="color:#64748b"></small>
+<aside id="cart" class="popup" role="dialog" aria-modal="true" aria-labelledby="cartTitle">
+  <div class="backdrop" id="backdrop"></div>
+  <div class="panel">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <h2 id="cartTitle">Себет</h2>
+      <button class="btn" id="closeCart" aria-label="Cerrar">✕</button>
     </div>
-  </aside>
+    <div id="cartItems"></div>
+    <div id="totals" style="margin-top:8px;font-weight:800">TOTAL: 0 сом / $0.00</div>
+
+    <!-- ✅ Campos de cliente -->
+    <div id="customerFields" style="margin-top:10px; display:flex; flex-direction:column; gap:6px">
+      <input id="customerName" type="text" data-i18n-ph="name" required
+             style="padding:8px; border:1px solid #ccc; border-radius:8px;">
+      <input id="customerPhone" type="tel" data-i18n-ph="phone" required
+             style="padding:8px; border:1px solid #ccc; border-radius:8px;">
+      <input id="customerEmail" type="email" data-i18n-ph="email" required
+             style="padding:8px; border:1px solid #ccc; border-radius:8px;">
+    </div>
+
+    <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+      <button id="confirm" class="btn mango">✅ Буйрутманы тастыктоо</button>
+    </div>
+    <small id="postNote" style="color:#64748b"></small>
+  </div>
+</aside>
+
 
   <footer class="foot">© 2025 CAPIFAN – elcapiproduct@gmail.com</footer>
 
