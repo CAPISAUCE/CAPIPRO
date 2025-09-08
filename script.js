@@ -10,7 +10,7 @@ console.log("Sheets URL:", SHEETS_WEBAPP_URL);
 fetch(SHEETS_WEBAPP_URL + "?route=health").then(r => r.text()).then(t => console.log("Ping /health:", t));
 
 const translations = {
-  honey: { ky:"таза Бал Issyk-Kul", ru:"Чистый мед Issyk-Kul", es:"Miel Pura Issyk-Kul", en:"Pure Honey Issyk-Kul" },
+  honey: { ky:"таза Бал Issyk-Kul", ru:"Чистый мед Issyk-Kul", es:"Miel Pura Issyk-Kul", en:"Pure Honey Issyk Kul" },
   mango_sauce: { ky:"Ачытуу манго соусу", ru:"Острый соус из манго", es:"Salsa Picante de Mango Verde", en:"Green Mango Hot Sauce" },
   slogan: { ky:"100% табигый продуктылар", ru:"100% натуральные продукты", es:"Productos 100% Naturales", en:"100% Natural Products" },
   price: { ky:"Баасы:", ru:"Цена:", es:"Precio:", en:"Price:" },
@@ -24,6 +24,24 @@ const translations = {
     ru:"Пожалуйста, заполните все обязательные поля.", 
     es:"Por favor, complete todos los campos obligatorios.", 
     en:"Please fill in all required fields." 
+  },
+  name_ph: { 
+    ky:"Атыңыз", 
+    ru:"Ваше имя", 
+    es:"Tu nombre", 
+    en:"Your name" 
+  },
+  phone_ph: { 
+    ky:"Телефонуңуз", 
+    ru:"Ваш телефон", 
+    es:"Tu teléfono", 
+    en:"Your phone" 
+  },
+  email_ph: { 
+    ky:"Электрон почта", 
+    ru:"Электронная почта", 
+    es:"Tu email", 
+    en:"Your email" 
   }
 };
 
