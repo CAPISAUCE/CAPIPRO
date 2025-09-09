@@ -191,9 +191,17 @@ const T = {
   remove:{ ky:"Өчүрүү", ru:"Удалить", es:"Eliminar", en:"Remove" },
   empty_cart:{ ky:"Себет бош", ru:"Корзина пуста", es:"El carrito está vacío", en:"Cart is empty" },
   confirm:{ ky:"Буйрутманы тастыктоо", ru:"Подтвердить заказ", es:"Confirmar pedido", en:"Confirm order" },
-  price_lbl:{ ky:"Баасы:", ru:"Цена:", es:"Precio:", en:"Price:" }
+  price_lbl:{ ky:"Баасы:", ru:"Цена:", es:"Precio:", en:"Price:" },
+  fill_required:{ 
+    ky:"Бардык талааларды толтуруңуз.", 
+    ru:"Пожалуйста, заполните все обязательные поля.", 
+    es:"Por favor, complete todos los campos obligatorios.", 
+    en:"Please fill in all required fields." 
+  },
+  name_ph:{ ky:"Атыңыз", ru:"Ваше имя", es:"Tu nombre", en:"Your name" },
+  phone_ph:{ ky:"Телефонуңуз", ru:"Ваш телефон", es:"Tu teléfono", en:"Your phone" },
+  email_ph:{ ky:"Электрон почта", ru:"Электронная почта", es:"Tu email", en:"Your email" }
 };
-
 /* ================== HELPERS ================== */
 function kgs(usd){ return Math.round(usd*EXCHANGE_KGS_PER_USD); }
 function money(n){ return (Math.round(n*100)/100).toFixed(2); }
@@ -226,8 +234,12 @@ function i18n(){
   document.getElementById("cartTxt").textContent = T.cart[lang];
   document.getElementById("cartTitle").textContent = T.cart[lang];
   document.getElementById("confirm").textContent = "✅ " + T.confirm[lang];
-}
 
+  // === NUEVO: actualizar placeholders ===
+  document.getElementById("custName").placeholder  = T.name_ph[lang];
+  document.getElementById("custPhone").placeholder = T.phone_ph[lang];
+  document.getElementById("custEmail").placeholder = T.email_ph[lang];
+}
 function renderProducts(){
   const root = document.getElementById("products");
   root.innerHTML = "";
@@ -326,24 +338,65 @@ function toggleCart(){
 }
 
 function confirmOrder(){
-  if(cart.length===0){ alert(T.empty_cart[lang] + " — TOTAL: $0 / 0 сом"); return; }
+  if(cart.length===0){ 
+    alert(T.empty_cart[lang] + " — TOTAL: $0 / 0 сом"); 
+    return; 
+  }
+
+  const name  = document.getElementById("custName").value.trim();
+  const phone = document.getElementById("custPhone").value.trim();
+  const email = document.getElementById("custEmail").value.trim();
+  const err   = document.getElementById("formError");
+
+  if (!name || !phone || !email) {
+    if (err) {
+      err.textContent = "⚠️ " + T.fill_required[lang];
+      err.style.display = "block";
+    }
+    return;
+  } else {
+    if (err) err.style.display = "none";
+  }
+
   let msg = "🧾 " + T.cart[lang] + ":\n";
   let totUSD=0, totKGS=0;
-  cart.forEach(it=>{ const subU=it.price.usd*it.qty, subK=it.price.kgs*it.qty;
+  cart.forEach(it=>{ 
+    const subU=it.price.usd*it.qty, subK=it.price.kgs*it.qty;
     msg += `• ${it.name} (${it.size} ml) x${it.qty} = ${subK} сом / $${money(subU)}\n`;
-    totUSD += subU; totKGS += subK; });
+    totUSD += subU; totKGS += subK; 
+  });
   msg += `\nTOTAL: ${totKGS} сом / $${money(totUSD)}`;
-  const orderId = genOrderId(); msg += `\n\nID: ${orderId}`;
-  const payload = { orderId, alive:true, version:"orders-v4-clean+invoices", to: PHONE_KG + "," + PHONE_US,
-    totalUSD:Number(money(totUSD)), totalKGS:Number(totKGS), currency:"USD/KGS", lang,
+  const orderId = genOrderId(); 
+  msg += `\n\nID: ${orderId}`;
+
+  const payload = { 
+    orderId, 
+    alive:true, 
+    version:"orders-v4-clean+invoices", 
+    to: PHONE_KG + "," + PHONE_US,
+    totalUSD:Number(money(totUSD)), 
+    totalKGS:Number(totKGS), 
+    currency:"USD/KGS", 
+    lang,
     items: cart.map(it=>({id:it.id,name:it.name,ml:Number(it.size),qty:Number(it.qty),usd:Number(it.price.usd),kgs:Number(it.price.kgs)})),
-    created_at:new Date().toISOString() };
+    created_at:new Date().toISOString(),
+    customer:name,
+    phone:phone,
+    email:email,
+    autoInvoice:true
+  };
+
   sendToSheets(payload);
   const enc = encodeURIComponent(msg);
   const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-  const urlKG = isMobile ? `whatsapp://send?phone=${PHONE_KG}&text=${enc}` : `https://wa.me/${PHONE_KG}?text=${enc}`; window.open(urlKG,"_blank");
-  const urlUS = isMobile ? `whatsapp://send?phone=${PHONE_US}&text=${enc}` : `https://wa.me/${PHONE_US}?text=${enc}`; setTimeout(()=>window.open(urlUS,"_blank"),500);
-  cart = []; updateCart(); closeCart();
+  const urlKG = isMobile ? `whatsapp://send?phone=${PHONE_KG}&text=${enc}` : `https://wa.me/${PHONE_KG}?text=${enc}`; 
+  window.open(urlKG,"_blank");
+  const urlUS = isMobile ? `whatsapp://send?phone=${PHONE_US}&text=${enc}` : `https://wa.me/${PHONE_US}?text=${enc}`; 
+  setTimeout(()=>window.open(urlUS,"_blank"),500);
+
+  cart = []; 
+  updateCart(); 
+  closeCart();
 }
 
 /* ================== INIT ================== */
