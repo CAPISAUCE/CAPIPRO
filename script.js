@@ -219,21 +219,11 @@ function validateForm(){
   const phone = document.getElementById("custPhone")?.value.trim();
   const email = document.getElementById("custEmail")?.value.trim();
   const btn   = document.getElementById("confirm");
-  const err   = document.getElementById("formError");
 
   if (!btn) return;
 
   const ready = (cart.length > 0 && name && phone && email);
   btn.disabled = !ready;
-
-  if (!ready) {
-    if (err) {
-      err.textContent = "⚠️ " + translations.fill_required[currentLang];
-      err.style.display = "block";
-    }
-  } else {
-    if (err) err.style.display = "none";
-  }
 }
 
 // === CONFIRMAR PEDIDO ===
@@ -245,8 +235,20 @@ function confirmOrder() {
   const customerName  = document.getElementById("custName").value.trim();
   const customerPhone = document.getElementById("custPhone").value.trim();
   const customerEmail = document.getElementById("custEmail").value.trim();
+  const err           = document.getElementById("formError");
 
-  if (!customerName || !customerPhone || !customerEmail) return;
+  // Mostrar warning si falta un campo
+  if (!customerName || !customerPhone || !customerEmail) {
+    if (err) {
+      err.textContent = "⚠️ " + translations.fill_required[currentLang];
+      err.style.display = "block";
+    }
+    return; // detener aquí
+  } else {
+    if (err) err.style.display = "none"; // ocultar si todo está lleno
+  }
+
+  // ... aquí sigue el resto de confirmOrder (tu lógica actual) ...
 
   sending = true;
 
