@@ -230,70 +230,38 @@ html, body{ max-width:100%; overflow-x:hidden; }
   display: block;
 }
 
-/* ✅ Botón Confirmar Pedido - deshabilitado (gris) */
+/* 🟢 Botón Confirmar Pedido - deshabilitado (gris) */
 #confirm:disabled {
   background: #f0f0f0 !important;
   color: #999 !important;
   border: 1px solid #ccc !important;
-  cursor: not-allowed;
+  cursor: not-allowed !important;
   font-weight: 600;
   box-shadow: none !important;
   transition: all 0.3s ease;
 }
 
-/* 🌟 Botón Confirmar Pedido - habilitado (verde mango) */
+/* 🟢 Botón Confirmar Pedido - habilitado (mango) */
 #confirm:not(:disabled) {
-  background: linear-gradient(180deg, #34d399, #059669) !important; /* verde esmeralda estilo mango */
+  background: linear-gradient(180deg, #fcd34d, #f59e0b) !important; /* mango */
   color: #fff !important;
-  border: 1px solid #047857 !important;
+  border: 1px solid #d97706 !important;
   font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 0 8px rgba(16, 185, 129, 0.4), 0 4px 10px rgba(0, 0, 0, 0.15) !important;
-  transform: scale(1);
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.4), 
+              0 4px 10px rgba(0, 0, 0, 0.15) !important;
   transition: all 0.3s ease;
 }
 
-/* efecto hover */
 #confirm:not(:disabled):hover {
-  background: linear-gradient(180deg, #6ee7b7, #059669) !important;
-  box-shadow: 0 0 12px rgba(16, 185, 129, 0.6), 0 6px 14px rgba(0, 0, 0, 0.2) !important;
+  background: linear-gradient(180deg, #fde68a, #f59e0b) !important;
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.6), 
+              0 6px 14px rgba(0, 0, 0, 0.2) !important;
   transform: scale(1.02);
 }
 
-    #closeCart:hover {
-      background: linear-gradient(180deg, #a6e3a6, #8cd88c);
-    }
-
-    /* 🟢 Estilos para botón Confirmar Pedido */
-    #confirm:disabled {
-      background: #f0f0f0 !important;
-      color: #999 !important;
-      border: 1px solid #ccc !important;
-      cursor: not-allowed !important;
-      font-weight: 600;
-      box-shadow: none !important;
-    }
-
-    #confirm:not(:disabled) {
-      background: linear-gradient(180deg, #fcd34d, #f59e0b) !important; /* mango */
-      color: #fff !important;
-      border: 1px solid #d97706 !important;
-      font-weight: 700;
-      cursor: pointer;
-      box-shadow: 0 0 8px rgba(245, 158, 11, 0.4), 
-                  0 4px 10px rgba(0, 0, 0, 0.15) !important;
-      transition: all 0.3s ease;
-    }
-
-    #confirm:not(:disabled):hover {
-      background: linear-gradient(180deg, #fde68a, #f59e0b) !important;
-      box-shadow: 0 0 12px rgba(245, 158, 11, 0.6), 
-                  0 6px 14px rgba(0, 0, 0, 0.2) !important;
-      transform: scale(1.02);
-    }
-
-    #confirm:not(:disabled):active {
-      transform: scale(0.98);
-      box-shadow: 0 0 6px rgba(245, 158, 11, 0.3), 
-                  0 3px 6px rgba(0, 0, 0, 0.2) !important;
-    }
+#confirm:not(:disabled):active {
+  transform: scale(0.98);
+  box-shadow: 0 0 6px rgba(245, 158, 11, 0.3), 
+              0 3px 6px rgba(0, 0, 0, 0.2) !important;
+}
