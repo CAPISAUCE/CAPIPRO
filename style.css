@@ -264,8 +264,9 @@ html, body{ max-width:100%; overflow-x:hidden; }
 #confirm:not(:disabled):active {
   transform: scale(0.98);
   box-shadow: 0 0 6px rgba(16, 185, 129, 0.3), 0 3px 6px rgba(0, 0, 0, 0.2) !important;
+}
 
-  /* Espaciado precio debajo del selector */
+/* Espaciado precio debajo del selector */
 .card select + div {
   margin-top: 8px;
   margin-bottom: 6px;
