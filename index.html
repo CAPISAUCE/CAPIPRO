@@ -96,35 +96,22 @@
     #closeCart:hover {
       background: linear-gradient(180deg, #a6e3a6, #8cd88c);
     }
-  <<style>
-  /* … aquí todos tus estilos existentes … */
+  </style>
 
-  /* —— Botón Confirmar Orden estilo Amazon —— */
-  #confirm.confirm-btn {
-    background: linear-gradient(to bottom, #ffb300, #ffa000);
-    color: #fff;
-    border: 1px solid #e69500;
-    padding: 12px 20px;
-    font-size: 1.1em;
-    font-weight: bold;
-    border-radius: 8px;
-    cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-    transition: all 0.2s ease-in-out;
-    display: inline-block;
-    text-align: center;
-    min-width: 200px;
-  }
-  #confirm.confirm-btn:hover {
-    background: linear-gradient(to bottom, #ffca28, #ffb300);
-    box-shadow: 0 5px 10px rgba(0,0,0,0.3);
-  }
-  #confirm.confirm-btn:active {
-    background: linear-gradient(to bottom, #ffa000, #ff8f00);
-    box-shadow: inset 0 3px 6px rgba(0,0,0,0.4);
-    transform: scale(0.97);
-  }
-</style>
+  <!-- OVERRIDE imágenes: hace el recuadro más alto y la imagen encaja sin recortar -->
+  <style id="imgfix-override">
+    #product-list .product img,
+    .product img,
+    img.product-image {
+      height: 320px !important;
+      width: 100% !important;
+      object-fit: contain !important;
+      display: block !important;
+      margin: 0 auto 10px !important;
+      border-radius: 12px !important;
+      border: 1px solid #ffe1ad !important;
+    }
+  </style>
 </head>
 <body>
   <header class="topbar">
@@ -176,9 +163,7 @@
 </div>
 
       <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
- <button id="confirm" class="btn confirm-btn" disabled>
-  ✅ Буйрутманы тастыктоо
-</button>
+  <button id="confirm" class="btn" disabled>✅ Буйрутманы тастыктоо</button>
 </div>
 
     </div>
