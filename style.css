@@ -230,7 +230,7 @@ html, body{ max-width:100%; overflow-x:hidden; }
   display: block;
 }
 
-/* ✅ Botón Confirmar Pedido - deshabilitado */
+/* ✅ Botón Confirmar Pedido - deshabilitado (gris) */
 #confirm:disabled {
   background: #f0f0f0 !important;
   color: #999 !important;
@@ -241,9 +241,9 @@ html, body{ max-width:100%; overflow-x:hidden; }
   transition: all 0.3s ease;
 }
 
-/* 🌟 Botón Confirmar Pedido - habilitado */
+/* 🌟 Botón Confirmar Pedido - habilitado (verde mango) */
 #confirm:not(:disabled) {
-  background: linear-gradient(180deg, #34d399, #059669) !important; /* verde esmeralda */
+  background: linear-gradient(180deg, #34d399, #059669) !important; /* verde esmeralda estilo mango */
   color: #fff !important;
   border: 1px solid #047857 !important;
   font-weight: 700;
