@@ -19,11 +19,21 @@ const translations = {
   add_to_cart: { ky:"Себетке кошуу", ru:"Добавить в корзину", es:"Agregar al carrito", en:"Add to cart" },
   remove: { ky:"Өчүрүү", ru:"Удалить", es:"Eliminar", en:"Remove" },
   cart_empty: { ky:"Себетиңиз бош", ru:"Ваша корзина пустая", es:"Tu carrito está vacío", en:"Your cart is empty" },
+  const translations = {
+  honey: { ky:"таза Бал Issyk-Kul", ru:"Чистый мед Issyk-Kul", es:"Miel Pura Issyk-Kul", en:"Pure Honey Issyk Kul" },
+  mango_sauce: { ky:"Ачытуу манго соусу", ru:"Острый соус из манго", es:"Salsa Picante de Mango Verde", en:"Green Mango Hot Sauce" },
+  slogan: { ky:"100% табигый продуктылар", ru:"100% натуральные продукты", es:"Productos 100% Naturales", en:"100% Natural Products" },
+  price: { ky:"Баасы:", ru:"Цена:", es:"Precio:", en:"Price:" },
+  confirm_order: { ky:"Буйрутманы ырастоо", ru:"Подтвердить заказ", es:"Confirmar pedido", en:"Confirm order" },
+  your_cart: { ky:"Себетиңиз", ru:"Ваша корзина", es:"Tu carrito", en:"Your cart" },
+  add_to_cart: { ky:"Себетке кошуу", ru:"Добавить в корзину", es:"Agregar al carrito", en:"Add to cart" },
+  remove: { ky:"Өчүрүү", ru:"Удалить", es:"Eliminar", en:"Remove" },
+  cart_empty: { ky:"Себетиңиз бош", ru:"Ваша корзина пустая", es:"Tu carrito está vacío", en:"Your cart is empty" },
   fill_required: { 
-    ky:"Бардык талааларды толтуруңуз.", 
-    ru:"Пожалуйста, заполните все обязательные поля.", 
-    es:"Por favor, complete todos los campos obligatorios.", 
-    en:"Please fill in all required fields." 
+    ky:"🐝 Бардык талааларды толтуруңуз.", 
+    ru:"🐝 Пожалуйста, заполните все обязательные поля.", 
+    es:"🐝 Debe rellenar los campos obligatorios.", 
+    en:"🐝 Please fill in the required fields." 
   },
   name_ph: { 
     ky:"Атыңыз", 
