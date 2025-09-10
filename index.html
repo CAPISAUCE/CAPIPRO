@@ -150,12 +150,15 @@
       <div id="cartItems"></div>
       <div id="totals" style="margin-top:8px;font-weight:800">TOTAL: 0 сом / $0.00</div>
 
-      <!-- Campos obligatorios -->
-      <div id="customerInfo" style="margin-top:12px; display:flex; flex-direction:column; gap:8px">
-        <input type="text" id="custName" placeholder="Tu nombre" required style="padding:8px;border:1px solid #ccc;border-radius:8px;">
-        <input type="tel" id="custPhone" placeholder="Tu teléfono" required style="padding:8px;border:1px solid #ccc;border-radius:8px;">
-        <input type="email" id="custEmail" placeholder="Tu email" required style="padding:8px;border:1px solid #ccc;border-radius:8px;">
-      </div>
+<!-- Mensaje de error amigable -->
+<small id="formError" style="color:#d97706;display:none;font-weight:600;"></small>
+
+<!-- Campos obligatorios -->
+<div id="customerInfo" style="margin-top:12px; display:flex; flex-direction:column; gap:8px">
+  <input type="text" id="custName" placeholder="Tu nombre" required style="padding:8px;border:1px solid #ccc;border-radius:8px;">
+  <input type="tel" id="custPhone" placeholder="Tu teléfono" required style="padding:8px;border:1px solid #ccc;border-radius:8px;">
+  <input type="email" id="custEmail" placeholder="Tu email" required style="padding:8px;border:1px solid #ccc;border-radius:8px;">
+</div>
 
       <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
   <button id="confirm" class="btn mango" disabled>✅ Буйрутманы тастыктоо</button>
