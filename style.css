@@ -226,20 +226,49 @@ html, body{ max-width:100%; overflow-x:hidden; }
   transform: translateY(1px) !important;
   box-shadow: 0 1px 0 rgba(183,28,28,0.15) !important;
  
-  /* 🟢 Ajuste del mensaje con la abeja */
+/* 🐝 Estilo del mensaje fijo */
 #formError {
   margin-top: 10px;
   margin-bottom: 10px;
   line-height: 1.4;
   font-size: 0.9em;
+  font-weight: 600;
+  color: #d97706;
   display: block;
 }
 
-/* 🟢 Estilo claro para botón confirmar deshabilitado */
+/* ✅ Botón Confirmar Pedido - deshabilitado */
 #confirm:disabled {
   background: #f0f0f0 !important;
   color: #999 !important;
   border: 1px solid #ccc !important;
   cursor: not-allowed;
   font-weight: 600;
+  box-shadow: none !important;
+  transition: all 0.3s ease;
+}
+
+/* 🌟 Botón Confirmar Pedido - habilitado */
+#confirm:not(:disabled) {
+  background: linear-gradient(180deg, #34d399, #059669) !important; /* verde esmeralda */
+  color: #fff !important;
+  border: 1px solid #047857 !important;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.4), 0 4px 10px rgba(0, 0, 0, 0.15) !important;
+  transform: scale(1);
+  transition: all 0.3s ease;
+}
+
+/* efecto hover */
+#confirm:not(:disabled):hover {
+  background: linear-gradient(180deg, #6ee7b7, #059669) !important;
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.6), 0 6px 14px rgba(0, 0, 0, 0.2) !important;
+  transform: scale(1.02);
+}
+
+/* efecto click */
+#confirm:not(:disabled):active {
+  transform: scale(0.98);
+  box-shadow: 0 0 6px rgba(16, 185, 129, 0.3), 0 3px 6px rgba(0, 0, 0, 0.2) !important;
 }
