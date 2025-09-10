@@ -270,15 +270,11 @@ function validateForm(){
   const phone = document.getElementById("custPhone")?.value.trim();
   const email = document.getElementById("custEmail")?.value.trim();
   const btn   = document.getElementById("confirm");
-  const err   = document.getElementById("formError");
 
   if (!btn) return;
 
   const ready = (cart.length > 0 && name && phone && email);
   btn.disabled = !ready;
-
-  // 🐝 Actualizar mensaje fijo en el idioma correcto
-  if (err) err.textContent = translations.fill_required[currentLang];
 }
 
 // === CONFIRMAR PEDIDO ===
