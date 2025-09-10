@@ -437,6 +437,15 @@ function shakeCartBadge() {
 window.onload = () => {
   setLanguage(currentLang);
 
+  // 🟢 conectar el selector de idioma con setLanguage
+  const sel = document.getElementById("lang");
+  if (sel) {
+    sel.value = currentLang;
+    sel.onchange = (e) => {
+      setLanguage(e.target.value);
+    };
+  }
+
   ["custName","custPhone","custEmail"].forEach(id=>{
     const el = document.getElementById(id);
     if (el) el.addEventListener("input", validateForm);
