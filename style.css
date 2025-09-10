@@ -194,7 +194,7 @@ body.no-scroll{
 .topbar{ padding-right: calc(16px + env(safe-area-inset-right,0px)); }
 
 @media (max-width: 380px){
-  .controls select, .controls .btn{ padding:6px 8px; font-size:14px; }
+  .controls select, .controls .btn.mango{ padding:6px 8px; font-size:14px; }
 }
 
 html{ -webkit-text-size-adjust: 100%; }
