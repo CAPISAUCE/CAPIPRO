@@ -446,11 +446,17 @@ window.onload = () => {
     };
   }
 
+  // Validación dinámica en los inputs
   ["custName","custPhone","custEmail"].forEach(id=>{
     const el = document.getElementById(id);
     if (el) el.addEventListener("input", validateForm);
   });
+
   validateForm();
+
+  // 🐝 asegurar que el mensaje fijo quede en el idioma actual al cargar la página
+  const err = document.getElementById("formError");
+  if (err) err.textContent = translations.fill_required[currentLang];
 };
 
 </script>
