@@ -250,7 +250,7 @@ function confirmOrder() {
   // Mostrar warning si falta un campo
   if (!customerName || !customerPhone || !customerEmail) {
     if (err) {
-      err.textContent = "⚠️ " + translations.fill_required[currentLang];
+      err.textContent = translations.fill_required[currentLang];
       err.style.display = "block";
     }
     return; // detener aquí
