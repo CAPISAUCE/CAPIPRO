@@ -230,7 +230,7 @@ html, body{ max-width:100%; overflow-x:hidden; }
   display: block;
 }
 
-/* 🟢 Botón Confirmar Pedido - deshabilitado (gris) */
+/* ✅ Botón Confirmar Pedido - deshabilitado (gris) */
 #confirm:disabled {
   background: #f0f0f0 !important;
   color: #999 !important;
@@ -241,7 +241,7 @@ html, body{ max-width:100%; overflow-x:hidden; }
   transition: all 0.3s ease;
 }
 
-/* 🟢 Botón Confirmar Pedido - habilitado (mango) */
+/* 🥭 Botón Confirmar Pedido - habilitado (mango) */
 #confirm:not(:disabled) {
   background: linear-gradient(180deg, #fcd34d, #f59e0b) !important; /* mango */
   color: #fff !important;
