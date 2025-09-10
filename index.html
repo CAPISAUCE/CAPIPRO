@@ -243,6 +243,12 @@ function i18n(){
   document.getElementById("custName").placeholder  = T.name_ph[lang];
   document.getElementById("custPhone").placeholder = T.phone_ph[lang];
   document.getElementById("custEmail").placeholder = T.email_ph[lang];
+
+  // 🟢 actualizar mensaje fijo de error
+  const err = document.getElementById("formError");
+  if (err) {
+    err.textContent = "🐝 " + T.fill_required[lang];
+  }
 }
 function renderProducts(){
   const root = document.getElementById("products");
