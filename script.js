@@ -249,20 +249,11 @@ function confirmOrder() {
   const customerName  = document.getElementById("custName").value.trim();
   const customerPhone = document.getElementById("custPhone").value.trim();
   const customerEmail = document.getElementById("custEmail").value.trim();
-  const err           = document.getElementById("formError");
 
-  // Mostrar warning si falta un campo
+  // 🚫 ya no manipulamos formError aquí
   if (!customerName || !customerPhone || !customerEmail) {
-    if (err) {
-      err.textContent = translations.fill_required[currentLang];
-      err.style.display = "block";
-    }
-    return; // detener aquí
-  } else {
-    if (err) err.style.display = "none"; // ocultar si todo está lleno
+    return; // detener aquí si faltan campos
   }
-
-  // ... aquí sigue el resto de confirmOrder (tu lógica actual) ...
 
   sending = true;
 
