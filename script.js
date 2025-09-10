@@ -85,6 +85,10 @@ function setLanguage(lang) {
   if (phoneInput) phoneInput.placeholder = translations.phone_ph[lang];
   if (emailInput) emailInput.placeholder = translations.email_ph[lang];
 
+  // ⚡ NUEVO: mensaje fijo con la abeja
+  const err = document.getElementById("formError");
+  if (err) err.textContent = translations.fill_required[lang];
+
   // Validar formulario otra vez
   validateForm();
 }
