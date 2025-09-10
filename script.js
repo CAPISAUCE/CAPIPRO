@@ -111,7 +111,7 @@ function setLanguage(lang) {
   renderProducts();
   renderCart();
 
-  // === NUEVO: actualizar placeholders de los campos ===
+  // === actualizar placeholders de los campos ===
   const nameInput  = document.getElementById("custName");
   const phoneInput = document.getElementById("custPhone");
   const emailInput = document.getElementById("custEmail");
@@ -120,9 +120,11 @@ function setLanguage(lang) {
   if (phoneInput) phoneInput.placeholder = translations.phone_ph[lang];
   if (emailInput) emailInput.placeholder = translations.email_ph[lang];
 
-  // ⚡ NUEVO: mensaje fijo con la abeja
+  // 🐝 mensaje fijo con el idioma correcto
   const err = document.getElementById("formError");
-  if (err) err.textContent = translations.fill_required[lang];
+  if (err) {
+    err.textContent = translations.fill_required[lang];
+  }
 
   // Validar formulario otra vez
   validateForm();
