@@ -435,6 +435,7 @@ function shakeCartBadge() {
 }
 
 window.onload = () => {
+  // inicializar idioma
   setLanguage(currentLang);
 
   // 🟢 conectar el selector de idioma con setLanguage
@@ -446,10 +447,12 @@ window.onload = () => {
     };
   }
 
-  ["custName","custPhone","custEmail"].forEach(id=>{
+  // validar formulario en vivo
+  ["custName","custPhone","custEmail"].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.addEventListener("input", validateForm);
   });
+
   validateForm();
 };
 </script>
