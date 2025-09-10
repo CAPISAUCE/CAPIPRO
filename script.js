@@ -64,12 +64,12 @@ const translations = {
     es:"Tu carrito está vacío", 
     en:"Your cart is empty" 
   },
-  fill_required: { 
-    ky:"🐝 Бардык талааларды толтуруңуз.", 
-    ru:"🐝 Пожалуйста, заполните все обязательные поля.", 
-    es:"🐝 Debe rellenar los campos obligatorios.", 
-    en:"🐝 Please fill in the required fields." 
-  },
+  fill_required:{ 
+  ky:"🐝 Сураныч, буйрутманы ырастоо үчүн бардык талааларды толтуруңуз.", 
+  ru:"🐝 Пожалуйста, заполните все обязательные поля, чтобы подтвердить заказ.", 
+  es:"🐝 Por favor, rellenar los campos obligatorios, para confirmar su pedido.", 
+  en:"🐝 Please fill in all required fields to confirm your order." 
+},
   name_ph: { 
     ky:"Атыңыз", 
     ru:"Ваше имя", 
