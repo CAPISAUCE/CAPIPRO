@@ -225,4 +225,21 @@ html, body{ max-width:100%; overflow-x:hidden; }
 #cart-items button[data-index]:active {
   transform: translateY(1px) !important;
   box-shadow: 0 1px 0 rgba(183,28,28,0.15) !important;
+ 
+  /* 🟢 Ajuste del mensaje con la abeja */
+#formError {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  line-height: 1.4;
+  font-size: 0.9em;
+  display: block;
+}
+
+/* 🟢 Estilo claro para botón confirmar deshabilitado */
+#confirm:disabled {
+  background: #f0f0f0 !important;
+  color: #999 !important;
+  border: 1px solid #ccc !important;
+  cursor: not-allowed;
+  font-weight: 600;
 }
