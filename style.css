@@ -1,17 +1,9 @@
 /* ——— Base ——— */
 :root{
-  --safe-top: env(safe-area-inset-top, 0px);
-  --safe-bot: env(safe-area-inset-bottom, 0px);
+  /* Safe areas para iPhone/Android con notch */
+  --safe-top: env(safe-area-inset-top);
+  --safe-bottom: env(safe-area-inset-bottom);
 }
-
-.topbar{
-  padding-top: calc(12px + var(--safe-top));
-  min-height: calc(56px + var(--safe-top)); /* asegura que no quede recortado */
-  box-sizing: border-box;
-}
-
-/* (Opcional) un poco de aire abajo por la barra home en PWA */
-.shell{ padding-bottom: calc(16px + var(--safe-bot)); }
 
 body {
   background-color: #fff8e1;
@@ -21,7 +13,7 @@ body {
   padding: 0;
   /* amortigua la barra de estado en iOS/Android PWA */
   padding-top: max(0px, var(--safe-top));
-  padding-bottom: max(0px, var(--safe-bot));
+  padding-bottom: max(0px, var(--safe-bottom));
 }
 
 header {
@@ -73,13 +65,14 @@ button:hover { background-color: #ffa000; }
   padding: 20px;
   margin: 12px;
   text-align: center;
-  width: 260px;
-  max-width: 92vw;
+  width: 260px;              /* desktop/tablet */
+  max-width: 92vw;           /* evita overflow en móviles */
 }
 
+/* Imagen responsive (usa todo el ancho disponible del card) */
 .product-image {
   width: 100%;
-  max-width: 220px;
+  max-width: 220px;          /* tope en pantallas grandes */
   height: auto;
   margin: 0 auto 10px;
   border-radius: 8px;
@@ -103,16 +96,19 @@ button:hover { background-color: #ffa000; }
   transform: translateY(0);
 }
 
-/* Animación al ocultar */
+/* Animación al ocultar, sin cortar la transición */
 #cart-popup.hidden {
   opacity: 0;
   transform: translateY(20px);
   pointer-events: none;
+  /* clave: mantenemos display para que la transición funcione */
   display: block;
 }
 
+/* Clase genérica .hidden para el resto de elementos */
 .hidden { display: none; }
 
+/* Botón flotante del carrito */
 #cart-button {
   position: fixed;
   bottom: 20px;
@@ -140,128 +136,24 @@ button:hover { background-color: #ffa000; }
   display: none;
 }
 
-/* Imagen de producto */
+/* —— IMAGEN de producto (única regla final) —— */
 html body #product-list .product img.product-image {
   display: block !important;
-  width: 100% !important;
-  max-width: 220px !important;
-  height: 420px !important;
-  object-fit: contain !important;
+  width: 100% !important;        /* ocupa el ancho del card */
+  max-width: 220px !important;   /* tope en desktop/tablet */
+  height: 420px !important;      /* alto fijo del recuadro */
+  object-fit: contain !important;/* NO recorta ni deforma */
   object-position: center !important;
   margin: 0 auto 10px !important;
   border: 1px solid #ffe0b2 !important;
   border-radius: 12px !important;
 }
 
+/* opcional: un poco más chica en móvil */
 @media (max-width: 600px){
   html body #product-list .product img.product-image {
     max-width: 180px !important;
+    /* si querés, podés bajar el alto también:
+       height: 220px !important; */
   }
-}
-
-/* Carrito por encima */
-#cart-popup{
-  z-index: 2147483000 !important;
-  position: fixed !important;
-}
-
-body.no-scroll{
-  overflow: hidden !important;
-  position: fixed !important;
-  width: 100% !important;
-}
-
-/* FIX header en iPhone */
-.topbar{
-  top: env(safe-area-inset-top, 0px) !important;
-}
-
-/* Controles del header */
-.controls{
-  display:flex; align-items:center; gap:8px;
-  flex-wrap:wrap;
-  max-width:100%;
-}
-.controls > *{ flex:0 0 auto; }
-#lang{
-  max-width: clamp(120px, 52vw, 240px);
-}
-#btnCart{
-  margin-left:auto;
-  white-space:nowrap;
-}
-
-.topbar{ padding-right: calc(16px + env(safe-area-inset-right,0px)); }
-
-@media (max-width: 380px){
-  .controls select, .controls .btn.mango{ padding:6px 8px; font-size:14px; }
-}
-
-html{ -webkit-text-size-adjust: 100%; }
-html, body{ max-width:100%; overflow-x:hidden; }
-
-/* ===== Estilo 3D rojo para botón Eliminar en el carrito ===== */
-#cart-items button[data-index] {
-  background: linear-gradient(180deg, rgba(255,0,0,0.15), rgba(255,0,0,0.25)) !important;
-  border: 1px solid rgba(255,0,0,0.28) !important;
-  color: #b71c1c !important;
-  font-weight: 700 !important;
-  border-radius: 10px !important;
-  box-shadow: 0 2px 0 rgba(183,28,28,0.15) !important;
-  transition: transform 0.05s ease, background 0.2s ease !important;
-  white-space: nowrap;
-  padding: 6px 12px;
-  cursor: pointer;
-}
-
-#cart-items button[data-index]:active {
-  transform: translateY(1px) !important;
-  box-shadow: 0 1px 0 rgba(183,28,28,0.15) !important;
-}  /* ⬅️ faltaba este cierre */
-
-/* 🐝 Estilo del mensaje fijo */
-#formError {
-  margin-top: 8px;
-  margin-bottom: 6px;
-  line-height: 1.4;
-  font-size: 0.9em;
-  font-weight: 600;
-  color: #d97706;
-  display: block;
-}
-
-/* ✅ Botón Confirmar Pedido - deshabilitado (gris) */
-#confirm:disabled {
-  background: #f0f0f0 !important;
-  color: #999 !important;
-  border: 1px solid #ccc !important;
-  cursor: not-allowed !important;
-  font-weight: 600;
-  box-shadow: none !important;
-  transition: all 0.3s ease;
-}
-
-/* 🥭 Botón Confirmar Pedido - habilitado (mango) */
-#confirm:not(:disabled) {
-  background: linear-gradient(180deg, #fcd34d, #f59e0b) !important; /* mango */
-  color: #fff !important;
-  border: 1px solid #d97706 !important;
-  font-weight: 700;
-  cursor: pointer;
-  box-shadow: 0 0 8px rgba(245, 158, 11, 0.4), 
-              0 4px 10px rgba(0, 0, 0, 0.15) !important;
-  transition: all 0.3s ease;
-}
-
-#confirm:not(:disabled):hover {
-  background: linear-gradient(180deg, #fde68a, #f59e0b) !important;
-  box-shadow: 0 0 12px rgba(245, 158, 11, 0.6), 
-              0 6px 14px rgba(0, 0, 0, 0.2) !important;
-  transform: scale(1.02);
-}
-
-#confirm:not(:disabled):active {
-  transform: scale(0.98);
-  box-shadow: 0 0 6px rgba(245, 158, 11, 0.3), 
-              0 3px 6px rgba(0, 0, 0, 0.2) !important;
 }
