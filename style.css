@@ -158,58 +158,48 @@ html body #product-list .product img.product-image {
   }
 }
 
-/* —— Botón Confirmar Orden estilo Amazon —— */
-button.btn-amz {
+/* —— Botón Confirmar Orden dorado tipo CAPIPRODUCT —— */
+button#confirm.btn-capipro {
   -webkit-appearance: none;
   appearance: none;
 
-  background: linear-gradient(#fff8dc, #f7dfa5 25%, #f0c14b 60%, #e2b33b) !important;
-  background-color: transparent !important;
-  color: #111 !important;
+  background: linear-gradient(#f8e39d, #efc24d 55%, #dda83a);
+  border: 1px solid #9a7a26;
+  border-right-color: #876a20;
+  border-bottom-color: #755a1a;
 
-  border: 1px solid #a88734 !important;
-  border-right-color: #9c7e31 !important;
-  border-bottom-color: #846a29 !important;
-
+  color: #111;
   font-weight: 700;
-  padding: 16px 20px;
-  border-radius: 10px;
-  box-shadow:
-    0 1px 0 rgba(255,255,255,.9) inset,
-    0 2px 0 rgba(0,0,0,.04),
-    0 4px 8px rgba(0,0,0,.08);
-  cursor: pointer;
-  transition: transform .05s ease, filter .12s ease;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: .2px;
 
+  padding: 9px 14px;
+  border-radius: 6px;
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.75) inset,
+    0 1px 0 rgba(0,0,0,.05),
+    0 3px 6px rgba(0,0,0,.10);
+  cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: .5rem;
-  width: auto;       /* en desktop no ocupa todo */
-  min-width: 220px;  /* ancho mínimo cómodo */
+  gap: .35rem;
+  transition: transform .04s ease, filter .12s ease, box-shadow .12s ease;
 }
 
-/* Estado hover/active */
-button.btn-amz:hover {
+button#confirm.btn-capipro:hover {
   filter: brightness(.98);
 }
-button.btn-amz:active {
+
+button#confirm.btn-capipro:active {
   transform: translateY(1px);
+  box-shadow:
+    0 0 0 rgba(0,0,0,0),
+    0 1px 0 rgba(0,0,0,.10);
 }
 
-/* Disabled */
-button.btn-amz[disabled] {
-  opacity: .6;
+button#confirm.btn-capipro[disabled] {
+  opacity: .65;
   cursor: not-allowed;
-  filter: none;
-}
-
-/* —— Ajuste móvil: ocupa todo el ancho —— */
-@media (max-width: 600px){
-  button.btn-amz {
-    width: 100%;          /* ocupa todo el ancho disponible */
-    min-width: unset;     /* quita el ancho mínimo fijo */
-    font-size: 1.1em;     /* texto un poco más grande */
-    padding: 18px 0;      /* más alto, táctil */
-  }
 }
