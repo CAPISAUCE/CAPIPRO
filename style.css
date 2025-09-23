@@ -158,30 +158,39 @@ html body #product-list .product img.product-image {
   }
 }
 
-/* —— Botón Confirmar Orden estilo Amazon —— */ 
-.btn-amz {
-  background: linear-gradient(#fff8dc, #f7dfa5 25%, #f0c14b 60%, #e2b33b); /* degradado amarillo Amazon */
+/* —— Botón Confirmar Orden estilo Amazon —— */
+button.btn-amz {
+  background: linear-gradient(#fff8dc, #f7dfa5 25%, #f0c14b 60%, #e2b33b) !important;
+  color: #111 !important;
+
   border: 1px solid #a88734;
   border-right-color: #9c7e31;
   border-bottom-color: #846a29;
-  color: #111;
+
   font-weight: 700;
   padding: 16px 20px;
   border-radius: 10px;
-  box-shadow: 0 1px 0 rgba(255,255,255,.9) inset,
-              0 2px 0 rgba(0,0,0,.04),
-              0 4px 8px rgba(0,0,0,.08);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.9) inset,
+    0 2px 0 rgba(0,0,0,.04),
+    0 4px 8px rgba(0,0,0,.08);
   cursor: pointer;
   transition: transform .05s ease, filter .12s ease;
+
+  /* opcional: presencia y alineación del emoji/texto */
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  /* min-width: 220px;  <- si lo quieres más ancho por defecto */
 }
 
-/* hover y active */
-.btn-amz:hover { filter: brightness(.98); }
-.btn-amz:active { transform: translateY(1px); }
+/* hover y active (misma especificidad para ganar a button{}) */
+button.btn-amz:hover { filter: brightness(.98); }
+button.btn-amz:active { transform: translateY(1px); }
 
-/* estado disabled (apagado, pero conserva amarillo) */
-.btn-amz[disabled] {
-  opacity: .6;        /* menos fuerte, pero mantiene color */
+/* estado disabled (apagado pero mantiene el degradado) */
+button.btn-amz[disabled] {
+  opacity: .6;
   cursor: not-allowed;
-  filter: grayscale(0);
+  filter: none;
 }
