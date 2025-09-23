@@ -112,6 +112,56 @@
       border: 1px solid #ffe1ad !important;
     }
   </style>
+  <style id="capipro-btn">
+  /* —— Botón Confirmar dorado tipo CAPIPRODUCT (solo #confirm) —— */
+  #confirm.btn-capipro {
+    -webkit-appearance: none;
+    appearance: none;
+
+    /* Fondo dorado */
+    background: linear-gradient(#f8e39d, #efc24d 55%, #dda83a) !important;
+    color: #111 !important;
+
+    /* Borde con relieve */
+    border: 1px solid #9a7a26 !important;
+    border-right-color: #876a20 !important;
+    border-bottom-color: #755a1a !important;
+
+    /* Tipografía y caja (respetando herencia general de la página) */
+    font-weight: 700;
+    font-size: 14px;        /* ajusta si quieres más grande */
+    padding: 12px 16px;
+    border-radius: 6px;
+
+    /* Brillo y sombra tipo CAPIPRODUCT */
+    box-shadow:
+      0 1px 0 rgba(255,255,255,.75) inset,
+      0 1px 0 rgba(0,0,0,.05),
+      0 3px 6px rgba(0,0,0,.10);
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .35rem;
+    cursor: pointer;
+    transition: transform .04s ease, filter .12s ease, box-shadow .12s ease;
+  }
+
+  /* Hover y Active */
+  #confirm.btn-capipro:hover { filter: brightness(.98); }
+  #confirm.btn-capipro:active {
+    transform: translateY(1px);
+    box-shadow:
+      0 0 0 rgba(0,0,0,0),
+      0 1px 0 rgba(0,0,0,.10);
+  }
+
+  /* Disabled (sigue dorado pero atenuado) */
+  #confirm.btn-capipro[disabled] {
+    opacity: .65;
+    cursor: not-allowed;
+  }
+</style>
 </head>
 <body>
   <header class="topbar">
