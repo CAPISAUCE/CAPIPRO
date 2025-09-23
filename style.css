@@ -160,12 +160,16 @@ html body #product-list .product img.product-image {
 
 /* —— Botón Confirmar Orden estilo Amazon —— */
 button.btn-amz {
+  -webkit-appearance: none;
+  appearance: none;
+
   background: linear-gradient(#fff8dc, #f7dfa5 25%, #f0c14b 60%, #e2b33b) !important;
+  background-color: transparent !important;
   color: #111 !important;
 
-  border: 1px solid #a88734;
-  border-right-color: #9c7e31;
-  border-bottom-color: #846a29;
+  border: 1px solid #a88734 !important;
+  border-right-color: #9c7e31 !important;
+  border-bottom-color: #846a29 !important;
 
   font-weight: 700;
   padding: 16px 20px;
@@ -177,20 +181,35 @@ button.btn-amz {
   cursor: pointer;
   transition: transform .05s ease, filter .12s ease;
 
-  /* opcional: presencia y alineación del emoji/texto */
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: .5rem;
-  /* min-width: 220px;  <- si lo quieres más ancho por defecto */
+  width: auto;       /* en desktop no ocupa todo */
+  min-width: 220px;  /* ancho mínimo cómodo */
 }
 
-/* hover y active (misma especificidad para ganar a button{}) */
-button.btn-amz:hover { filter: brightness(.98); }
-button.btn-amz:active { transform: translateY(1px); }
+/* Estado hover/active */
+button.btn-amz:hover {
+  filter: brightness(.98);
+}
+button.btn-amz:active {
+  transform: translateY(1px);
+}
 
-/* estado disabled (apagado pero mantiene el degradado) */
+/* Disabled */
 button.btn-amz[disabled] {
   opacity: .6;
   cursor: not-allowed;
   filter: none;
+}
+
+/* —— Ajuste móvil: ocupa todo el ancho —— */
+@media (max-width: 600px){
+  button.btn-amz {
+    width: 100%;          /* ocupa todo el ancho disponible */
+    min-width: unset;     /* quita el ancho mínimo fijo */
+    font-size: 1.1em;     /* texto un poco más grande */
+    padding: 18px 0;      /* más alto, táctil */
+  }
 }
