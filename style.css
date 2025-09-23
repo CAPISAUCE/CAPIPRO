@@ -156,6 +156,13 @@ html body #product-list .product img.product-image {
     /* si querés, podés bajar el alto también:
        height: 220px !important; */
   }
+
+  /* ✅ Botón Confirmar dorado en móviles, ancho auto */
+  #confirm.btn-capipro { 
+    width: auto !important;
+    padding: 12px 20px;
+    font-size: 15px;
+  }
 }
 
 /* —— FORZAR estilo CAPIPRODUCT en el botón confirmar —— */
