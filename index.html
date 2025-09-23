@@ -113,27 +113,27 @@
     }
   </style>
   <style id="capipro-btn">
-  /* —— Botón Confirmar dorado tipo CAPIPRODUCT (solo #confirm) —— */
+  /* —— Botón Confirmar dorado tipo CAPIPRODUCT —— */
   #confirm.btn-capipro {
     -webkit-appearance: none;
     appearance: none;
 
-    /* Fondo dorado */
+    /* Dorado luminoso (activo) */
     background: linear-gradient(#f8e39d, #efc24d 55%, #dda83a) !important;
     color: #111 !important;
 
-    /* Borde con relieve */
     border: 1px solid #9a7a26 !important;
     border-right-color: #876a20 !important;
     border-bottom-color: #755a1a !important;
 
-    /* Tipografía y caja (respetando herencia general de la página) */
     font-weight: 700;
-    font-size: 14px;        /* ajusta si quieres más grande */
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: .2px;
+
     padding: 12px 16px;
     border-radius: 6px;
 
-    /* Brillo y sombra tipo CAPIPRODUCT */
     box-shadow:
       0 1px 0 rgba(255,255,255,.75) inset,
       0 1px 0 rgba(0,0,0,.05),
@@ -144,22 +144,30 @@
     justify-content: center;
     gap: .35rem;
     cursor: pointer;
-    transition: transform .04s ease, filter .12s ease, box-shadow .12s ease;
+    transition: transform .04s ease, filter .12s ease, box-shadow .12s ease, background .2s ease;
   }
 
-  /* Hover y Active */
-  #confirm.btn-capipro:hover { filter: brightness(.98); }
-  #confirm.btn-capipro:active {
+  /* Hover y Active (más luminoso) */
+  #confirm.btn-capipro:hover:not([disabled]) {
+    filter: brightness(1.05);
+  }
+  #confirm.btn-capipro:active:not([disabled]) {
     transform: translateY(1px);
-    box-shadow:
-      0 0 0 rgba(0,0,0,0),
-      0 1px 0 rgba(0,0,0,.10);
+    box-shadow: 0 0 0 rgba(0,0,0,0), 0 1px 0 rgba(0,0,0,.10);
   }
 
-  /* Disabled (sigue dorado pero atenuado) */
+  /* Disabled: dorado opaco */
   #confirm.btn-capipro[disabled] {
-    opacity: .65;
+    background: linear-gradient(#e6d999, #d4b857 55%, #b99735) !important;
+    color: #444 !important;
+    opacity: 0.85;
     cursor: not-allowed;
+    box-shadow: none;
+  }
+
+  /* Móvil: ancho completo */
+  @media (max-width: 600px){
+    #confirm.btn-capipro { width: 100%; padding: 14px 0; font-size: 15px; }
   }
 </style>
 </head>
