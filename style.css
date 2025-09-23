@@ -149,21 +149,21 @@ html body #product-list .product img.product-image {
   border-radius: 12px !important;
 }
 
-/* opcional: un poco más chica en móvil */
+/* ✅ Forzar botón Confirmar a ancho auto en móviles (override definitivo) */
 @media (max-width: 600px){
-  html body #product-list .product img.product-image {
-    max-width: 180px !important;
-    /* si querés, podés bajar el alto también:
-       height: 220px !important; */
-  }
-
-  /* ✅ Botón Confirmar dorado en móviles, ancho auto */
-  #confirm.btn-capipro { 
-    width: auto !important;
-    padding: 12px 20px;
+  /* Cubrimos todas las variantes posibles del selector */
+  button#confirm,
+  #confirm.btn-capipro,
+  button#confirm.btn-capipro {
+    width: auto !important;         /* deja de ocupar todo el ancho */
+    flex: 0 0 auto !important;      /* evita que se estire dentro del contenedor flex */
+    display: inline-flex !important; /* asegura ancho según contenido */
+    padding: 12px 20px;             /* tacto cómodo en móvil */
     font-size: 15px;
+    align-self: flex-start;          /* se mantiene a la izquierda */
   }
 }
+
 
 /* —— FORZAR estilo CAPIPRODUCT en el botón confirmar —— */
 #confirm.btn-capipro {
