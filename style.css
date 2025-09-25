@@ -164,34 +164,49 @@ html body #product-list .product img.product-image {
   }
 }
 
-/* —— Confirmar pedido estilo Amazon con brillo —— */
-#confirm.btn-capipro {
-  background: linear-gradient(#f7f8fa, #f0c14b);
-  border: 1px solid #a88734;
-  border-right-color: #9c7e31;
-  border-bottom-color: #846a29;
-  color: #111;
-  font-weight: 700;
-  font-size: 14px;
-  padding: 12px 16px;
+/* —— Confirmar Pedido: mismo estilo que "Agregar al carrito" —— */
+
+/* Inactivo (apagado) */
+#confirm:disabled {
+  background: #f0f0f0 !important;
+  color: #999 !important;
+  border: 1px solid #ccc !important;
+  cursor: not-allowed !important;
+  font-weight: 600;
+  box-shadow: none !important;
+  width: auto !important;   /* 🔹 tamaño natural */
+  padding: 10px 14px;       /* igual que los demás botones */
   border-radius: 6px;
+  font-size: 1em;
+}
+
+/* Activo (igual que "Agregar al carrito") */
+#confirm:not(:disabled) {
+  background: linear-gradient(180deg, #fcd34d, #f59e0b) !important; /* mango brillante */
+  color: #fff !important;
+  border: 1px solid #d97706 !important;
+  font-weight: 700;
   cursor: pointer;
-  transition: transform .04s ease, filter .12s ease, opacity .15s ease;
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.4),
+              0 4px 10px rgba(0, 0, 0, 0.15) !important;
+  transition: all 0.3s ease;
+  width: auto !important;   /* 🔹 no ocupa todo el ancho */
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 1em;
 }
 
-/* Hover → más luminoso */
-#confirm.btn-capipro:hover:not([disabled]) {
-  filter: brightness(1.05);
+/* Hover */
+#confirm:not(:disabled):hover {
+  background: linear-gradient(180deg, #fde68a, #f59e0b) !important;
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.6),
+              0 6px 14px rgba(0, 0, 0, 0.2) !important;
+  transform: scale(1.02);
 }
 
-/* Active → relieve presionado */
-#confirm.btn-capipro:active:not([disabled]) {
-  transform: translateY(1px);
-}
-
-/* Disabled → dorado opaco */
-#confirm.btn-capipro[disabled] {
-  opacity: .55;       /* se apaga */
-  background: linear-gradient(#f7f8fa, #e6d68a);
-  cursor: not-allowed;
+/* Active */
+#confirm:not(:disabled):active {
+  transform: scale(0.98);
+  box-shadow: 0 0 6px rgba(245, 158, 11, 0.3),
+              0 3px 6px rgba(0, 0, 0, 0.2) !important;
 }
