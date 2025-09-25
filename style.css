@@ -164,7 +164,7 @@ html body #product-list .product img.product-image {
   }
 }
 
-/* —— Confirmar pedido estilo Amazon —— */
+/* —— Confirmar pedido estilo Amazon con brillo —— */
 #confirm.btn-capipro {
   background: linear-gradient(#f7f8fa, #f0c14b);
   border: 1px solid #a88734;
@@ -176,21 +176,22 @@ html body #product-list .product img.product-image {
   padding: 12px 16px;
   border-radius: 6px;
   cursor: pointer;
-  transition: transform .04s ease, filter .12s ease;
+  transition: transform .04s ease, filter .12s ease, opacity .15s ease;
 }
 
-/* Hover */
-#confirm.btn-capipro:hover {
-  filter: brightness(.97);
+/* Hover → más luminoso */
+#confirm.btn-capipro:hover:not([disabled]) {
+  filter: brightness(1.05);
 }
 
-/* Active */
-#confirm.btn-capipro:active {
+/* Active → relieve presionado */
+#confirm.btn-capipro:active:not([disabled]) {
   transform: translateY(1px);
 }
 
-/* Disabled (mantiene color pero opaco) */
+/* Disabled → dorado opaco */
 #confirm.btn-capipro[disabled] {
-  opacity: .6;
+  opacity: .55;       /* se apaga */
+  background: linear-gradient(#f7f8fa, #e6d68a);
   cursor: not-allowed;
 }
