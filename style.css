@@ -164,7 +164,7 @@ aside #confirm {
 /* 🔒 Estado deshabilitado */
 #confirm:disabled {
   background: #f0f0f0 !important;
-  color: #999 !important;
+  color: #000 !important;
   border: 1px solid #ccc !important;
   cursor: not-allowed !important;
   font-weight: 600;
@@ -177,7 +177,7 @@ aside #confirm {
 /* 🟡 Estado activo (idéntico a "Agregar al carrito") */
 #confirm:not(:disabled) {
   background: linear-gradient(180deg, #fcd34d, #f59e0b) !important;
-  color: #fff !important;
+  color: #000 !important;
   border: 1px solid #d97706 !important;
   font-weight: 700;
   cursor: pointer;
