@@ -161,8 +161,8 @@ aside #confirm {
   transition: all 0.25s ease;
 }
 
-/* 🔒 Estado deshabilitado (gris opaco) */
-aside #confirm:disabled {
+/* 🔒 Inactivo */
+#confirm:disabled {
   background: #f0f0f0 !important;
   color: #999 !important;
   border: 1px solid #ccc !important;
@@ -170,11 +170,12 @@ aside #confirm:disabled {
   box-shadow: none !important;
 }
 
-/* 🟡 Estado activo (igual que "Agregar al carrito") */
-aside #confirm:not(:disabled) {
+/* 🟡 Activo (forzar mango degradado) */
+#confirm:not(:disabled) {
   background: linear-gradient(180deg, #fcd34d, #f59e0b) !important;
   color: #fff !important;
   border: 1px solid #d97706 !important;
+  font-weight: 700;
   box-shadow: 0 0 8px rgba(245, 158, 11, 0.4),
               0 4px 10px rgba(0, 0, 0, 0.15) !important;
 }
