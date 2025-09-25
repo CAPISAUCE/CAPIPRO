@@ -101,11 +101,9 @@ button:hover { background-color: #ffa000; }
   opacity: 0;
   transform: translateY(20px);
   pointer-events: none;
-  /* clave: mantenemos display para que la transición funcione */
   display: block;
 }
 
-/* Clase genérica .hidden para el resto de elementos */
 .hidden { display: none; }
 
 /* Botón flotante del carrito */
@@ -139,71 +137,69 @@ button:hover { background-color: #ffa000; }
 /* —— IMAGEN de producto (única regla final) —— */
 html body #product-list .product img.product-image {
   display: block !important;
-  width: 100% !important;        /* ocupa el ancho del card */
-  max-width: 220px !important;   /* tope en desktop/tablet */
-  height: 420px !important;      /* alto fijo del recuadro */
-  object-fit: contain !important;/* NO recorta ni deforma */
+  width: 100% !important;
+  max-width: 220px !important;
+  height: 420px !important;
+  object-fit: contain !important;
   object-position: center !important;
   margin: 0 auto 10px !important;
   border: 1px solid #ffe0b2 !important;
   border-radius: 12px !important;
 }
 
-/* ✅ Forzar botón Confirmar a ancho auto en móviles (override definitivo) */
-@media (max-width: 600px){
-  #confirm.btn-capipro {
-    width: auto !important;         /* deja de ocupar todo el ancho */
-    flex: 0 0 auto !important;      /* evita que se estire dentro del contenedor flex */
-    display: inline-flex !important;/* asegura ancho según contenido */
-    padding: 12px 20px;             /* tacto cómodo en móvil */
-    font-size: 15px;
-    align-self: flex-start;         /* se mantiene a la izquierda */
-  }
+/* ✅ Botón Confirmar Pedido — versión final única */
+aside #confirm {
+  -webkit-appearance: none;
+  appearance: none;
+
+  width: auto;
+  padding: 10px 14px;
+  font-size: 1em;
+  border-radius: 6px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s ease;
 }
 
-/* —— Confirmar Pedido: mismo estilo que "Agregar al carrito" —— */
-
-/* Inactivo (apagado) */
-#confirm:disabled {
+/* 🔒 Estado deshabilitado (gris opaco) */
+aside #confirm:disabled {
   background: #f0f0f0 !important;
   color: #999 !important;
   border: 1px solid #ccc !important;
-  cursor: not-allowed !important;
-  font-weight: 600;
+  cursor: not-allowed;
   box-shadow: none !important;
-  width: auto !important;   /* 🔹 tamaño natural */
-  padding: 10px 14px;       /* igual que los demás botones */
-  border-radius: 6px;
-  font-size: 1em;
 }
 
-/* Activo (igual que "Agregar al carrito") */
-#confirm:not(:disabled) {
-  background: linear-gradient(180deg, #fcd34d, #f59e0b) !important; /* mango brillante */
+/* 🟡 Estado activo (igual que "Agregar al carrito") */
+aside #confirm:not(:disabled) {
+  background: linear-gradient(180deg, #fcd34d, #f59e0b) !important;
   color: #fff !important;
   border: 1px solid #d97706 !important;
-  font-weight: 700;
-  cursor: pointer;
   box-shadow: 0 0 8px rgba(245, 158, 11, 0.4),
               0 4px 10px rgba(0, 0, 0, 0.15) !important;
-  transition: all 0.3s ease;
-  width: auto !important;   /* 🔹 no ocupa todo el ancho */
-  padding: 10px 14px;
-  border-radius: 6px;
-  font-size: 1em;
 }
 
-/* Hover */
-#confirm:not(:disabled):hover {
+/* ✨ Hover */
+aside #confirm:not(:disabled):hover {
   background: linear-gradient(180deg, #fde68a, #f59e0b) !important;
   box-shadow: 0 0 12px rgba(245, 158, 11, 0.6),
               0 6px 14px rgba(0, 0, 0, 0.2) !important;
   transform: scale(1.02);
 }
 
-/* Active */
-#confirm:not(:disabled):active {
+/* 👆 Active (clic) */
+aside #confirm:not(:disabled):active {
   transform: scale(0.98);
   box-shadow: 0 0 6px rgba(245, 158, 11, 0.3),
               0 3px 6px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* 📱 En móviles: ancho auto y alineado a la izquierda */
+@media (max-width: 600px){
+  aside #confirm {
+    width: auto !important;
+    flex: 0 0 auto !important;
+    display: inline-flex !important;
+    align-self: flex-start;
+  }
 }
