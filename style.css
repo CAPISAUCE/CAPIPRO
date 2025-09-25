@@ -161,38 +161,47 @@ aside #confirm {
   transition: all 0.25s ease;
 }
 
-/* 🔒 Inactivo */
+/* 🔒 Estado deshabilitado */
 #confirm:disabled {
   background: #f0f0f0 !important;
   color: #999 !important;
   border: 1px solid #ccc !important;
-  cursor: not-allowed;
+  cursor: not-allowed !important;
+  font-weight: 600;
   box-shadow: none !important;
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: 1em;
 }
 
-/* 🟡 Activo (forzar mango degradado) */
+/* 🟡 Estado activo (idéntico a "Agregar al carrito") */
 #confirm:not(:disabled) {
   background: linear-gradient(180deg, #fcd34d, #f59e0b) !important;
   color: #fff !important;
   border: 1px solid #d97706 !important;
   font-weight: 700;
+  cursor: pointer;
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: 1em;
   box-shadow: 0 0 8px rgba(245, 158, 11, 0.4),
-              0 4px 10px rgba(0, 0, 0, 0.15) !important;
+              0 4px 10px rgba(0,0,0,0.15) !important;
+  transition: all 0.25s ease;
 }
 
 /* ✨ Hover */
-aside #confirm:not(:disabled):hover {
+#confirm:not(:disabled):hover {
   background: linear-gradient(180deg, #fde68a, #f59e0b) !important;
   box-shadow: 0 0 12px rgba(245, 158, 11, 0.6),
-              0 6px 14px rgba(0, 0, 0, 0.2) !important;
+              0 6px 14px rgba(0,0,0,0.2) !important;
   transform: scale(1.02);
 }
 
-/* 👆 Active (clic) */
-aside #confirm:not(:disabled):active {
+/* 👆 Active */
+#confirm:not(:disabled):active {
   transform: scale(0.98);
   box-shadow: 0 0 6px rgba(245, 158, 11, 0.3),
-              0 3px 6px rgba(0, 0, 0, 0.2) !important;
+              0 3px 6px rgba(0,0,0,0.2) !important;
 }
 
 /* 📱 En móviles: ancho auto y alineado a la izquierda */
