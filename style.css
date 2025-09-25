@@ -151,16 +151,13 @@ html body #product-list .product img.product-image {
 
 /* ✅ Forzar botón Confirmar a ancho auto en móviles (override definitivo) */
 @media (max-width: 600px){
-  /* Cubrimos todas las variantes posibles del selector */
-  button#confirm,
-  #confirm.btn-capipro,
-  button#confirm.btn-capipro {
+  #confirm.btn-capipro {
     width: auto !important;         /* deja de ocupar todo el ancho */
     flex: 0 0 auto !important;      /* evita que se estire dentro del contenedor flex */
-    display: inline-flex !important; /* asegura ancho según contenido */
+    display: inline-flex !important;/* asegura ancho según contenido */
     padding: 12px 20px;             /* tacto cómodo en móvil */
     font-size: 15px;
-    align-self: flex-start;          /* se mantiene a la izquierda */
+    align-self: flex-start;         /* se mantiene a la izquierda */
   }
 }
 
