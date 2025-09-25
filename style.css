@@ -164,49 +164,33 @@ html body #product-list .product img.product-image {
   }
 }
 
-/* —— FORZAR estilo CAPIPRODUCT en el botón confirmar —— */
+/* —— Confirmar pedido estilo Amazon —— */
 #confirm.btn-capipro {
-  /* Tamaño (como antes, pequeño y a la izquierda) */
-  width: auto;               /* se ajusta al contenido */
-  padding: 12px 16px;        /* alto/ancho cómodo */
-  font-size: 14px;           /* tamaño de texto original */
-  display: inline-flex; 
-  align-items: center; 
-  gap: .35rem;
-
-  /* Apariencia CAPIPRODUCT */
-  -webkit-appearance: none;
-  appearance: none;
-  background: linear-gradient(#f8e39d, #efc24d 55%, #dda83a) !important;
-  color: #111 !important;
-
-  border: 1px solid #9a7a26 !important;
-  border-right-color: #876a20 !important;
-  border-bottom-color: #755a1a !important;
-
+  background: linear-gradient(#f7f8fa, #f0c14b);
+  border: 1px solid #a88734;
+  border-right-color: #9c7e31;
+  border-bottom-color: #846a29;
+  color: #111;
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: .2px;
+  font-size: 14px;
+  padding: 12px 16px;
   border-radius: 6px;
-
-  box-shadow:
-    0 1px 0 rgba(255,255,255,.75) inset,
-    0 1px 0 rgba(0,0,0,.05),
-    0 3px 6px rgba(0,0,0,.10);
-
   cursor: pointer;
-  transition: transform .04s ease, filter .12s ease, box-shadow .12s ease;
+  transition: transform .04s ease, filter .12s ease;
 }
 
-/* Hover y Active */
-#confirm.btn-capipro:hover { filter: brightness(.98); }
+/* Hover */
+#confirm.btn-capipro:hover {
+  filter: brightness(.97);
+}
+
+/* Active */
 #confirm.btn-capipro:active {
   transform: translateY(1px);
-  box-shadow: 0 0 0 rgba(0,0,0,0), 0 1px 0 rgba(0,0,0,.10);
 }
 
-/* Disabled: dorado atenuado */
+/* Disabled (mantiene color pero opaco) */
 #confirm.btn-capipro[disabled] {
-  opacity: .65;
+  opacity: .6;
   cursor: not-allowed;
 }
