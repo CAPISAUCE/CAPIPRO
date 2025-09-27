@@ -188,10 +188,10 @@ function updateCart(){
     const row = document.createElement("div");
     row.className = "row";
 
-    const icon = it.id === "honey" ? "🍯" 
-           : it.id === "mango" ? "🥭🌶️" 
-           : it.id === "pepper_red" ? "<img src='emoji_redpepper.png' class='emoji-icon'>" 
-           : "•";
+     const icon = it.id === "honey" ? "🍯" 
+              : it.id === "mango" ? "🥭🌶️" 
+              : it.id === "pepper_red" ? "🫑"   // volvemos al emoji verde
+              : "•";
 
     row.innerHTML = `<span>${icon} ${it.name} ${it.size} ml x${it.qty} (${it.price.kgs} сом / $${money(it.price.usd)})</span>`;
 
