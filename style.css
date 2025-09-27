@@ -213,3 +213,8 @@ aside #confirm {
     align-self: flex-start;
   }
 }
+.emoji-icon {
+  width: 1em;
+  height: 1em;
+  vertical-align: middle;
+}
