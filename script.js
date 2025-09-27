@@ -10,8 +10,51 @@ let lang = localStorage.getItem("capi_lang") || "ky";
 
 /* ================== DATA ================== */
 const PRODUCTS = [
-  { id:"honey", img:"honey_logo.png", name:{ky:"Таза бал Issyk Kul", ru:"Чистый мёд Issyk Kul", es:"Miel Pura Issyk Kul", en:"Pure Honey Issyk Kul"}, sizes:[{ml:350,usd:4.0},{ml:500,usd:6.3},{ml:1000,usd:10.0}] },
-  { id:"mango", img:"mango_logo.png", name:{ky:"Жашыл манго ачуу соусу",ru:"Острый соус из зелёного манго",es:"Salsa Picante de Mango Verde",en:"Green Mango Hot Sauce"}, sizes:[{ml:350,usd:4.0},{ml:500,usd:9.0},{ml:1000,usd:20.0}] }
+  { 
+    id:"honey", 
+    img:"honey_logo.png", 
+    name:{
+      ky:"Таза бал Issyk Kul", 
+      ru:"Чистый мёд Issyk Kul", 
+      es:"Miel Pura Issyk Kul", 
+      en:"Pure Honey Issyk Kul"
+    }, 
+    sizes:[
+      {ml:350,usd:4.0},
+      {ml:500,usd:6.3},
+      {ml:1000,usd:10.0}
+    ] 
+  },
+  { 
+    id:"mango", 
+    img:"mango_logo.png", 
+    name:{
+      ky:"Жашыл манго ачуу соусу",
+      ru:"Острый соус из зелёного манго",
+      es:"Salsa Picante de Mango Verde",
+      en:"Green Mango Hot Sauce"
+    }, 
+    sizes:[
+      {ml:350,usd:4.0},
+      {ml:500,usd:9.0},
+      {ml:1000,usd:20.0}
+    ] 
+  },
+  { 
+    id:"pepper_red", 
+    img:"redpepper_logo.png", 
+    name:{
+      ky:"Кызыл калемпир ачуу соусу",
+      ru:"Острый соус из красного перца",
+      es:"Salsa Picante de Pimiento Rojo",
+      en:"Spicy Red Pepper Sauce"
+    }, 
+    sizes:[
+      {ml:350,usd:3.5},
+      {ml:500,usd:8.0},
+      {ml:1000,usd:20.0}
+    ] 
+  }
 ];
 
 const T = {
