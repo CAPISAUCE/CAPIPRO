@@ -214,7 +214,8 @@ aside #confirm {
   }
 }
 .emoji-icon {
-  width: 1em;
+  width: 1em;          /* tamaño relativo a la fuente (como un emoji) */
   height: 1em;
   vertical-align: middle;
+  object-fit: contain; /* asegura que no se deforme */
 }
