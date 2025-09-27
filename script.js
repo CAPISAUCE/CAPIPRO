@@ -190,7 +190,7 @@ function updateCart(){
 
     const icon = it.id === "honey" ? "🍯" 
            : it.id === "mango" ? "🥭🌶️" 
-           : it.id === "pepper_red" ? "<img src='icons/emoji_redpepper.png' class='emoji-icon'>" 
+           : it.id === "pepper_red" ? "<img src='emoji_redpepper.png' class='emoji-icon'>" 
            : "•";
 
     row.innerHTML = `<span>${icon} ${it.name} ${it.size} ml x${it.qty} (${it.price.kgs} сом / $${money(it.price.usd)})</span>`;
