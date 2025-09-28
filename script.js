@@ -255,7 +255,8 @@ function confirmOrder(){
   }
 
   const name  = document.getElementById("custName").value.trim();
-  const phone = document.getElementById("custPhone").value.trim();
+  // ✅ NUEVO: obtener número internacional con intl-tel-input
+  const phone = iti.getNumber(); 
   const email = document.getElementById("custEmail").value.trim();
   const err   = document.getElementById("formError");
 
@@ -299,7 +300,6 @@ function confirmOrder(){
 
   sendToSheets(payload);
 
-  /* ===== NUEVO: limpiar datos del cliente ANTES de salir ===== */
   clearCheckoutForm();
 
   const enc = encodeURIComponent(msg);
@@ -336,6 +336,14 @@ window.addEventListener("load", () => {
       document.getElementById("confirm").disabled = !filled;
     }
     inputs.forEach(i => i.addEventListener("input", validateForm));
+
+    // ✅ NUEVO: inicializar intl-tel-input en el campo de teléfono
+    window.iti = window.intlTelInput(document.querySelector("#custPhone"), {
+      initialCountry: "kg",
+      preferredCountries: ["kg","es","us","ru"],
+      separateDialCode: true
+    });
+
   }catch(e){
     console.error("Init error:", e);
     document.getElementById("products").innerHTML = "<div class='card'>Перезагрузите страницу / Vuelva a cargar la página.</div>";
