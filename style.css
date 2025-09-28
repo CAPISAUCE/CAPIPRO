@@ -213,3 +213,18 @@ aside #confirm {
     align-self: flex-start;
   }
 }
+
+/* ✅ NUEVO — Estilos mínimos para intl-tel-input (campo teléfono internacional) */
+.iti {
+  width: 100%;
+}
+.iti__flag-container {
+  border-radius: 6px 0 0 6px;
+}
+.iti input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1em;
+}
