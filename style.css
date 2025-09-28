@@ -50,7 +50,7 @@ button:active { transform: scale(.98); }
 button:hover { background-color: #ffa000; }
 
 /* ——— Productos ——— */
-#product-list {
+#product {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -135,7 +135,7 @@ button:hover { background-color: #ffa000; }
 }
 
 /* —— IMAGEN de producto (única regla final) —— */
-html body #product-list .product img.product-image {
+html body #product .product img.product-image {
   display: block !important;
   width: 100% !important;
   max-width: 220px !important;
