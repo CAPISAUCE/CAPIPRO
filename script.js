@@ -315,12 +315,18 @@ function confirmOrder(){
 }
 
 /* ================== INIT ================== */
-if ('serviceWorker' in navigator) { navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister())); }
+if ('serviceWorker' in navigator) { 
+  navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister())); 
+}
 window.addEventListener("load", () => {
   try{
     const sel = document.getElementById("lang");
     sel.value = lang;
-    sel.onchange = (e)=>{ lang=e.target.value; localStorage.setItem("capi_lang",lang); i18n(); renderProducts(); updateCart(); };
+    sel.onchange = (e)=>{ 
+      lang=e.target.value; 
+      localStorage.setItem("capi_lang",lang); 
+      i18n(); renderProducts(); updateCart(); 
+    };
     document.getElementById("btnCart").onclick = openCart;
     document.getElementById("closeCart").onclick = closeCart;
     document.getElementById("backdrop").onclick = closeCart;
@@ -328,6 +334,13 @@ window.addEventListener("load", () => {
     document.getElementById("confirm").onclick = confirmOrder;
     i18n(); renderProducts(); updateCart();
     fetch(SHEETS_WEBAPP_URL).catch(()=>{});
+
+    // ✅ Inicializar intl-tel-input en el campo de teléfono
+    window.iti = window.intlTelInput(document.querySelector("#custPhone"), {
+      initialCountry: "kg",
+      preferredCountries: ["kg","es","us","ru"],
+      separateDialCode: true
+    });
 
     // === Validación de campos obligatorios ===
     const inputs = ["custName","custPhone","custEmail"].map(id => document.getElementById(id));
@@ -337,16 +350,10 @@ window.addEventListener("load", () => {
     }
     inputs.forEach(i => i.addEventListener("input", validateForm));
 
-    // ✅ NUEVO: inicializar intl-tel-input en el campo de teléfono
-    window.iti = window.intlTelInput(document.querySelector("#custPhone"), {
-      initialCountry: "kg",
-      preferredCountries: ["kg","es","us","ru"],
-      separateDialCode: true
-    });
-
   }catch(e){
     console.error("Init error:", e);
     document.getElementById("products").innerHTML = "<div class='card'>Перезагрузите страницу / Vuelva a cargar la página.</div>";
   }
 });
+
 </script>
