@@ -248,6 +248,8 @@ function toggleCart(){
   document.body.classList.toggle("no-scroll", willOpen);
 }
 
+// ✅ Actualizado: confirmOrder con intl-tel-input
+
 function confirmOrder(){
   if(cart.length===0){ 
     alert(T.empty_cart[lang] + " — TOTAL: $0 / 0 сом"); 
@@ -255,10 +257,25 @@ function confirmOrder(){
   }
 
   const name  = document.getElementById("custName").value.trim();
-  const phone = document.getElementById("custPhone").value.trim();
   const email = document.getElementById("custEmail").value.trim();
   const err   = document.getElementById("formError");
 
+  // Teléfono: usar intl-tel-input si está cargado
+  const phoneInputEl = document.getElementById("custPhone");
+  let phone = (phoneInputEl?.value || "").trim();
+
+  if (iti) {
+    phone = iti.getNumber(); // siempre formato +996..., +34..., etc.
+    if (!iti.isValidNumber()) {
+      if (err) {
+        err.textContent = "🐝 Número de teléfono inválido. Revísalo, por favor.";
+        err.style.display = "block";
+      }
+      return;
+    }
+  }
+
+  // Validar campos
   if (!name || !phone || !email) {
     if (err) {
       err.textContent = "🐝 " + T.fill_required[lang];
@@ -269,6 +286,7 @@ function confirmOrder(){
     if (err) err.style.display = "none";
   }
 
+  // Mensaje WhatsApp
   let msg = "🧾 " + T.cart[lang] + ":\n";
   let totUSD=0, totKGS=0;
   cart.forEach(it=>{ 
@@ -280,6 +298,7 @@ function confirmOrder(){
   const orderId = genOrderId(); 
   msg += `\n\nID: ${orderId}`;
 
+  // Payload al Sheet
   const payload = { 
     orderId, 
     alive:true, 
@@ -292,16 +311,17 @@ function confirmOrder(){
     items: cart.map(it=>({id:it.id,name:it.name,ml:Number(it.size),qty:Number(it.qty),usd:Number(it.price.usd),kgs:Number(it.price.kgs)})),
     created_at:new Date().toISOString(),
     customer:name,
-    phone:phone,
+    phone:phone,   // ✅ guardamos número internacional
     email:email,
     autoInvoice:true
   };
 
   sendToSheets(payload);
 
-  /* ===== NUEVO: limpiar datos del cliente ANTES de salir ===== */
+  // Limpia el formulario
   clearCheckoutForm();
 
+  // Enviar a WhatsApp (tus números de negocio)
   const enc = encodeURIComponent(msg);
   const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
   const urlKG = isMobile ? `whatsapp://send?phone=${PHONE_KG}&text=${enc}` : `https://wa.me/${PHONE_KG}?text=${enc}`; 
@@ -309,6 +329,7 @@ function confirmOrder(){
   const urlUS = isMobile ? `whatsapp://send?phone=${PHONE_US}&text=${enc}` : `https://wa.me/${PHONE_US}?text=${enc}`; 
   setTimeout(()=>window.open(urlUS,"_blank"),500);
 
+  // Reset del carrito
   cart = []; 
   updateCart(); 
   closeCart();
@@ -328,14 +349,48 @@ window.addEventListener("load", () => {
     document.getElementById("confirm").onclick = confirmOrder;
     i18n(); renderProducts(); updateCart();
     fetch(SHEETS_WEBAPP_URL).catch(()=>{});
-
+    
+    // ✅ Actualizado: intl-tel-input inicialización
+    let iti;
+    const phoneInput = document.querySelector("#custPhone");
+    if (phoneInput) {
+    iti = window.intlTelInput(phoneInput, {
+    initialCountry: "kg", // 🇰🇬 predeterminado
+    preferredCountries: ["kg","us","es","mx","ru"],
+    utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js"
+  });
+}
     // === Validación de campos obligatorios ===
     const inputs = ["custName","custPhone","custEmail"].map(id => document.getElementById(id));
+    
+       // === Validación de campos obligatorios ===
+    const inputs = ["custName","custPhone","custEmail"].map(id => document.getElementById(id));
+
+    // ✅ Actualizado: validateForm con intl-tel-input
     function validateForm(){
-      const filled = inputs.every(i => i.value.trim() !== "");
-      document.getElementById("confirm").disabled = !filled;
+      const name  = document.getElementById("custName").value.trim();
+      const phone = document.getElementById("custPhone").value.trim();
+      const email = document.getElementById("custEmail").value.trim();
+
+      let ok = !!name && !!phone && !!email;
+
+      // si intl-tel-input está cargado, validar número internacional
+      if (ok && typeof iti !== "undefined" && iti) {
+        ok = iti.isValidNumber();
+      }
+      document.getElementById("confirm").disabled = !ok;
     }
+
+    // ✅ Escuchar cambios en los 3 inputs normales
     inputs.forEach(i => i.addEventListener("input", validateForm));
+
+    // ✅ Escuchar cambios específicos del input teléfono (bandera y escritura)
+    const phoneEl = document.getElementById("custPhone");
+    if (phoneEl) {
+      phoneEl.addEventListener("countrychange", validateForm);
+      phoneEl.addEventListener("input", validateForm);
+    }
+
   }catch(e){
     console.error("Init error:", e);
     document.getElementById("products").innerHTML = "<div class='card'>Перезагрузите страницу / Vuelva a cargar la página.</div>";
