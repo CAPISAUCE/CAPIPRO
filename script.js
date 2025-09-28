@@ -204,9 +204,10 @@ function updateCart(){
     row.className = "row";
 
      const icon = it.id === "honey" ? "🍯" 
-              : it.id === "mango" ? "🥭🌶️" 
-              : it.id === "pepper_red" ? "🫑"   // volvemos al emoji verde
-              : "•";
+            : it.id === "mango" ? "🥭🌶️" 
+            : it.id === "pepper_red" ? "🍅"     // tomate para red pepper
+            : it.id === "pepper_green" ? "🫑"   // pimiento verde
+            : "•";
 
     row.innerHTML = `<span>${icon} ${it.name} ${it.size} ml x${it.qty} (${it.price.kgs} сом / $${money(it.price.usd)})</span>`;
 
