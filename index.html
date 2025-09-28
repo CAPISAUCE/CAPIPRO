@@ -126,10 +126,10 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
 </head>
 <body>
-  <!-- … resto de tu body y carrito sin cambios … -->
+  <!-- … tu body, productos y carrito igual que lo tienes … -->
 
 <script>
-/* … todo tu código … */
+/* … tu código previo … */
 
 function confirmOrder(){
   if(cart.length===0){ 
@@ -153,7 +153,7 @@ function confirmOrder(){
     if (err) err.style.display = "none";
   }
 
-  /* … resto de confirmOrder sin cambios … */
+  /* … resto de confirmOrder igual … */
 }
 
 /* ================== INIT ================== */
@@ -170,7 +170,7 @@ window.addEventListener("load", () => {
     });
 
     /* … validación de campos … */
-  }catch(e){ … }
+  }catch(e){ console.error("Init error", e); }
 });
 </script>
 </body>
