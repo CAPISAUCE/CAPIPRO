@@ -129,6 +129,7 @@ function clearCheckoutForm(){
 
 /* ================== STATE ================== */
 let cart = [];
+let iti = null; // 📞 instancia global para intl-tel-input
 
 /* ================== UI ================== */
 function i18n(){
@@ -349,14 +350,14 @@ window.addEventListener("load", () => {
     document.getElementById("confirm").onclick = confirmOrder;
     i18n(); renderProducts(); updateCart();
     fetch(SHEETS_WEBAPP_URL).catch(()=>{});
-    
-    // ✅ Actualizado: intl-tel-input inicialización
-    let iti;
-    const phoneInput = document.querySelector("#custPhone");
-    if (phoneInput) {
-    iti = window.intlTelInput(phoneInput, {
-    initialCountry: "kg", // 🇰🇬 predeterminado
-    preferredCountries: ["kg","us","es","mx","ru"],
+
+// ✅ intl-tel-input inicialización
+const phoneInput = document.querySelector("#custPhone");
+if (phoneInput) {
+  iti = window.intlTelInput(phoneInput, {
+    initialCountry: "kg",
+    preferredCountries: ["kg","us","es","kz","ru"],
+    dropdownContainer: document.body,
     utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js"
   });
 }
@@ -367,7 +368,7 @@ window.addEventListener("load", () => {
     const inputs = ["custName","custPhone","custEmail"].map(id => document.getElementById(id));
 
     // ✅ Actualizado: validateForm con intl-tel-input
-    function validateForm(){
+    function validateForm(){ ... }
       const name  = document.getElementById("custName").value.trim();
       const phone = document.getElementById("custPhone").value.trim();
       const email = document.getElementById("custEmail").value.trim();
