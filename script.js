@@ -45,9 +45,24 @@ const PRODUCTS = [
     img:"redpepper_logo.png", 
     name:{
       ky:"Кызыл калемпир соусу",
-      ru:"соус из красного перца",
+      ru:"Соус из красного перца",
       es:"Salsa Pimiento Rojo",
       en:"Red Pepper Sauce"
+    }, 
+    sizes:[
+      {ml:350,usd:3.5},
+      {ml:500,usd:8.0},
+      {ml:1000,usd:20.0}
+    ] 
+  },
+  { 
+    id:"pepper_green", 
+    img:"greenpepper_logo.png", 
+    name:{
+      ky:"Жашыл калемпир соусу",
+      ru:"Соус из зелёного перца",
+      es:"Salsa Pimiento Verde",
+      en:"Green Pepper Sauce"
     }, 
     sizes:[
       {ml:350,usd:3.5},
