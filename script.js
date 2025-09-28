@@ -335,12 +335,17 @@ window.addEventListener("load", () => {
     i18n(); renderProducts(); updateCart();
     fetch(SHEETS_WEBAPP_URL).catch(()=>{});
 
-    // ✅ Inicializar intl-tel-input en el campo de teléfono
-    window.iti = window.intlTelInput(document.querySelector("#custPhone"), {
-      initialCountry: "kg",
-      preferredCountries: ["kg","es","us","ru"],
-      separateDialCode: true
-    });
+   // ✅ Inicializar intl-tel-input con protección
+const phoneInput = document.querySelector("#custPhone");
+if (window.intlTelInput && phoneInput) {
+  window.iti = window.intlTelInput(phoneInput, {
+    initialCountry: "kg",
+    preferredCountries: ["kg","es","us","ru"],
+    separateDialCode: true
+  });
+} else {
+  console.warn("intl-tel-input no se cargó correctamente");
+}
 
     // === Validación de campos obligatorios ===
     const inputs = ["custName","custPhone","custEmail"].map(id => document.getElementById(id));
