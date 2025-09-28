@@ -166,7 +166,10 @@
 <!-- Campos obligatorios -->
 <div id="customerInfo" style="margin-top:12px; display:flex; flex-direction:column; gap:8px">
   <input type="text" id="custName" placeholder="Tu nombre" required style="padding:8px;border:1px solid #ccc;border-radius:8px;">
-  <input type="tel" id="custPhone" placeholder="Tu teléfono" required style="padding:8px;border:1px solid #ccc;border-radius:8px;">
+
+  <!-- 📱 Teléfono con banderas -->
+  <input id="custPhone" type="tel" name="phone" required style="padding:8px;border:1px solid #ccc;border-radius:8px;">
+
   <input type="email" id="custEmail" placeholder="Tu email" required style="padding:8px;border:1px solid #ccc;border-radius:8px;">
 </div>
 
