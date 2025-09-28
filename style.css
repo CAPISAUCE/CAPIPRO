@@ -214,12 +214,9 @@ aside #confirm {
   }
 }
 
-/* ✅ NUEVO — Estilos mínimos para intl-tel-input (campo teléfono internacional) */
+/* ✅ Estilos mínimos para intl-tel-input */
 .iti {
   width: 100%;
-}
-.iti__flag-container {
-  border-radius: 6px 0 0 6px;
 }
 .iti input {
   width: 100%;
