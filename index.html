@@ -103,13 +103,13 @@
     aside #confirm:not(:disabled):hover {
       background: linear-gradient(180deg, #fde68a, #f59e0b) !important;
       box-shadow: 0 0 12px rgba(245, 158, 11, 0.6),
-                  0 6px 14px rgba(0,0,0,0.2) !important;
+                  0 6px 14px rgba(0, 0, 0, 0.2) !important;
       transform: scale(1.02);
     }
     aside #confirm:not(:disabled):active {
       transform: scale(0.98);
       box-shadow: 0 0 6px rgba(245, 158, 11, 0.3),
-                  0 3px 6px rgba(0,0,0,0.2) !important;
+                  0 3px 6px rgba(0, 0, 0, 0.2) !important;
     }
     @media (max-width: 600px){
       aside #confirm {
@@ -120,21 +120,304 @@
       }
     }
   </style>
-
-  <!-- 🌍 intl-tel-input (banderas y prefijos internacionales) -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css"/>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
 </head>
 <body>
-  <!-- … tu body, productos y carrito igual que lo tienes … -->
-<main class="shell">
-  <div class="notice" id="pricesNote">
-    Баалар USD жана KGS менен. Өлчөмдү өзгөртүп бааны көрүңүз.
-  </div>
-  <section id="products" class="grid"></section>
-</main>
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo"></div>
+      <div>
+        <div class="brand-name">CAPIFAN</div>
+        <div class="slogan" id="slogan">табияттан сиздин дасторконуңузга</div>
+      </div>
+    </div>
+    <div class="controls">
+      <label for="lang">🌐</label>
+      <select id="lang" aria-label="Language">
+        <option value="ky" selected>🇰🇬 КY</option>
+        <option value="ru">🇷🇺 RU</option>
+        <option value="es">🇪🇸 ES</option>
+        <option value="en">🇬🇧 EN</option>
+      </select>
+      <button id="btnCart" class="btn mango">🛒 <span id="cartTxt">Себет</span> <span id="cartCount" class="badge" style="display:none">0</span></button>
+    </div>
+  </header>
+
+  <main class="shell">
+    <div class="notice" id="pricesNote">Баалар USD жана KGS менен. Өлчөмдү өзгөртүп бааны көрүңүз.</div>
+    <section id="products" class="grid"></section>
+  </main>
+
+  <!-- Cart -->
+  <aside id="cart" class="popup" role="dialog" aria-modal="true" aria-labelledby="cartTitle">
+    <div class="backdrop" id="backdrop"></div>
+    <div class="panel">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <h2 id="cartTitle">Себет</h2>
+        <button class="btn" id="closeCart" aria-label="Cerrar">✕</button>
+      </div>
+      <div id="cartItems"></div>
+      <div id="totals" style="margin-top:8px;font-weight:800">TOTAL: 0 сом / $0.00</div>
+
+<!-- Mensaje fijo -->
+<small id="formError" style="color:#d97706;font-weight:600;display:block;">
+  🐝 Por favor, rellenar los campos obligatorios para confirmar su pedido. 
+</small>
+
+<!-- Campos obligatorios -->
+<div id="customerInfo" style="margin-top:12px; display:flex; flex-direction:column; gap:8px">
+  <input type="text" id="custName" placeholder="Tu nombre" required style="padding:8px;border:1px solid #ccc;border-radius:8px;">
+  <input type="tel" id="custPhone" placeholder="Tu teléfono" required style="padding:8px;border:1px solid #ccc;border-radius:8px;">
+  <input type="email" id="custEmail" placeholder="Tu email" required style="padding:8px;border:1px solid #ccc;border-radius:8px;">
+</div>
+
+      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+  <button id="confirm" class="btn-capipro" disabled>
+  ✅ Буйрутманы тастыктоо
+</button>
+</div>
+  </aside>
+
+  <footer class="foot">© 2025 CAPIFAN – elcapiproduct@gmail.com</footer>
+
 <script>
-/* … tu código previo … */
+/* ================== CONFIG ================== */
+const SHEETS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxab8-ziPP2u5oAhQJKBzxzhrc54-Qz_s4xAzbLg_on1Wl5Z9zthTNPxwVSWUylBCoz/exec";
+const PHONE_KG = "996559500551";
+const PHONE_US = "17866514487";
+const EXCHANGE_KGS_PER_USD = 89;
+
+/* Idioma por defecto: KY (respeta localStorage si ya existe) */
+let lang = localStorage.getItem("capi_lang") || "ky";
+
+/* ================== DATA ================== */
+const PRODUCTS = [
+  { 
+    id:"honey", 
+    img:"honey_logo.png", 
+    name:{
+      ky:"Таза бал Issyk Kul", 
+      ru:"Чистый мёд Issyk Kul", 
+      es:"Miel Pura Issyk Kul", 
+      en:"Pure Honey Issyk Kul"
+    }, 
+    sizes:[
+      {ml:350,usd:4.0},
+      {ml:500,usd:6.3},
+      {ml:1000,usd:10.0}
+    ] 
+  },
+  { 
+    id:"mango", 
+    img:"mango_logo.png", 
+    name:{
+      ky:"Жашыл манго ачуу соусу",
+      ru:"Острый соус из зелёного манго",
+      es:"Salsa Picante de Mango Verde",
+      en:"Green Mango Hot Sauce"
+    }, 
+    sizes:[
+      {ml:350,usd:4.0},
+      {ml:500,usd:9.0},
+      {ml:1000,usd:20.0}
+    ] 
+  },
+  { 
+    id:"pepper_red", 
+    img:"redpepper_logo.png", 
+    name:{
+      ky:"Кызыл калемпир соусу",
+      ru:"Соус из красного перца",
+      es:"Salsa Pimiento Rojo",
+      en:"Red Pepper Sauce"
+    }, 
+    sizes:[
+      {ml:350,usd:3.5},
+      {ml:500,usd:8.0},
+      {ml:1000,usd:20.0}
+    ] 
+  },
+  { 
+    id:"pepper_green", 
+    img:"greenpepper_logo.png", 
+    name:{
+      ky:"Жашыл калемпир соусу",
+      ru:"Соус из зелёного перца",
+      es:"Salsa Pimiento Verde",
+      en:"Green Pepper Sauce"
+    }, 
+    sizes:[
+      {ml:350,usd:3.5},
+      {ml:500,usd:8.0},
+      {ml:1000,usd:20.0}
+    ] 
+  }
+];
+
+
+const T = {
+  title:{ ky:"Продукциялар 100% табигый", ru:"Продукция 100% натуральная", es:"Productos 100% Natural", en:"100% Natural Products" },
+  prices_note:{ ky:"Баалар USD жана KGS менен. Өлчөмдү өзгөртүп бааны көрүңүз.", ru:"Цены в USD и сомах. Меняйте объём, чтобы увидеть цену.", es:"Precios en USD y KGS. Cambia el tamaño para ver el precio.", en:"Prices in USD and KGS. Change size to see price." },
+  cart:{ ky:"Себет", ru:"Корзина", es:"Tu carrito", en:"Your cart" },
+  add:{ ky:"Себетке кошуу", ru:"В корзину", es:"Agregar al carrito", en:"Add to cart" },
+  remove:{ ky:"Өчүрүү", ru:"Удалить", es:"Eliminar", en:"Remove" },
+  empty_cart:{ ky:"Себет бош", ru:"Корзина пуста", es:"El carrito está vacío", en:"Cart is empty" },
+  confirm:{ ky:"Буйрутманы тастыктоо", ru:"Подтвердить заказ", es:"Confirmar pedido", en:"Confirm order" },
+  price_lbl:{ ky:"Баасы:", ru:"Цена:", es:"Precio:", en:"Price:" },
+  fill_required:{ 
+    ky:"Бардык талааларды толтуруңуз.", 
+    ru:"Пожалуйста, заполните все обязательные поля.", 
+    es:"Por favor, complete todos los campos obligatorios.", 
+    en:"Please fill in all required fields." 
+  },
+  name_ph:{ ky:"Атыңыз", ru:"Ваше имя", es:"Tu nombre", en:"Your name" },
+  phone_ph:{ ky:"Телефонуңуз", ru:"Ваш телефон", es:"Tu teléfono", en:"Your phone" },
+  email_ph:{ ky:"Электрон почта", ru:"Электронная почта", es:"Tu email", en:"Your email" }
+};
+/* ================== HELPERS ================== */
+function kgs(usd){ return Math.round(usd*EXCHANGE_KGS_PER_USD); }
+function money(n){ return (Math.round(n*100)/100).toFixed(2); }
+function genOrderId(){ return "CAPI-" + Math.random().toString(16).slice(2,10).toUpperCase(); }
+function sendToSheets(order){
+  try{
+    if (navigator.sendBeacon) {
+      const blob = new Blob([JSON.stringify(order)], { type: "text/plain;charset=utf-8" });
+      navigator.sendBeacon(SHEETS_WEBAPP_URL, blob);
+      return;
+    }
+  }catch(_){}
+  try{
+    fetch(SHEETS_WEBAPP_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(order)
+    });
+  }catch(_){}
+}
+
+/* ================== STATE ================== */
+let cart = [];
+
+/* ================== UI ================== */
+function i18n(){
+  document.getElementById("slogan").textContent = T.title[lang];
+  document.getElementById("pricesNote").textContent = T.prices_note[lang];
+  document.getElementById("cartTxt").textContent = T.cart[lang];
+  document.getElementById("cartTitle").textContent = T.cart[lang];
+  document.getElementById("confirm").textContent = "✅ " + T.confirm[lang];
+
+  // === NUEVO: actualizar placeholders ===
+  document.getElementById("custName").placeholder  = T.name_ph[lang];
+  document.getElementById("custPhone").placeholder = T.phone_ph[lang];
+  document.getElementById("custEmail").placeholder = T.email_ph[lang];
+
+  // 🟢 actualizar mensaje fijo de error
+  const err = document.getElementById("formError");
+  if (err) {
+    err.textContent = "🐝 " + T.fill_required[lang];
+  }
+}
+function renderProducts(){
+  const root = document.getElementById("products");
+  root.innerHTML = "";
+  PRODUCTS.forEach(p=>{
+    const card = document.createElement("div"); card.className="card";
+    if (p.img) {
+      const img = document.createElement("img");
+      img.src = p.img; img.alt = p.name[lang];
+      img.onerror = ()=>{ img.remove(); };
+      img.className = "product-image";
+      card.appendChild(img);
+    }
+    const h3 = document.createElement("h3"); h3.textContent = p.name[lang]; card.appendChild(h3);
+    const sel = document.createElement("select");
+    p.sizes.forEach((s,i)=>{ const o=document.createElement("option"); o.value=s.ml; o.textContent=`${s.ml} ml`; sel.appendChild(o); if(i===0) sel.value=s.ml; });
+    card.appendChild(sel);
+    const price = document.createElement("div");
+    const s0 = p.sizes[0]; price.innerHTML = `${T.price_lbl[lang]} ${kgs(s0.usd)} сом / $${money(s0.usd)}`;
+    card.appendChild(price);
+    sel.onchange = ()=> {
+      const s = p.sizes.find(x=>x.ml==sel.value);
+      price.innerHTML = `${T.price_lbl[lang]} ${kgs(s.usd)} сом / $${money(s.usd)}`;
+    };
+    const controls = document.createElement("div"); controls.className="qty";
+    const dec = document.createElement("button"); dec.textContent="−";
+    const q = document.createElement("span"); q.className="q"; q.textContent="1";
+    const inc = document.createElement("button"); inc.textContent="+";
+    dec.onclick = ()=>{ q.textContent = Math.max(1, parseInt(q.textContent)-1); };
+    inc.onclick = ()=>{ q.textContent = parseInt(q.textContent)+1; };
+    controls.append(dec,q,inc); card.appendChild(controls);
+    const add = document.createElement("button"); add.className="btn mango"; add.textContent = T.add[lang];
+    add.onclick = ()=>{
+      const size = parseInt(sel.value,10);
+      const unit = p.sizes.find(x=>x.ml===size).usd;
+      addToCart(p.id, p.name[lang], size, parseInt(q.textContent,10), {usd:unit,kgs:kgs(unit)});
+    };
+    card.appendChild(add);
+    root.appendChild(card);
+  });
+}
+
+function addToCart(id, name, size, qty, price){
+  const key = id + "-" + size + "-" + Date.now() + "-" + Math.random().toString(16).slice(2,6);
+  cart.push({ key, id, name, size, qty, price });
+  updateCart();
+}
+
+function updateCart(){
+  const items = document.getElementById("cartItems");
+  const count = document.getElementById("cartCount");
+  items.innerHTML = "";
+  let totUSD=0, totKGS=0;
+
+  cart.forEach((it,idx)=>{
+    const row = document.createElement("div");
+    row.className = "row";
+
+     const icon = it.id === "honey" ? "🍯" 
+            : it.id === "mango" ? "🥭🌶️" 
+            : it.id === "pepper_red" ? "🍅"     // tomate para red pepper
+            : it.id === "pepper_green" ? "🫑"   // pimiento verde
+            : "•";
+
+    row.innerHTML = `<span>${icon} ${it.name} ${it.size} ml x${it.qty} (${it.price.kgs} сом / $${money(it.price.usd)})</span>`;
+
+    const rm = document.createElement("button");
+    rm.className = "btn-remove";
+    rm.textContent = "🗑";
+    rm.onclick = ()=>{ cart.splice(idx,1); updateCart(); };
+
+    row.appendChild(rm);
+    items.appendChild(row);
+
+    totUSD += it.price.usd * it.qty;
+    totKGS += it.price.kgs * it.qty;
+  });
+
+  document.getElementById("totals").textContent = `TOTAL: ${totKGS} сом / $${money(totUSD)}`;
+
+  if(cart.length > 0){
+    count.style.display = "inline-block";
+    count.textContent = cart.reduce((a,c)=>a+c.qty,0);
+  } else {
+    count.style.display = "none";
+  }
+}
+
+function openCart(){
+  document.getElementById("cart").classList.add("open");
+  document.body.classList.add("no-scroll");
+}
+function closeCart(){
+  document.getElementById("cart").classList.remove("open");
+  document.body.classList.remove("no-scroll");
+}
+function toggleCart(){
+  const el = document.getElementById("cart");
+  const willOpen = !el.classList.contains("open");
+  el.classList.toggle("open");
+  document.body.classList.toggle("no-scroll", willOpen);
+}
 
 function confirmOrder(){
   if(cart.length===0){ 
@@ -143,8 +426,7 @@ function confirmOrder(){
   }
 
   const name  = document.getElementById("custName").value.trim();
-  // ✅ usar intl-tel-input
-  const phone = iti.getNumber(); 
+  const phone = document.getElementById("custPhone").value.trim();
   const email = document.getElementById("custEmail").value.trim();
   const err   = document.getElementById("formError");
 
@@ -158,24 +440,73 @@ function confirmOrder(){
     if (err) err.style.display = "none";
   }
 
-  /* … resto de confirmOrder igual … */
+  let msg = "🧾 " + T.cart[lang] + ":\n";
+  let totUSD=0, totKGS=0;
+  cart.forEach(it=>{ 
+    const subU=it.price.usd*it.qty, subK=it.price.kgs*it.qty;
+    msg += `• ${it.name} (${it.size} ml) x${it.qty} = ${subK} сом / $${money(subU)}\n`;
+    totUSD += subU; totKGS += subK; 
+  });
+  msg += `\nTOTAL: ${totKGS} сом / $${money(totUSD)}`;
+  const orderId = genOrderId(); 
+  msg += `\n\nID: ${orderId}`;
+
+  const payload = { 
+    orderId, 
+    alive:true, 
+    version:"orders-v4-clean+invoices", 
+    to: PHONE_KG + "," + PHONE_US,
+    totalUSD:Number(money(totUSD)), 
+    totalKGS:Number(totKGS), 
+    currency:"USD/KGS", 
+    lang,
+    items: cart.map(it=>({id:it.id,name:it.name,ml:Number(it.size),qty:Number(it.qty),usd:Number(it.price.usd),kgs:Number(it.price.kgs)})),
+    created_at:new Date().toISOString(),
+    customer:name,
+    phone:phone,
+    email:email,
+    autoInvoice:true
+  };
+
+  sendToSheets(payload);
+  const enc = encodeURIComponent(msg);
+  const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  const urlKG = isMobile ? `whatsapp://send?phone=${PHONE_KG}&text=${enc}` : `https://wa.me/${PHONE_KG}?text=${enc}`; 
+  window.open(urlKG,"_blank");
+  const urlUS = isMobile ? `whatsapp://send?phone=${PHONE_US}&text=${enc}` : `https://wa.me/${PHONE_US}?text=${enc}`; 
+  setTimeout(()=>window.open(urlUS,"_blank"),500);
+
+  cart = []; 
+  updateCart(); 
+  closeCart();
 }
 
 /* ================== INIT ================== */
 if ('serviceWorker' in navigator) { navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister())); }
 window.addEventListener("load", () => {
   try{
-    /* … tu init … */
+    const sel = document.getElementById("lang");
+    sel.value = lang;
+    sel.onchange = (e)=>{ lang=e.target.value; localStorage.setItem("capi_lang",lang); i18n(); renderProducts(); updateCart(); };
+    document.getElementById("btnCart").onclick = openCart;
+    document.getElementById("closeCart").onclick = closeCart;
+    document.getElementById("backdrop").onclick = closeCart;
+    document.addEventListener("keydown", (e)=>{ if(e.key==="Escape") closeCart(); });
+    document.getElementById("confirm").onclick = confirmOrder;
+    i18n(); renderProducts(); updateCart();
+    fetch(SHEETS_WEBAPP_URL).catch(()=>{});
 
-    // ✅ Inicializar intl-tel-input
-    window.iti = window.intlTelInput(document.querySelector("#custPhone"), {
-      initialCountry: "kg",
-      preferredCountries: ["kg","es","us","ru"],
-      separateDialCode: true
-    });
-
-    /* … validación de campos … */
-  }catch(e){ console.error("Init error", e); }
+    // === Validación de campos obligatorios ===
+    const inputs = ["custName","custPhone","custEmail"].map(id => document.getElementById(id));
+    function validateForm(){
+      const filled = inputs.every(i => i.value.trim() !== "");
+      document.getElementById("confirm").disabled = !filled;
+    }
+    inputs.forEach(i => i.addEventListener("input", validateForm));
+  }catch(e){
+    console.error("Init error:", e);
+    document.getElementById("products").innerHTML = "<div class='card'>Перезагрузите страницу / Vuelva a cargar la página.</div>";
+  }
 });
 </script>
 </body>
