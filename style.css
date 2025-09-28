@@ -50,7 +50,7 @@ button:active { transform: scale(.98); }
 button:hover { background-color: #ffa000; }
 
 /* ——— Productos ——— */
-#product {
+#products {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -58,7 +58,7 @@ button:hover { background-color: #ffa000; }
   gap: 12px;
 }
 
-.product {
+.card {
   background-color: #ffffff;
   border: 1px solid #ffe0b2;
   border-radius: 8px;
@@ -77,6 +77,19 @@ button:hover { background-color: #ffa000; }
   margin: 0 auto 10px;
   border-radius: 8px;
   display: block;
+}
+
+/* —— IMAGEN de producto (única regla final) —— */
+html body #products .card img.product-image {
+  display: block !important;
+  width: 100% !important;
+  max-width: 220px !important;
+  height: 420px !important;
+  object-fit: contain !important;
+  object-position: center !important;
+  margin: 0 auto 10px !important;
+  border: 1px solid #ffe0b2 !important;
+  border-radius: 12px !important;
 }
 
 /* ——— Carrito flotante ——— */
@@ -132,19 +145,6 @@ button:hover { background-color: #ffa000; }
   padding: 2px 6px;
   font-size: 14px;
   display: none;
-}
-
-/* —— IMAGEN de producto (única regla final) —— */
-html body #product .product img.product-image {
-  display: block !important;
-  width: 100% !important;
-  max-width: 220px !important;
-  height: 420px !important;
-  object-fit: contain !important;
-  object-position: center !important;
-  margin: 0 auto 10px !important;
-  border: 1px solid #ffe0b2 !important;
-  border-radius: 12px !important;
 }
 
 /* ✅ Botón Confirmar Pedido — versión final única */
