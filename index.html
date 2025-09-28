@@ -120,6 +120,12 @@
       }
     }
   </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/css/intlTelInput.css"/>
+<style>
+  /* Pequeños ajustes */
+  .iti { width: 100%; }               /* el input ocupa todo el ancho */
+  .iti__country-list { z-index: 1100; } /* menú por encima del popup del carrito */
+</style>
 </head>
 <body>
   <header class="topbar">
@@ -503,11 +509,15 @@ window.addEventListener("load", () => {
       document.getElementById("confirm").disabled = !filled;
     }
     inputs.forEach(i => i.addEventListener("input", validateForm));
-  }catch(e){
+   }catch(e){
     console.error("Init error:", e);
     document.getElementById("products").innerHTML = "<div class='card'>Перезагрузите страницу / Vuelva a cargar la página.</div>";
   }
 });
 </script>
+
+<!-- Librería intl-tel-input -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/intlTelInput.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js"></script>
 </body>
 </html>
