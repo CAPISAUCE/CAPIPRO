@@ -164,10 +164,13 @@
       <div id="cartItems"></div>
       <div id="totals" style="margin-top:8px;font-weight:800">TOTAL: 0 сом / $0.00</div>
 
-<!-- Mensaje fijo -->
-<small id="formError" style="color:#d97706;font-weight:600;display:block;">
-  🐝 Por favor, rellenar los campos obligatorios para confirmar su pedido. 
+<!-- Aviso fijo (siempre visible, se traduce con i18n) -->
+<small id="formNotice" style="color:#d97706;font-weight:600;display:block;">
+  🐝 Por favor, complete todos los campos obligatorios 🐝
 </small>
+
+<!-- Error dinámico (se muestra solo si el teléfono es inválido) -->
+<small id="formError" style="color:red;font-weight:600;display:none;"></small>
 
 <!-- Campos obligatorios -->
 <div id="customerInfo" style="margin-top:12px; display:flex; flex-direction:column; gap:8px">
