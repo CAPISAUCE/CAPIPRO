@@ -500,8 +500,19 @@ window.addEventListener("load", () => {
     document.getElementById("backdrop").onclick = closeCart;
     document.addEventListener("keydown", (e)=>{ if(e.key==="Escape") closeCart(); });
     document.getElementById("confirm").onclick = confirmOrder;
-    i18n(); renderProducts(); updateCart();
+        i18n(); renderProducts(); updateCart();
     fetch(SHEETS_WEBAPP_URL).catch(()=>{});
+
+    // ✅ intl-tel-input inicialización
+    const phoneInput = document.querySelector("#custPhone");
+    if (phoneInput) {
+      iti = window.intlTelInput(phoneInput, {
+        initialCountry: "kg",
+        preferredCountries: ["kg","us","es","mx","ru"],
+        dropdownContainer: document.body,
+        utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js"
+      });
+    }
 
     // === Validación de campos obligatorios ===
     const inputs = ["custName","custPhone","custEmail"].map(id => document.getElementById(id));
@@ -510,6 +521,7 @@ window.addEventListener("load", () => {
       document.getElementById("confirm").disabled = !filled;
     }
     inputs.forEach(i => i.addEventListener("input", validateForm));
+
    }catch(e){
     console.error("Init error:", e);
     document.getElementById("products").innerHTML = "<div class='card'>Перезагрузите страницу / Vuelva a cargar la página.</div>";
