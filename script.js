@@ -369,7 +369,8 @@ if (phoneInput) {
     utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js"
   });
 
-  const phoneInput = document.querySelector("#custPhone");
+  // === intl-tel-input inicialización ===
+const phoneInput = document.querySelector("#custPhone");
 if (phoneInput) {
   iti = window.intlTelInput(phoneInput, {
     initialCountry: "kg",
@@ -387,7 +388,7 @@ if (phoneInput) {
       e.target.value = "+" + raw.slice(0, 15);
     }
   });
-} // 👈 esta llave te faltaba
+}
 
 // === Validación de campos obligatorios ===
 const inputs = ["custName","custPhone","custEmail"].map(id => document.getElementById(id));
