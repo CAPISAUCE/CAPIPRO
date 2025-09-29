@@ -488,6 +488,7 @@ function confirmOrder(){
   closeCart();
 }
 
+<script>
 /* ================== INIT ================== */
 if ('serviceWorker' in navigator) { navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister())); }
 window.addEventListener("load", () => {
@@ -500,7 +501,7 @@ window.addEventListener("load", () => {
     document.getElementById("backdrop").onclick = closeCart;
     document.addEventListener("keydown", (e)=>{ if(e.key==="Escape") closeCart(); });
     document.getElementById("confirm").onclick = confirmOrder;
-        i18n(); renderProducts(); updateCart();
+    i18n(); renderProducts(); updateCart();
     fetch(SHEETS_WEBAPP_URL).catch(()=>{});
 
     // ✅ intl-tel-input inicialización
@@ -508,8 +509,9 @@ window.addEventListener("load", () => {
     if (phoneInput) {
       iti = window.intlTelInput(phoneInput, {
         initialCountry: "kg",
-        preferredCountries: ["kg","us","es","kz","ru"],
+        preferredCountries: ["kg","us","es","mx","ru"],
         dropdownContainer: document.body,
+        separateDialCode: true,
         utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js"
       });
     }
@@ -517,12 +519,25 @@ window.addEventListener("load", () => {
     // === Validación de campos obligatorios ===
     const inputs = ["custName","custPhone","custEmail"].map(id => document.getElementById(id));
     function validateForm(){
-      const filled = inputs.every(i => i.value.trim() !== "");
+      const name  = document.getElementById("custName").value.trim();
+      const email = document.getElementById("custEmail").value.trim();
+
+      let phoneValid = false;
+      if (iti && iti.isValidNumber()) {
+        phoneValid = true;
+      }
+
+      const filled = (name !== "" && email !== "" && phoneValid);
       document.getElementById("confirm").disabled = !filled;
     }
     inputs.forEach(i => i.addEventListener("input", validateForm));
+    const phoneEl = document.getElementById("custPhone");
+    if (phoneEl) {
+      phoneEl.addEventListener("countrychange", validateForm);
+      phoneEl.addEventListener("input", validateForm);
+    }
 
-   }catch(e){
+  }catch(e){
     console.error("Init error:", e);
     document.getElementById("products").innerHTML = "<div class='card'>Перезагрузите страницу / Vuelva a cargar la página.</div>";
   }
