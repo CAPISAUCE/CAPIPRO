@@ -545,9 +545,7 @@ window.addEventListener("load", () => {
     fetch(SHEETS_WEBAPP_URL).catch(()=>{});
 
     // === intl-tel-input inicialización ===
-    const phoneInput = document.querySelector("#custPhone");
-    if (phoneInput) {
-    const phoneInput = document.querySelector("#custPhone");
+const phoneInput = document.querySelector("#custPhone");
 if (phoneInput) {
   iti = window.intlTelInput(phoneInput, {
     initialCountry: "kg",
@@ -565,7 +563,7 @@ if (phoneInput) {
       e.target.value = "+" + raw.slice(0, 15);
     }
   });
-} // 👈 esta llave te faltaba
+}
 
     // === Validación de campos obligatorios ===
     const inputs = ["custName","custPhone","custEmail"].map(id => document.getElementById(id));
