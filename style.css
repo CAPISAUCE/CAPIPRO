@@ -193,7 +193,7 @@ aside #confirm {
 #confirm:not(:disabled):hover {
   background: linear-gradient(180deg, #fde68a, #f59e0b) !important;
   box-shadow: 0 0 12px rgba(245, 158, 11, 0.6),
-              0 6px 14px rgba(0,0,0,0.2) !important;
+              0 6px 14px rgba(0, 0, 0, 0.2) !important;
   transform: scale(1.02);
 }
 
@@ -201,7 +201,7 @@ aside #confirm {
 #confirm:not(:disabled):active {
   transform: scale(0.98);
   box-shadow: 0 0 6px rgba(245, 158, 11, 0.3),
-              0 3px 6px rgba(0,0,0,0.2) !important;
+              0 3px 6px rgba(0, 0, 0, 0.2) !important;
 }
 
 /* 📱 En móviles: ancho auto y alineado a la izquierda */
@@ -247,35 +247,14 @@ aside #confirm {
 .iti__country-list {
   z-index: 1100 !important;
 }
-/* ⚠️ Estilos de validación de teléfono */
+
+/* ✅ Solo borde rojo cuando hay error */
 .input-error {
   border: 2px solid red !important;
-  background-color: #ffecec;
-  position: relative;
+  outline: none !important;
 }
 
-/* Icono de advertencia dentro del input */
-.input-error::after {
-  content: "⚠️";
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 18px;
-  pointer-events: none;
-}
-
-/* Mensaje de error debajo del campo */
-#formError {
-  color: red;
-  font-size: 14px;
-  margin-top: 5px;
-  display: none; /* lo controla el JS */
-}
-#formError::before {
-  content: "⚠️ ";
-}
-/* Ajustar solo el tamaño del código de país (+996, +1, etc.) */
+/* ✅ Ajustar solo el tamaño del código de país (+996, +1, etc.) */
 .iti__selected-dial-code {
   font-size: 0.85em;   /* más pequeño que el input */
   color: #555;         /* opcional: un poco más suave */
