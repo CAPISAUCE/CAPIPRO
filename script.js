@@ -174,8 +174,17 @@ function renderProducts(){
     const dec = document.createElement("button"); dec.textContent="−";
     const q = document.createElement("span"); q.className="q"; q.textContent="1";
     const inc = document.createElement("button"); inc.textContent="+";
+
+    // ✅ Limitar cantidades (mín 1, máx 20)
+    const MAX_QTY = 20;
     dec.onclick = ()=>{ q.textContent = Math.max(1, parseInt(q.textContent)-1); };
-    inc.onclick = ()=>{ q.textContent = parseInt(q.textContent)+1; };
+    inc.onclick = ()=>{
+      const current = parseInt(q.textContent);
+      if (current < MAX_QTY) {
+        q.textContent = current + 1;
+      }
+    };
+
     controls.append(dec,q,inc); card.appendChild(controls);
     const add = document.createElement("button"); add.className="btn mango"; add.textContent = T.add[lang];
     add.onclick = ()=>{
@@ -249,7 +258,7 @@ function toggleCart(){
   document.body.classList.toggle("no-scroll", willOpen);
 }
 
-// ✅ Actualizado: confirmOrder con intl-tel-input
+// ✅ Actualizado: confirmOrder con intl-tel-input + validación extra
 
 function confirmOrder(){
   if(cart.length===0){ 
@@ -257,30 +266,43 @@ function confirmOrder(){
     return; 
   }
 
-const name  = document.getElementById("custName").value.trim();
-const email = document.getElementById("custEmail").value.trim();
-const err   = document.getElementById("formError");
+  const name  = document.getElementById("custName").value.trim();
+  const email = document.getElementById("custEmail").value.trim();
+  const phoneInput = document.getElementById("custPhone");
+  const err   = document.getElementById("formError");
 
-let phone = "";
-if (iti && iti.isValidNumber()) {
-  phone = iti.getNumber(); // ✅ formato internacional (+996…)
-} else {
-  if (err) {
-    err.textContent = "🐝 " + T.fill_required[lang];
-    err.style.display = "block";
+  let phone = "";
+  if (iti && iti.isValidNumber()) {
+    phone = iti.getNumber(); // ✅ formato internacional (+996…)
+    const type = iti.getNumberType();
+    if (type !== intlTelInputUtils.numberType.MOBILE) {
+      if (err) {
+        err.textContent = "📵 Ingrese un número válido de celular";
+        err.style.display = "block";
+      }
+      phoneInput.classList.add("input-error");
+      return;
+    } else {
+      phoneInput.classList.remove("input-error");
+    }
+  } else {
+    if (err) {
+      err.textContent = "🐝 " + T.fill_required[lang];
+      err.style.display = "block";
+    }
+    phoneInput.classList.add("input-error");
+    return; // 🚫 no sigue si el número no es válido
   }
-  return; // 🚫 no sigue si el número no es válido
-}
 
-if (!name || !email) {
-  if (err) {
-    err.textContent = "🐝 " + T.fill_required[lang];
-    err.style.display = "block";
+  if (!name || !email) {
+    if (err) {
+      err.textContent = "🐝 " + T.fill_required[lang];
+      err.style.display = "block";
+    }
+    return;
+  } else {
+    if (err) err.style.display = "none";
   }
-  return;
-} else {
-  if (err) err.style.display = "none";
-}
 
   // Mensaje WhatsApp
   let msg = "🧾 " + T.cart[lang] + ":\n";
@@ -346,25 +368,23 @@ window.addEventListener("load", () => {
     i18n(); renderProducts(); updateCart();
     fetch(SHEETS_WEBAPP_URL).catch(()=>{});
 
-// ✅ intl-tel-input inicialización
-const phoneInput = document.querySelector("#custPhone");
-if (phoneInput) {
-  iti = window.intlTelInput(phoneInput, {
-  initialCountry: "kg",
-  preferredCountries: ["kg","us","es","mx","ru"],
-  dropdownContainer: document.body,
-  separateDialCode: true,   // ✅ muestra el prefijo junto a la bandera
-  utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js"
-});
-}
+    // ✅ intl-tel-input inicialización
+    const phoneInput = document.querySelector("#custPhone");
+    if (phoneInput) {
+      iti = window.intlTelInput(phoneInput, {
+        initialCountry: "kg",
+        preferredCountries: ["kg","us","es","mx","ru"],
+        dropdownContainer: document.body,
+        separateDialCode: true,   // ✅ muestra el prefijo junto a la bandera
+        utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js"
+      });
+    }
+
     // === Validación de campos obligatorios ===
-    const inputs = ["custName","custPhone","custEmail"].map(id => document.getElementById(id));
-    
-       // === Validación de campos obligatorios ===
     const inputs = ["custName","custPhone","custEmail"].map(id => document.getElementById(id));
 
     // ✅ Actualizado: validateForm con intl-tel-input
-        function validateForm(){
+    function validateForm(){
       const name  = document.getElementById("custName").value.trim();
       const email = document.getElementById("custEmail").value.trim();
 
