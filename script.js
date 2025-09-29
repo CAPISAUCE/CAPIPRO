@@ -369,6 +369,16 @@ if (phoneInput) {
     utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js"
   });
 
+  const phoneInput = document.querySelector("#custPhone");
+if (phoneInput) {
+  iti = window.intlTelInput(phoneInput, {
+    initialCountry: "kg",
+    preferredCountries: ["kg","us","es","kz","ru"],
+    dropdownContainer: document.body,
+    separateDialCode: true,
+    utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js"
+  });
+
   // 🚫 Bloquear letras y limitar a 15 dígitos
   phoneInput.addEventListener("input", (e) => {
     e.target.value = e.target.value.replace(/[^0-9+]/g, "");
