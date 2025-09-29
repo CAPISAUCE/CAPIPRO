@@ -354,12 +354,18 @@ function confirmOrder(){
 }
 
 /* ================== INIT ================== */
-if ('serviceWorker' in navigator) { navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister())); }
+if ('serviceWorker' in navigator) { 
+  navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister())); 
+}
 window.addEventListener("load", () => {
   try{
     const sel = document.getElementById("lang");
     sel.value = lang;
-    sel.onchange = (e)=>{ lang=e.target.value; localStorage.setItem("capi_lang",lang); i18n(); renderProducts(); updateCart(); };
+    sel.onchange = (e)=>{ 
+      lang = e.target.value; 
+      localStorage.setItem("capi_lang",lang); 
+      i18n(); renderProducts(); updateCart(); 
+    };
     document.getElementById("btnCart").onclick = openCart;
     document.getElementById("closeCart").onclick = closeCart;
     document.getElementById("backdrop").onclick = closeCart;
@@ -369,73 +375,75 @@ window.addEventListener("load", () => {
     fetch(SHEETS_WEBAPP_URL).catch(()=>{});
 
     // ✅ intl-tel-input inicialización
-const phoneInput = document.querySelector("#custPhone");
-if (phoneInput) {
-  iti = window.intlTelInput(phoneInput, {
-    initialCountry: "kg",
-    preferredCountries: ["kg","us","es","kz","ru"],
-    dropdownContainer: document.body,
-    separateDialCode: true,
-    utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js"
-  });
+    const phoneInput = document.querySelector("#custPhone");
+    if (phoneInput) {
+      iti = window.intlTelInput(phoneInput, {
+        initialCountry: "kg",
+        preferredCountries: ["kg","us","es","kz","ru"],
+        dropdownContainer: document.body,
+        separateDialCode: true,
+        utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js"
+      });
 
-  // 🚫 Bloquear letras en tiempo real
-  phoneInput.addEventListener("input", (e) => {
-    e.target.value = e.target.value.replace(/[^0-9+]/g, "");
-  });
-}
+      // 🚫 Bloquear letras en tiempo real
+      phoneInput.addEventListener("input", (e) => {
+        e.target.value = e.target.value.replace(/[^0-9+]/g, "");
+      });
+    }
 
     // === Validación de campos obligatorios ===
-const inputs = ["custName","custPhone","custEmail"].map(id => document.getElementById(id));
-const phoneEl = document.getElementById("custPhone");
+    const inputs = ["custName","custPhone","custEmail"].map(id => document.getElementById(id));
+    const phoneEl = document.getElementById("custPhone");
 
-// ✅ Valida nombre, email y teléfono
-function validateForm(){
-  const name  = document.getElementById("custName").value.trim();
-  const email = document.getElementById("custEmail").value.trim();
+    function validateForm(){
+      const name  = document.getElementById("custName").value.trim();
+      const email = document.getElementById("custEmail").value.trim();
 
-  let phoneValid = false;
-  if (iti && iti.isValidNumber()) {
-    phoneValid = true;
-  }
+      let phoneValid = false;
+      if (iti && iti.isValidNumber()) {
+        phoneValid = true;
+      }
 
-  const filled = (name !== "" && email !== "" && phoneValid);
-  document.getElementById("confirm").disabled = !filled;
-}
-
-// ✅ Valida el teléfono en vivo (muestra borde rojo + mensaje)
-function checkPhoneValidity(){
-  const err = document.getElementById("formError");
-  if (iti && iti.isValidNumber()) {
-    phoneEl.classList.remove("input-error");
-    if (err) err.style.display = "none";
-  } else {
-    phoneEl.classList.add("input-error");
-    if (err) {
-      err.textContent = "⚠️ Número inválido";
-      err.style.display = "block";
+      const filled = (name !== "" && email !== "" && phoneValid);
+      document.getElementById("confirm").disabled = !filled;
     }
-  }
-}
 
-// ✅ Escuchar cambios en los inputs normales
-inputs.forEach(i => i.addEventListener("input", validateForm));
+    // ✅ Valida el teléfono en vivo (solo resalta rojo si es inválido)
+    function checkPhoneValidity(){
+      if (!phoneEl) return;
 
-// ✅ Escuchar cambios en el input de teléfono
-if (phoneEl) {
-  phoneEl.addEventListener("input", () => {
-    checkPhoneValidity();
-    validateForm();
-  });
-  phoneEl.addEventListener("countrychange", () => {
-    checkPhoneValidity();
-    validateForm();
-  });
-}
+      if (iti && iti.isValidNumber()) {
+        // Extra: limitar longitud máxima absoluta (20 dígitos)
+        const raw = iti.getNumber().replace(/\D/g, "");
+        if (raw.length > 20) {
+          phoneEl.classList.add("input-error");
+          return;
+        }
+        phoneEl.classList.remove("input-error");
+      } else {
+        phoneEl.classList.add("input-error");
+      }
+    }
 
-  }catch(e){
+    // ✅ Escuchar cambios en los inputs normales
+    inputs.forEach(i => i.addEventListener("input", validateForm));
+
+    // ✅ Escuchar cambios en el input de teléfono
+    if (phoneEl) {
+      phoneEl.addEventListener("input", () => {
+        checkPhoneValidity();
+        validateForm();
+      });
+      phoneEl.addEventListener("countrychange", () => {
+        checkPhoneValidity();
+        validateForm();
+      });
+    }
+
+  } catch(e) {
     console.error("Init error:", e);
-    document.getElementById("products").innerHTML = "<div class='card'>Перезагрузите страницу / Vuelva a cargar la página.</div>";
+    document.getElementById("products").innerHTML = 
+      "<div class='card'>Перезагрузите страницу / Vuelva a cargar la página.</div>";
   }
 });
 </script>
