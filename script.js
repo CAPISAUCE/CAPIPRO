@@ -342,8 +342,9 @@ function confirmOrder(){
 if ('serviceWorker' in navigator) { 
   navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister())); 
 }
+
 window.addEventListener("load", () => {
-  try{
+  try {
     const sel = document.getElementById("lang");
     sel.value = lang;
     sel.onchange = (e)=>{ 
@@ -351,48 +352,40 @@ window.addEventListener("load", () => {
       localStorage.setItem("capi_lang",lang); 
       i18n(); renderProducts(); updateCart(); 
     };
+
     document.getElementById("btnCart").onclick = openCart;
     document.getElementById("closeCart").onclick = closeCart;
     document.getElementById("backdrop").onclick = closeCart;
     document.addEventListener("keydown", (e)=>{ if(e.key==="Escape") closeCart(); });
     document.getElementById("confirm").onclick = confirmOrder;
+
     i18n(); renderProducts(); updateCart();
     fetch(SHEETS_WEBAPP_URL).catch(()=>{});
 
+    // === intl-tel-input inicialización ===
     const phoneInput = document.querySelector("#custPhone");
-if (phoneInput) {
-  iti = window.intlTelInput(phoneInput, {
-    initialCountry: "kg",
-    preferredCountries: ["kg","us","es","kz","ru"],
-    dropdownContainer: document.body,
-    separateDialCode: true,
-    utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js"
-  });
+    if (phoneInput) {
+      iti = window.intlTelInput(phoneInput, {
+        initialCountry: "kg",
+        preferredCountries: ["kg","us","es","kz","ru"],
+        dropdownContainer: document.body,
+        separateDialCode: true,
+        utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js"
+      });
 
-  // === intl-tel-input inicialización ===
-const phoneInput = document.querySelector("#custPhone");
-if (phoneInput) {
-  iti = window.intlTelInput(phoneInput, {
-    initialCountry: "kg",
-    preferredCountries: ["kg","us","es","kz","ru"],
-    dropdownContainer: document.body,
-    separateDialCode: true,
-    utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js"
-  });
-
-  // 🚫 Bloquear letras y limitar a 15 dígitos
-  phoneInput.addEventListener("input", (e) => {
-    e.target.value = e.target.value.replace(/[^0-9+]/g, "");
-    const raw = e.target.value.replace(/\D/g, "");
-    if (raw.length > 15) {
-      e.target.value = "+" + raw.slice(0, 15);
+      // 🚫 Bloquear letras y limitar a 15 dígitos
+      phoneInput.addEventListener("input", (e) => {
+        e.target.value = e.target.value.replace(/[^0-9+]/g, "");
+        const raw = e.target.value.replace(/\D/g, "");
+        if (raw.length > 15) {
+          e.target.value = "+" + raw.slice(0, 15);
+        }
+      });
     }
-  });
-}
 
-// === Validación de campos obligatorios ===
-const inputs = ["custName","custPhone","custEmail"].map(id => document.getElementById(id));
-const phoneEl = document.getElementById("custPhone");
+    // === Validación de campos obligatorios ===
+    const inputs = ["custName","custPhone","custEmail"].map(id => document.getElementById(id));
+    const phoneEl = document.getElementById("custPhone");
 
     function validateForm(){
       const name  = document.getElementById("custName").value.trim();
@@ -434,4 +427,5 @@ const phoneEl = document.getElementById("custPhone");
       "<div class='card'>Перезагрузите страницу / Vuelva a cargar la página.</div>";
   }
 });
+
 </script>
