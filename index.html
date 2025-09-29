@@ -573,28 +573,30 @@ window.addEventListener("load", () => {
       document.getElementById("confirm").disabled = !filled;
     }
 
-    // ⚠️ Validación en vivo del teléfono (mensaje + borde rojo)
-    function checkPhoneValidity(){
-      const err = document.getElementById("formError");
-      if (iti && iti.isValidNumber()) {
-        phoneEl.classList.remove("input-error");
-        if (err) err.style.display = "none";
-      } else {
-        phoneEl.classList.add("input-error");
-        if (err) {
-          err.textContent = "⚠️ Número inválido";
-          err.style.display = "block";
-        }
-      }
-    }
+    // ✅ Valida el teléfono en vivo (solo resalta rojo si es inválido)
+function checkPhoneValidity(){
+  if (!phoneEl) return;
 
-    // Eventos en nombre/email/teléfono
-    inputs.forEach(i => i.addEventListener("input", validateForm));
-    if (phoneEl) {
-      phoneEl.addEventListener("input", () => { checkPhoneValidity(); validateForm(); });
-      phoneEl.addEventListener("countrychange", () => { checkPhoneValidity(); validateForm(); });
+  if (iti && iti.isValidNumber()) {
+    // Extra: limitar longitud máxima absoluta (20 dígitos)
+    const raw = iti.getNumber().replace(/\D/g, "");
+    if (raw.length > 20) {
+      phoneEl.classList.add("input-error");
+      return;
     }
+    phoneEl.classList.remove("input-error");
+  } else {
+    phoneEl.classList.add("input-error");
+  }
+}
 
+// Eventos en nombre/email/teléfono
+inputs.forEach(i => i.addEventListener("input", validateForm));
+if (phoneEl) {
+  phoneEl.addEventListener("input", () => { checkPhoneValidity(); validateForm(); });
+  phoneEl.addEventListener("countrychange", () => { checkPhoneValidity(); validateForm(); });
+}
+    
   } catch(e) {
     console.error("Init error:", e);
     document.getElementById("products").innerHTML = 
