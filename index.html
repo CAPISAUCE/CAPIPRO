@@ -426,6 +426,7 @@ function toggleCart(){
   document.body.classList.toggle("no-scroll", willOpen);
 }
 
+<script>
 function confirmOrder(){
   if(cart.length===0){ 
     alert(T.empty_cart[lang] + " — TOTAL: $0 / 0 сом"); 
@@ -433,11 +434,22 @@ function confirmOrder(){
   }
 
   const name  = document.getElementById("custName").value.trim();
-  const phone = document.getElementById("custPhone").value.trim();
   const email = document.getElementById("custEmail").value.trim();
   const err   = document.getElementById("formError");
 
-  if (!name || !phone || !email) {
+  // ✅ número desde intl-tel-input
+  let phone = "";
+  if (iti && iti.isValidNumber()) {
+    phone = iti.getNumber(); // siempre en formato internacional
+  } else {
+    if (err) {
+      err.textContent = "🐝 " + T.fill_required[lang];
+      err.style.display = "block";
+    }
+    return;
+  }
+
+  if (!name || !email) {
     if (err) {
       err.textContent = "🐝 " + T.fill_required[lang];
       err.style.display = "block";
@@ -447,6 +459,7 @@ function confirmOrder(){
     if (err) err.style.display = "none";
   }
 
+  // 📝 Mensaje WhatsApp
   let msg = "🧾 " + T.cart[lang] + ":\n";
   let totUSD=0, totKGS=0;
   cart.forEach(it=>{ 
@@ -458,6 +471,7 @@ function confirmOrder(){
   const orderId = genOrderId(); 
   msg += `\n\nID: ${orderId}`;
 
+  // 📦 Payload para Google Sheets
   const payload = { 
     orderId, 
     alive:true, 
@@ -467,26 +481,42 @@ function confirmOrder(){
     totalKGS:Number(totKGS), 
     currency:"USD/KGS", 
     lang,
-    items: cart.map(it=>({id:it.id,name:it.name,ml:Number(it.size),qty:Number(it.qty),usd:Number(it.price.usd),kgs:Number(it.price.kgs)})),
+    items: cart.map(it=>({
+      id:it.id,
+      name:it.name,
+      ml:Number(it.size),
+      qty:Number(it.qty),
+      usd:Number(it.price.usd),
+      kgs:Number(it.price.kgs)
+    })),
     created_at:new Date().toISOString(),
     customer:name,
-    phone:phone,
+    phone:phone,   // ✅ ahora va el número internacional validado
     email:email,
     autoInvoice:true
   };
 
   sendToSheets(payload);
+
+  // 📲 Enviar a WhatsApp
   const enc = encodeURIComponent(msg);
   const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-  const urlKG = isMobile ? `whatsapp://send?phone=${PHONE_KG}&text=${enc}` : `https://wa.me/${PHONE_KG}?text=${enc}`; 
+  const urlKG = isMobile 
+    ? `whatsapp://send?phone=${PHONE_KG}&text=${enc}` 
+    : `https://wa.me/${PHONE_KG}?text=${enc}`; 
   window.open(urlKG,"_blank");
-  const urlUS = isMobile ? `whatsapp://send?phone=${PHONE_US}&text=${enc}` : `https://wa.me/${PHONE_US}?text=${enc}`; 
+
+  const urlUS = isMobile 
+    ? `whatsapp://send?phone=${PHONE_US}&text=${enc}` 
+    : `https://wa.me/${PHONE_US}?text=${enc}`; 
   setTimeout(()=>window.open(urlUS,"_blank"),500);
 
+  // 🧹 Reset del carrito
   cart = []; 
   updateCart(); 
   closeCart();
 }
+</script>
 
 /* ================== INIT ================== */
 if ('serviceWorker' in navigator) { navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister())); }
@@ -507,25 +537,45 @@ window.addEventListener("load", () => {
     const phoneInput = document.querySelector("#custPhone");
     if (phoneInput) {
       iti = window.intlTelInput(phoneInput, {
-        initialCountry: "kg",
-        preferredCountries: ["kg","us","es","kz","ru"],
-        dropdownContainer: document.body,
-        utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js"
-      });
+  initialCountry: "kg",
+  preferredCountries: ["kg","us","es","kz","ru"],
+  dropdownContainer: document.body,
+  separateDialCode: true,   // 👈 prefijo fijo
+  utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js"
+});
     }
 
-    // === Validación de campos obligatorios ===
-    const inputs = ["custName","custPhone","custEmail"].map(id => document.getElementById(id));
-    function validateForm(){
-      const filled = inputs.every(i => i.value.trim() !== "");
-      document.getElementById("confirm").disabled = !filled;
-    }
-    inputs.forEach(i => i.addEventListener("input", validateForm));
+   // === Validación de campos obligatorios ===
+const inputs = ["custName","custPhone","custEmail"].map(id => document.getElementById(id));
 
-   }catch(e){
-    console.error("Init error:", e);
-    document.getElementById("products").innerHTML = "<div class='card'>Перезагрузите страницу / Vuelva a cargar la página.</div>";
+function validateForm(){
+  const name  = document.getElementById("custName").value.trim();
+  const email = document.getElementById("custEmail").value.trim();
+
+  let phoneValid = false;
+  if (iti && iti.isValidNumber()) {
+    phoneValid = true;
   }
+
+  const filled = (name !== "" && email !== "" && phoneValid);
+  document.getElementById("confirm").disabled = !filled;
+}
+
+// 🔹 Escuchar cambios en nombre/email/teléfono
+inputs.forEach(i => i.addEventListener("input", validateForm));
+
+// 🔹 Escuchar cambios de país o escritura en el teléfono
+const phoneEl = document.getElementById("custPhone");
+if (phoneEl) {
+  phoneEl.addEventListener("countrychange", validateForm);
+  phoneEl.addEventListener("input", validateForm);
+}
+
+} catch(e) {
+  console.error("Init error:", e);
+  document.getElementById("products").innerHTML = 
+    "<div class='card'>Перезагрузите страницу / Vuelva a cargar la página.</div>";
+}
 });
 </script>
 
