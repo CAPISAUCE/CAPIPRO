@@ -89,7 +89,13 @@ const T = {
   },
   name_ph:{ ky:"Атыңыз", ru:"Ваше имя", es:"Tu nombre", en:"Your name" },
   phone_ph:{ ky:"Телефонуңуз", ru:"Ваш телефон", es:"Tu teléfono", en:"Your phone" },
-  email_ph:{ ky:"Электрон почта", ru:"Электронная почта", es:"Tu email", en:"Your email" }
+  email_ph:{ ky:"Электрон почта", ru:"Электронная почта", es:"Tu email", en:"Your email" },
+  phone_mobile:{
+    ky:"Туура мобилдик номерди киргизиңиз",
+    ru:"Введите корректный номер мобильного телефона",
+    es:"Ingrese un número válido de celular",
+    en:"Please enter a valid mobile number"
+  }
 };
 /* ================== HELPERS ================== */
 function kgs(usd){ return Math.round(usd*EXCHANGE_KGS_PER_USD); }
@@ -277,7 +283,7 @@ function confirmOrder(){
     const type = iti.getNumberType();
     if (type !== intlTelInputUtils.numberType.MOBILE) {
       if (err) {
-        err.textContent = "📵 Ingrese un número válido de celular";
+        err.textContent = "📵 " + T.phone_mobile[lang];
         err.style.display = "block";
       }
       phoneInput.classList.add("input-error");
