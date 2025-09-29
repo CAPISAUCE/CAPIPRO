@@ -1,551 +1,242 @@
-<!DOCTYPE html>
-<html lang="ky">
-<head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
-  <title>CAPIFAN — табияттан сиздин дасторконуңузга</title>
-  <meta name="theme-color" content="#d86916"/>
-  <link rel="manifest" href="manifest.json?v=2">
-
-  <!-- iOS / iPadOS app icon -->
-  <link rel="apple-touch-icon" sizes="120x120" href="icons/ios-120x120.png?v=2">
-  <link rel="apple-touch-icon" sizes="180x180" href="icons/ios-180x180.png?v=2">
-  <link rel="apple-touch-icon" sizes="1024x1024" href="icons/ios-1024x1024.png?v=2">
-
-  <!-- PWA meta -->
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  
-  <!-- 🎨 Estilos generales -->
-  <style>
-    :root{--mango:#f3a21b;--honey:#d86916;--ink:#1e293b;--muted:#64748b;--card:#fff;--bg:#fff7ec}
-    *{box-sizing:border-box} html,body{height:100%}
-    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Helvetica,Arial;color:var(--ink);background:linear-gradient(180deg,#fff,var(--bg))}
-    .topbar{position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;background:rgba(255,255,255,.88);backdrop-filter:saturate(1.2) blur(6px);border-bottom:1px solid #ffe1ad}
-    .brand{display:flex;align-items:center;gap:10px}
-    .logo{width:42px;height:42px;border-radius:12px;background:radial-gradient(100% 100% at 30% 30%, var(--mango), var(--honey));box-shadow:0 6px 20px rgba(216,105,22,.25)}
-    .brand-name{font-weight:800} .slogan{font-size:12px;color:var(--muted)}
-    .controls{display:flex;align-items:center;gap:8px}
-    select,.btn{border:1px solid #ffd489;background:#fff;color:var(--ink);padding:8px 10px;border-radius:12px;font:inherit}
-    .btn.mango{background:linear-gradient(180deg,#fff8eb,#ffe3b3);font-weight:700;cursor:pointer}
-    .shell{max-width:1100px;margin:0 auto;padding:16px}
-    .notice{margin:10px 16px;padding:10px 12px;border:1px dashed #ffd08a;border-radius:12px;background:#fff7e8;color:#6a3c13;font-weight:600}
-    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
-    .card{background:var(--card);border:1px solid #ffe1ad;border-radius:18px;padding:14px;box-shadow:0 6px 16px rgba(243,162,27,.08);display:flex;flex-direction:column;gap:10px}
-    .card img{width:100%;height:160px;object-fit:cover;border-radius:12px;border:1px solid #ffe1ad}
-    .qty{display:flex;align-items:center;gap:8px}.qty .q{min-width:22px;text-align:center;display:inline-block}
-
-    /* ===== Carrito (popup en móviles) ===== */
-    .popup{position:fixed; inset:0; z-index:1000; display:block; pointer-events:none;}
-    .popup.open{ pointer-events:auto; }
-    .backdrop{position:absolute; inset:0; background:rgba(0,0,0,.35); opacity:0; transition:opacity .2s ease;}
-    .popup.open .backdrop{ opacity:1; }
-    .panel{position:fixed; left:0; right:0; bottom:0; top: calc(env(safe-area-inset-top, 0px) + 64px); background:#fff; border-top-left-radius:18px; border-top-right-radius:18px; box-shadow:0 -10px 30px rgba(0,0,0,.15); transform: translateY(100%); transition: transform .25s ease; display:flex; flex-direction:column; padding:calc(12px + env(safe-area-inset-top, 0px)) 16px calc(14px + env(safe-area-inset-bottom, 0px)); overflow:hidden;}
-    .popup.open .panel{ transform: translateY(0); }
-    .panel #cartItems{ flex:1; overflow:auto; -webkit-overflow-scrolling:touch; }
-    body.no-scroll{ overflow:hidden; height:100dvh; }
-    .badge{background:#dc2626;color:#fff;border-radius:999px;min-width:18px;padding:2px 6px;font-size:12px}
-    .foot{color:var(--muted);text-align:center;padding:16px}
-
-    /* Botón eliminar */
-    .btn-remove{background:linear-gradient(180deg,rgba(255,0,0,0.12),rgba(255,0,0,0.18));border:1px solid rgba(255,0,0,0.25);color:#000;font-weight:600;cursor:pointer;transition:transform 0.05s ease,background 0.2s ease;border-radius:12px;padding:8px 10px;}
-    .btn-remove:hover{background:linear-gradient(180deg,rgba(255,0,0,0.18),rgba(255,0,0,0.25));}
-    .btn-remove:active{transform:scale(0.97);}
-     
-    /* Botón cerrar carrito */
-    #closeCart{background:linear-gradient(180deg,#d1f7d1,#a6e3a6);border:1px solid #6ccf6c;color:#000;font-weight:700;cursor:pointer;border-radius:12px;padding:8px 10px;}
-    #closeCart:hover{background:linear-gradient(180deg,#a6e3a6,#8cd88c);}
-  </style>
-
-  <!-- 🖼️ OVERRIDE imágenes -->
-  <style id="imgfix-override">
-    #product-list .product img,
-    .product img,
-    img.product-image {
-      height: 320px !important;
-      width: 100% !important;
-      object-fit: contain !important;
-      display: block !important;
-      margin: 0 auto 10px !important;
-      border-radius: 12px !important;
-      border: 1px solid #ffe1ad !important;
-    }
-  </style>
-
-  <!-- ✅ Botón Confirmar Pedido -->
-  <style id="confirm-btn-final">
-    aside #confirm {
-      -webkit-appearance: none;
-      appearance: none;
-      width: auto;
-      padding: 10px 14px;
-      font-size: 1em;
-      border-radius: 6px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.25s ease;
-    }
-    aside #confirm:disabled {
-      background: #f0f0f0 !important;
-      color: #000 !important;
-      border: 1px solid #ccc !important;
-      cursor: not-allowed !important;
-      box-shadow: none !important;
-    }
-    aside #confirm:not(:disabled) {
-      background: linear-gradient(180deg, #fcd34d, #f59e0b) !important;
-      color: #000 !important;
-      border: 1px solid #d97706 !important;
-      box-shadow: 0 0 8px rgba(245, 158, 11, 0.4),
-                  0 4px 10px rgba(0, 0, 0, 0.15) !important;
-    }
-    aside #confirm:not(:disabled):hover {
-      background: linear-gradient(180deg, #fde68a, #f59e0b) !important;
-      box-shadow: 0 0 12px rgba(245, 158, 11, 0.6),
-                  0 6px 14px rgba(0, 0, 0, 0.2) !important;
-      transform: scale(1.02);
-    }
-    aside #confirm:not(:disabled):active {
-      transform: scale(0.98);
-      box-shadow: 0 0 6px rgba(245, 158, 11, 0.3),
-                  0 3px 6px rgba(0, 0, 0, 0.2) !important;
-    }
-    @media (max-width: 600px){
-      aside #confirm {
-        width: auto !important;
-        flex: 0 0 auto !important;
-        display: inline-flex !important;
-        align-self: flex-start;
-      }
-    }
-  </style>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/css/intlTelInput.css"/>
-<style>
-  /* Pequeños ajustes */
-  .iti { width: 100%; }               /* el input ocupa todo el ancho */
-  .iti__country-list { z-index: 1100; } /* menú por encima del popup del carrito */
-</style>
-</head>
-<body>
-  <header class="topbar">
-    <div class="brand">
-      <div class="logo"></div>
-      <div>
-        <div class="brand-name">CAPIFAN</div>
-        <div class="slogan" id="slogan">табияттан сиздин дасторконуңузга</div>
-      </div>
-    </div>
-    <div class="controls">
-      <label for="lang">🌐</label>
-      <select id="lang" aria-label="Language">
-        <option value="ky" selected>🇰🇬 КY</option>
-        <option value="ru">🇷🇺 RU</option>
-        <option value="es">🇪🇸 ES</option>
-        <option value="en">🇬🇧 EN</option>
-      </select>
-      <button id="btnCart" class="btn mango">🛒 <span id="cartTxt">Себет</span> <span id="cartCount" class="badge" style="display:none">0</span></button>
-    </div>
-  </header>
-
-  <main class="shell">
-    <div class="notice" id="pricesNote">Баалар USD жана KGS менен. Өлчөмдү өзгөртүп бааны көрүңүз.</div>
-    <section id="products" class="grid"></section>
-  </main>
-
-  <!-- Cart -->
-  <aside id="cart" class="popup" role="dialog" aria-modal="true" aria-labelledby="cartTitle">
-    <div class="backdrop" id="backdrop"></div>
-    <div class="panel">
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <h2 id="cartTitle">Себет</h2>
-        <button class="btn" id="closeCart" aria-label="Cerrar">✕</button>
-      </div>
-      <div id="cartItems"></div>
-      <div id="totals" style="margin-top:8px;font-weight:800">TOTAL: 0 сом / $0.00</div>
-
-<!-- Mensaje fijo -->
-<small id="formError" style="color:#d97706;font-weight:600;display:block;">
-  🐝 Por favor, rellenar los campos obligatorios para confirmar su pedido. 
-</small>
-
-<!-- Campos obligatorios -->
-<div id="customerInfo" style="margin-top:12px; display:flex; flex-direction:column; gap:8px">
-  <input type="text" id="custName" placeholder="Tu nombre" required style="padding:8px;border:1px solid #ccc;border-radius:8px;">
-  <input type="tel" id="custPhone" placeholder="Tu teléfono" required style="padding:8px;border:1px solid #ccc;border-radius:8px;">
-  <input type="email" id="custEmail" placeholder="Tu email" required style="padding:8px;border:1px solid #ccc;border-radius:8px;">
-</div>
-
-      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
-  <button id="confirm" class="btn-capipro" disabled>
-  ✅ Буйрутманы тастыктоо
-</button>
-</div>
-  </aside>
-
-  <footer class="foot">© 2025 CAPIFAN – elcapiproduct@gmail.com</footer>
-
-<script>
-/* ================== CONFIG ================== */
-const SHEETS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxab8-ziPP2u5oAhQJKBzxzhrc54-Qz_s4xAzbLg_on1Wl5Z9zthTNPxwVSWUylBCoz/exec";
-const PHONE_KG = "996559500551";
-const PHONE_US = "17866514487";
-const EXCHANGE_KGS_PER_USD = 89;
-
-/* Idioma por defecto: KY (respeta localStorage si ya existe) */
-let lang = localStorage.getItem("capi_lang") || "ky";
-
-/* ================== DATA ================== */
-const PRODUCTS = [
-  { 
-    id:"honey", 
-    img:"honey_logo.png", 
-    name:{
-      ky:"Таза бал Issyk Kul", 
-      ru:"Чистый мёд Issyk Kul", 
-      es:"Miel Pura Issyk Kul", 
-      en:"Pure Honey Issyk Kul"
-    }, 
-    sizes:[
-      {ml:350,usd:4.0},
-      {ml:500,usd:6.3},
-      {ml:1000,usd:10.0}
-    ] 
-  },
-  { 
-    id:"mango", 
-    img:"mango_logo.png", 
-    name:{
-      ky:"Жашыл манго ачуу соусу",
-      ru:"Острый соус из зелёного манго",
-      es:"Salsa Picante de Mango Verde",
-      en:"Green Mango Hot Sauce"
-    }, 
-    sizes:[
-      {ml:350,usd:4.0},
-      {ml:500,usd:9.0},
-      {ml:1000,usd:20.0}
-    ] 
-  },
-  { 
-    id:"pepper_red", 
-    img:"redpepper_logo.png", 
-    name:{
-      ky:"Кызыл калемпир соусу",
-      ru:"Соус из красного перца",
-      es:"Salsa Pimiento Rojo",
-      en:"Red Pepper Sauce"
-    }, 
-    sizes:[
-      {ml:350,usd:3.5},
-      {ml:500,usd:8.0},
-      {ml:1000,usd:20.0}
-    ] 
-  },
-  { 
-    id:"pepper_green", 
-    img:"greenpepper_logo.png", 
-    name:{
-      ky:"Жашыл калемпир соусу",
-      ru:"Соус из зелёного перца",
-      es:"Salsa Pimiento Verde",
-      en:"Green Pepper Sauce"
-    }, 
-    sizes:[
-      {ml:350,usd:3.5},
-      {ml:500,usd:8.0},
-      {ml:1000,usd:20.0}
-    ] 
-  }
-];
-
-
-const T = {
-  title:{ ky:"Продукциялар 100% табигый", ru:"Продукция 100% натуральная", es:"Productos 100% Natural", en:"100% Natural Products" },
-  prices_note:{ ky:"Баалар USD жана KGS менен. Өлчөмдү өзгөртүп бааны көрүңүз.", ru:"Цены в USD и сомах. Меняйте объём, чтобы увидеть цену.", es:"Precios en USD y KGS. Cambia el tamaño para ver el precio.", en:"Prices in USD and KGS. Change size to see price." },
-  cart:{ ky:"Себет", ru:"Корзина", es:"Tu carrito", en:"Your cart" },
-  add:{ ky:"Себетке кошуу", ru:"В корзину", es:"Agregar al carrito", en:"Add to cart" },
-  remove:{ ky:"Өчүрүү", ru:"Удалить", es:"Eliminar", en:"Remove" },
-  empty_cart:{ ky:"Себет бош", ru:"Корзина пуста", es:"El carrito está vacío", en:"Cart is empty" },
-  confirm:{ ky:"Буйрутманы тастыктоо", ru:"Подтвердить заказ", es:"Confirmar pedido", en:"Confirm order" },
-  price_lbl:{ ky:"Баасы:", ru:"Цена:", es:"Precio:", en:"Price:" },
-  fill_required:{ 
-    ky:"Бардык талааларды толтуруңуз.", 
-    ru:"Пожалуйста, заполните все обязательные поля.", 
-    es:"Por favor, complete todos los campos obligatorios.", 
-    en:"Please fill in all required fields." 
-  },
-  name_ph:{ ky:"Атыңыз", ru:"Ваше имя", es:"Tu nombre", en:"Your name" },
-  phone_ph:{ ky:"Телефонуңуз", ru:"Ваш телефон", es:"Tu teléfono", en:"Your phone" },
-  email_ph:{ ky:"Электрон почта", ru:"Электронная почта", es:"Tu email", en:"Your email" }
-};
-/* ================== HELPERS ================== */
-function kgs(usd){ return Math.round(usd*EXCHANGE_KGS_PER_USD); }
-function money(n){ return (Math.round(n*100)/100).toFixed(2); }
-function genOrderId(){ return "CAPI-" + Math.random().toString(16).slice(2,10).toUpperCase(); }
-function sendToSheets(order){
-  try{
-    if (navigator.sendBeacon) {
-      const blob = new Blob([JSON.stringify(order)], { type: "text/plain;charset=utf-8" });
-      navigator.sendBeacon(SHEETS_WEBAPP_URL, blob);
-      return;
-    }
-  }catch(_){}
-  try{
-    fetch(SHEETS_WEBAPP_URL, {
-      method: "POST",
-      mode: "no-cors",
-      headers: { "Content-Type": "text/plain;charset=utf-8" },
-      body: JSON.stringify(order)
-    });
-  }catch(_){}
+/* ——— Base ——— */
+:root{
+  /* Safe areas para iPhone/Android con notch */
+  --safe-top: env(safe-area-inset-top);
+  --safe-bottom: env(safe-area-inset-bottom);
 }
 
-/* ================== STATE ================== */
-let cart = [];
-let iti = null; // 📞 instancia global para intl-tel-input
-
-/* ================== UI ================== */
-function i18n(){
-  document.getElementById("slogan").textContent = T.title[lang];
-  document.getElementById("pricesNote").textContent = T.prices_note[lang];
-  document.getElementById("cartTxt").textContent = T.cart[lang];
-  document.getElementById("cartTitle").textContent = T.cart[lang];
-  document.getElementById("confirm").textContent = "✅ " + T.confirm[lang];
-
-  // === NUEVO: actualizar placeholders ===
-  document.getElementById("custName").placeholder  = T.name_ph[lang];
-  document.getElementById("custPhone").placeholder = T.phone_ph[lang];
-  document.getElementById("custEmail").placeholder = T.email_ph[lang];
-
-  // 🟢 actualizar mensaje fijo de error
-  const err = document.getElementById("formError");
-  if (err) {
-    err.textContent = "🐝 " + T.fill_required[lang];
-  }
-}
-function renderProducts(){
-  const root = document.getElementById("products");
-  root.innerHTML = "";
-  PRODUCTS.forEach(p=>{
-    const card = document.createElement("div"); card.className="card";
-    if (p.img) {
-      const img = document.createElement("img");
-      img.src = p.img; img.alt = p.name[lang];
-      img.onerror = ()=>{ img.remove(); };
-      img.className = "product-image";
-      card.appendChild(img);
-    }
-    const h3 = document.createElement("h3"); h3.textContent = p.name[lang]; card.appendChild(h3);
-    const sel = document.createElement("select");
-    p.sizes.forEach((s,i)=>{ const o=document.createElement("option"); o.value=s.ml; o.textContent=`${s.ml} ml`; sel.appendChild(o); if(i===0) sel.value=s.ml; });
-    card.appendChild(sel);
-    const price = document.createElement("div");
-    const s0 = p.sizes[0]; price.innerHTML = `${T.price_lbl[lang]} ${kgs(s0.usd)} сом / $${money(s0.usd)}`;
-    card.appendChild(price);
-    sel.onchange = ()=> {
-      const s = p.sizes.find(x=>x.ml==sel.value);
-      price.innerHTML = `${T.price_lbl[lang]} ${kgs(s.usd)} сом / $${money(s.usd)}`;
-    };
-    const controls = document.createElement("div"); controls.className="qty";
-    const dec = document.createElement("button"); dec.textContent="−";
-    const q = document.createElement("span"); q.className="q"; q.textContent="1";
-    const inc = document.createElement("button"); inc.textContent="+";
-    dec.onclick = ()=>{ q.textContent = Math.max(1, parseInt(q.textContent)-1); };
-    inc.onclick = ()=>{ q.textContent = parseInt(q.textContent)+1; };
-    controls.append(dec,q,inc); card.appendChild(controls);
-    const add = document.createElement("button"); add.className="btn mango"; add.textContent = T.add[lang];
-    add.onclick = ()=>{
-      const size = parseInt(sel.value,10);
-      const unit = p.sizes.find(x=>x.ml===size).usd;
-      addToCart(p.id, p.name[lang], size, parseInt(q.textContent,10), {usd:unit,kgs:kgs(unit)});
-    };
-    card.appendChild(add);
-    root.appendChild(card);
-  });
+body {
+  background-color: #fff7e6; /* color uniforme para toda la página */
+  color: #4e342e;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+  /* amortigua la barra de estado en iOS/Android PWA */
+  padding-top: max(0px, var(--safe-top));
+  padding-bottom: max(0px, var(--safe-bottom));
 }
 
-function addToCart(id, name, size, qty, price){
-  const key = id + "-" + size + "-" + Date.now() + "-" + Math.random().toString(16).slice(2,6);
-  cart.push({ key, id, name, size, qty, price });
-  updateCart();
+header {
+  background-color: #ffcc80;
+  padding: 15px;
+  text-align: center;
 }
 
-function updateCart(){
-  const items = document.getElementById("cartItems");
-  const count = document.getElementById("cartCount");
-  items.innerHTML = "";
-  let totUSD=0, totKGS=0;
+h1 {
+  margin: 0;
+  font-size: 2.5em;
+  color: #4e342e;
+}
 
-  cart.forEach((it,idx)=>{
-    const row = document.createElement("div");
-    row.className = "row";
+#slogan {
+  font-size: 1em;
+  color: #5d4037;
+  margin-top: 5px;
+}
 
-     const icon = it.id === "honey" ? "🍯" 
-            : it.id === "mango" ? "🥭🌶️" 
-            : it.id === "pepper_red" ? "🍅"     // tomate para red pepper
-            : it.id === "pepper_green" ? "🫑"   // pimiento verde
-            : "•";
+button {
+  background-color: #ffb300;
+  color: white;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 1em;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: transform .04s ease;
+  touch-action: manipulation;
+}
+button:active { transform: scale(.98); }
+button:hover { background-color: #ffa000; }
 
-    row.innerHTML = `<span>${icon} ${it.name} ${it.size} ml x${it.qty} (${it.price.kgs} сом / $${money(it.price.usd)})</span>`;
+/* ——— Productos ——— */
+#product-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 20px;
+  gap: 12px;
+}
 
-    const rm = document.createElement("button");
-    rm.className = "btn-remove";
-    rm.textContent = "🗑";
-    rm.onclick = ()=>{ cart.splice(idx,1); updateCart(); };
+.product {
+  background-color: #ffffff;
+  border: 1px solid #ffe0b2;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 12px;
+  text-align: center;
+  width: 260px;              /* desktop/tablet */
+  max-width: 92vw;           /* evita overflow en móviles */
+}
 
-    row.appendChild(rm);
-    items.appendChild(row);
+/* Imagen responsive (usa todo el ancho disponible del card) */
+.product-image {
+  width: 100%;
+  max-width: 220px;          /* tope en pantallas grandes */
+  height: auto;
+  margin: 0 auto 10px;
+  border-radius: 8px;
+  display: block;
+}
 
-    totUSD += it.price.usd * it.qty;
-    totKGS += it.price.kgs * it.qty;
-  });
+/* ——— Carrito flotante ——— */
+#cart-popup {
+  background-color: #fff8e1;
+  border: 2px solid #ffe0b2;
+  padding: 20px;
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  z-index: 999;
+  width: 300px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  border-radius: 10px;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  opacity: 1;
+  transform: translateY(0);
+}
 
-  document.getElementById("totals").textContent = `TOTAL: ${totKGS} сом / $${money(totUSD)}`;
+/* Animación al ocultar, sin cortar la transición */
+#cart-popup.hidden {
+  opacity: 0;
+  transform: translateY(20px);
+  pointer-events: none;
+  display: block;
+}
 
-  if(cart.length > 0){
-    count.style.display = "inline-block";
-    count.textContent = cart.reduce((a,c)=>a+c.qty,0);
-  } else {
-    count.style.display = "none";
+.hidden { display: none; }
+
+/* Botón flotante del carrito */
+#cart-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #ffb300;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  font-size: 24px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+  z-index: 1000;
+}
+
+#cart-count {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background-color: red;
+  color: white;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 14px;
+  display: none;
+}
+
+/* —— IMAGEN de producto (única regla final) —— */
+html body #product-list .product img.product-image {
+  display: block !important;
+  width: 100% !important;
+  max-width: 220px !important;
+  height: 420px !important;
+  object-fit: contain !important;
+  object-position: center !important;
+  margin: 0 auto 10px !important;
+  border: 1px solid #ffe0b2 !important;
+  border-radius: 12px !important;
+}
+
+/* ✅ Botón Confirmar Pedido — versión final única */
+aside #confirm {
+  -webkit-appearance: none;
+  appearance: none;
+
+  width: auto;
+  padding: 10px 14px;
+  font-size: 1em;
+  border-radius: 6px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+/* 🔒 Estado deshabilitado */
+#confirm:disabled {
+  background: #f0f0f0 !important;
+  color: #000 !important;
+  border: 1px solid #ccc !important;
+  cursor: not-allowed !important;
+  font-weight: 600;
+  box-shadow: none !important;
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: 1em;
+}
+
+/* 🟡 Estado activo (idéntico a "Agregar al carrito") */
+#confirm:not(:disabled) {
+  background: linear-gradient(180deg, #fcd34d, #f59e0b) !important;
+  color: #000 !important;
+  border: 1px solid #d97706 !important;
+  font-weight: 700;
+  cursor: pointer;
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: 1em;
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.4),
+              0 4px 10px rgba(0,0,0,0.15) !important;
+  transition: all 0.25s ease;
+}
+
+/* ✨ Hover */
+#confirm:not(:disabled):hover {
+  background: linear-gradient(180deg, #fde68a, #f59e0b) !important;
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.6),
+              0 6px 14px rgba(0,0,0,0.2) !important;
+  transform: scale(1.02);
+}
+
+/* 👆 Active */
+#confirm:not(:disabled):active {
+  transform: scale(0.98);
+  box-shadow: 0 0 6px rgba(245, 158, 11, 0.3),
+              0 3px 6px rgba(0,0,0,0.2) !important;
+}
+
+/* 📱 En móviles: ancho auto y alineado a la izquierda */
+@media (max-width: 600px){
+  aside #confirm {
+    width: auto !important;
+    flex: 0 0 auto !important;
+    display: inline-flex !important;
+    align-self: flex-start;
   }
 }
 
-function openCart(){
-  document.getElementById("cart").classList.add("open");
-  document.body.classList.add("no-scroll");
+/* 🔧 Overrides mínimos intl-tel-input */
+.iti {
+  position: relative;
+  display: inline-block;
+  width: 100%;
 }
-function closeCart(){
-  document.getElementById("cart").classList.remove("open");
-  document.body.classList.remove("no-scroll");
+.iti__flag-container {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  padding: 0 6px;
 }
-function toggleCart(){
-  const el = document.getElementById("cart");
-  const willOpen = !el.classList.contains("open");
-  el.classList.toggle("open");
-  document.body.classList.toggle("no-scroll", willOpen);
+.iti__selected-flag {
+  height: 100%;
+  display: flex;
+  align-items: center;
 }
-
-function confirmOrder(){
-  if(cart.length===0){ 
-    alert(T.empty_cart[lang] + " — TOTAL: $0 / 0 сом"); 
-    return; 
-  }
-
-  const name  = document.getElementById("custName").value.trim();
-  const phone = document.getElementById("custPhone").value.trim();
-  const email = document.getElementById("custEmail").value.trim();
-  const err   = document.getElementById("formError");
-
-  if (!name || !phone || !email) {
-    if (err) {
-      err.textContent = "🐝 " + T.fill_required[lang];
-      err.style.display = "block";
-    }
-    return;
-  } else {
-    if (err) err.style.display = "none";
-  }
-
-  let msg = "🧾 " + T.cart[lang] + ":\n";
-  let totUSD=0, totKGS=0;
-  cart.forEach(it=>{ 
-    const subU=it.price.usd*it.qty, subK=it.price.kgs*it.qty;
-    msg += `• ${it.name} (${it.size} ml) x${it.qty} = ${subK} сом / $${money(subU)}\n`;
-    totUSD += subU; totKGS += subK; 
-  });
-  msg += `\nTOTAL: ${totKGS} сом / $${money(totUSD)}`;
-  const orderId = genOrderId(); 
-  msg += `\n\nID: ${orderId}`;
-
-  const payload = { 
-    orderId, 
-    alive:true, 
-    version:"orders-v4-clean+invoices", 
-    to: PHONE_KG + "," + PHONE_US,
-    totalUSD:Number(money(totUSD)), 
-    totalKGS:Number(totKGS), 
-    currency:"USD/KGS", 
-    lang,
-    items: cart.map(it=>({id:it.id,name:it.name,ml:Number(it.size),qty:Number(it.qty),usd:Number(it.price.usd),kgs:Number(it.price.kgs)})),
-    created_at:new Date().toISOString(),
-    customer:name,
-    phone:phone,
-    email:email,
-    autoInvoice:true
-  };
-
-  sendToSheets(payload);
-  const enc = encodeURIComponent(msg);
-  const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-  const urlKG = isMobile ? `whatsapp://send?phone=${PHONE_KG}&text=${enc}` : `https://wa.me/${PHONE_KG}?text=${enc}`; 
-  window.open(urlKG,"_blank");
-  const urlUS = isMobile ? `whatsapp://send?phone=${PHONE_US}&text=${enc}` : `https://wa.me/${PHONE_US}?text=${enc}`; 
-  setTimeout(()=>window.open(urlUS,"_blank"),500);
-
-  cart = []; 
-  updateCart(); 
-  closeCart();
+.iti input {
+  padding-left: 52px !important; /* espacio para bandera y prefijo */
 }
 
-<script>
-/* ================== INIT ================== */
-if ('serviceWorker' in navigator) { navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister())); }
-window.addEventListener("load", () => {
-  try{
-    const sel = document.getElementById("lang");
-    sel.value = lang;
-    sel.onchange = (e)=>{ lang=e.target.value; localStorage.setItem("capi_lang",lang); i18n(); renderProducts(); updateCart(); };
-    document.getElementById("btnCart").onclick = openCart;
-    document.getElementById("closeCart").onclick = closeCart;
-    document.getElementById("backdrop").onclick = closeCart;
-    document.addEventListener("keydown", (e)=>{ if(e.key==="Escape") closeCart(); });
-    document.getElementById("confirm").onclick = confirmOrder;
-    i18n(); renderProducts(); updateCart();
-    fetch(SHEETS_WEBAPP_URL).catch(()=>{});
-
-    // ✅ intl-tel-input inicialización
-    const phoneInput = document.querySelector("#custPhone");
-    if (phoneInput) {
-      iti = window.intlTelInput(phoneInput, {
-        initialCountry: "kg",
-        preferredCountries: ["kg","us","es","mx","ru"],
-        dropdownContainer: document.body,
-        separateDialCode: true,
-        utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js"
-      });
-    }
-
-    // === Validación de campos obligatorios ===
-    const inputs = ["custName","custPhone","custEmail"].map(id => document.getElementById(id));
-    function validateForm(){
-      const name  = document.getElementById("custName").value.trim();
-      const email = document.getElementById("custEmail").value.trim();
-
-      let phoneValid = false;
-      if (iti && iti.isValidNumber()) {
-        phoneValid = true;
-      }
-
-      const filled = (name !== "" && email !== "" && phoneValid);
-      document.getElementById("confirm").disabled = !filled;
-    }
-    inputs.forEach(i => i.addEventListener("input", validateForm));
-    const phoneEl = document.getElementById("custPhone");
-    if (phoneEl) {
-      phoneEl.addEventListener("countrychange", validateForm);
-      phoneEl.addEventListener("input", validateForm);
-    }
-
-  }catch(e){
-    console.error("Init error:", e);
-    document.getElementById("products").innerHTML = "<div class='card'>Перезагрузите страницу / Vuelva a cargar la página.</div>";
-  }
-});
-</script>
-
-<!-- Librería intl-tel-input -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/intlTelInput.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js"></script>
-</body>
-</html>
+/* asegúrate que la lista de países siempre quede por encima */
+.iti__country-list {
+  z-index: 1100 !important;
+}
