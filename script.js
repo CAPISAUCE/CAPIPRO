@@ -441,6 +441,7 @@ if (phoneEl) {
   });
 }
 
+
   } catch(e) {
     console.error("Init error:", e);
     document.getElementById("products").innerHTML = 
