@@ -247,3 +247,31 @@ aside #confirm {
 .iti__country-list {
   z-index: 1100 !important;
 }
+/* ⚠️ Estilos de validación de teléfono */
+.input-error {
+  border: 2px solid red !important;
+  background-color: #ffecec;
+  position: relative;
+}
+
+/* Icono de advertencia dentro del input */
+.input-error::after {
+  content: "⚠️";
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;
+  pointer-events: none;
+}
+
+/* Mensaje de error debajo del campo */
+#formError {
+  color: red;
+  font-size: 14px;
+  margin-top: 5px;
+  display: none; /* lo controla el JS */
+}
+#formError::before {
+  content: "⚠️ ";
+}
