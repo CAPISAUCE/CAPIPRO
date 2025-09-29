@@ -220,7 +220,6 @@ aside #confirm {
   display: inline-block;
   width: 100%;
 }
-
 .iti__flag-container {
   position: absolute;
   top: 0;
@@ -228,19 +227,13 @@ aside #confirm {
   left: 0;
   padding: 0 6px;
 }
-
 .iti__selected-flag {
   height: 100%;
   display: flex;
   align-items: center;
 }
-
 .iti input {
-  padding-left: 70px !important;  /* espacio extra para bandera y prefijo */
-  width: 100% !important;
-  box-sizing: border-box;
-  height: 40px;                  /* altura uniforme con otros campos */
-  line-height: 40px;
+  padding-left: 52px !important; /* espacio para bandera y prefijo */
 }
 
 /* asegúrate que la lista de países siempre quede por encima */
