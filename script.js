@@ -257,35 +257,30 @@ function confirmOrder(){
     return; 
   }
 
-  const name  = document.getElementById("custName").value.trim();
-  const email = document.getElementById("custEmail").value.trim();
-  const err   = document.getElementById("formError");
+const name  = document.getElementById("custName").value.trim();
+const email = document.getElementById("custEmail").value.trim();
+const err   = document.getElementById("formError");
 
-  // Teléfono: usar intl-tel-input si está cargado
-  const phoneInputEl = document.getElementById("custPhone");
-  let phone = (phoneInputEl?.value || "").trim();
-
-  if (iti) {
-    phone = iti.getNumber(); // siempre formato +996..., +34..., etc.
-    if (!iti.isValidNumber()) {
-      if (err) {
-        err.textContent = "🐝 Número de teléfono inválido. Revísalo, por favor.";
-        err.style.display = "block";
-      }
-      return;
-    }
+let phone = "";
+if (iti && iti.isValidNumber()) {
+  phone = iti.getNumber(); // ✅ formato internacional (+996…)
+} else {
+  if (err) {
+    err.textContent = "🐝 " + T.fill_required[lang];
+    err.style.display = "block";
   }
+  return; // 🚫 no sigue si el número no es válido
+}
 
-  // Validar campos
-  if (!name || !phone || !email) {
-    if (err) {
-      err.textContent = "🐝 " + T.fill_required[lang];
-      err.style.display = "block";
-    }
-    return;
-  } else {
-    if (err) err.style.display = "none";
+if (!name || !email) {
+  if (err) {
+    err.textContent = "🐝 " + T.fill_required[lang];
+    err.style.display = "block";
   }
+  return;
+} else {
+  if (err) err.style.display = "none";
+}
 
   // Mensaje WhatsApp
   let msg = "🧾 " + T.cart[lang] + ":\n";
@@ -355,11 +350,12 @@ window.addEventListener("load", () => {
 const phoneInput = document.querySelector("#custPhone");
 if (phoneInput) {
   iti = window.intlTelInput(phoneInput, {
-    initialCountry: "kg",
-    preferredCountries: ["kg","us","es","kz","ru"],
-    dropdownContainer: document.body,
-    utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js"
-  });
+  initialCountry: "kg",
+  preferredCountries: ["kg","us","es","mx","ru"],
+  dropdownContainer: document.body,
+  separateDialCode: true,   // ✅ muestra el prefijo junto a la bandera
+  utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js"
+});
 }
     // === Validación de campos obligatorios ===
     const inputs = ["custName","custPhone","custEmail"].map(id => document.getElementById(id));
@@ -368,18 +364,17 @@ if (phoneInput) {
     const inputs = ["custName","custPhone","custEmail"].map(id => document.getElementById(id));
 
     // ✅ Actualizado: validateForm con intl-tel-input
-    function validateForm(){ ... }
+        function validateForm(){
       const name  = document.getElementById("custName").value.trim();
-      const phone = document.getElementById("custPhone").value.trim();
       const email = document.getElementById("custEmail").value.trim();
 
-      let ok = !!name && !!phone && !!email;
-
-      // si intl-tel-input está cargado, validar número internacional
-      if (ok && typeof iti !== "undefined" && iti) {
-        ok = iti.isValidNumber();
+      let phoneValid = false;
+      if (iti && iti.isValidNumber()) {
+        phoneValid = true;
       }
-      document.getElementById("confirm").disabled = !ok;
+
+      const filled = (name !== "" && email !== "" && phoneValid);
+      document.getElementById("confirm").disabled = !filled;
     }
 
     // ✅ Escuchar cambios en los 3 inputs normales
