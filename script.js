@@ -369,43 +369,69 @@ window.addEventListener("load", () => {
     fetch(SHEETS_WEBAPP_URL).catch(()=>{});
 
     // ✅ intl-tel-input inicialización
-    const phoneInput = document.querySelector("#custPhone");
-    if (phoneInput) {
-      iti = window.intlTelInput(phoneInput, {
-        initialCountry: "kg",
-        preferredCountries: ["kg","us","es","mx","ru"],
-        dropdownContainer: document.body,
-        separateDialCode: true,   // ✅ muestra el prefijo junto a la bandera
-        utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js"
-      });
-    }
+const phoneInput = document.querySelector("#custPhone");
+if (phoneInput) {
+  iti = window.intlTelInput(phoneInput, {
+    initialCountry: "kg",
+    preferredCountries: ["kg","us","es","kz","ru"],
+    dropdownContainer: document.body,
+    separateDialCode: true,
+    utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js"
+  });
+
+  // 🚫 Bloquear letras en tiempo real
+  phoneInput.addEventListener("input", (e) => {
+    e.target.value = e.target.value.replace(/[^0-9+]/g, "");
+  });
+}
 
     // === Validación de campos obligatorios ===
-    const inputs = ["custName","custPhone","custEmail"].map(id => document.getElementById(id));
+const inputs = ["custName","custPhone","custEmail"].map(id => document.getElementById(id));
+const phoneEl = document.getElementById("custPhone");
 
-    // ✅ Actualizado: validateForm con intl-tel-input
-    function validateForm(){
-      const name  = document.getElementById("custName").value.trim();
-      const email = document.getElementById("custEmail").value.trim();
+// ✅ Valida nombre, email y teléfono
+function validateForm(){
+  const name  = document.getElementById("custName").value.trim();
+  const email = document.getElementById("custEmail").value.trim();
 
-      let phoneValid = false;
-      if (iti && iti.isValidNumber()) {
-        phoneValid = true;
-      }
+  let phoneValid = false;
+  if (iti && iti.isValidNumber()) {
+    phoneValid = true;
+  }
 
-      const filled = (name !== "" && email !== "" && phoneValid);
-      document.getElementById("confirm").disabled = !filled;
+  const filled = (name !== "" && email !== "" && phoneValid);
+  document.getElementById("confirm").disabled = !filled;
+}
+
+// ✅ Valida el teléfono en vivo (muestra borde rojo + mensaje)
+function checkPhoneValidity(){
+  const err = document.getElementById("formError");
+  if (iti && iti.isValidNumber()) {
+    phoneEl.classList.remove("input-error");
+    if (err) err.style.display = "none";
+  } else {
+    phoneEl.classList.add("input-error");
+    if (err) {
+      err.textContent = "⚠️ Número inválido";
+      err.style.display = "block";
     }
+  }
+}
 
-    // ✅ Escuchar cambios en los 3 inputs normales
-    inputs.forEach(i => i.addEventListener("input", validateForm));
+// ✅ Escuchar cambios en los inputs normales
+inputs.forEach(i => i.addEventListener("input", validateForm));
 
-    // ✅ Escuchar cambios específicos del input teléfono (bandera y escritura)
-    const phoneEl = document.getElementById("custPhone");
-    if (phoneEl) {
-      phoneEl.addEventListener("countrychange", validateForm);
-      phoneEl.addEventListener("input", validateForm);
-    }
+// ✅ Escuchar cambios en el input de teléfono
+if (phoneEl) {
+  phoneEl.addEventListener("input", () => {
+    checkPhoneValidity();
+    validateForm();
+  });
+  phoneEl.addEventListener("countrychange", () => {
+    checkPhoneValidity();
+    validateForm();
+  });
+}
 
   }catch(e){
     console.error("Init error:", e);
