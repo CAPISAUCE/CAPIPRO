@@ -369,10 +369,17 @@ window.addEventListener("load", () => {
         utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js"
       });
 
-      phoneInput.addEventListener("input", (e) => {
-        e.target.value = e.target.value.replace(/[^0-9+]/g, "");
-      });
-    }
+      // 🚫 Bloquear letras y limitar a 15 dígitos
+phoneInput.addEventListener("input", (e) => {
+  // Permite solo números y "+"
+  e.target.value = e.target.value.replace(/[^0-9+]/g, "");
+  
+  // Extra: limitar a 15 dígitos (sin contar "+")
+  const raw = e.target.value.replace(/\D/g, "");
+  if (raw.length > 15) {
+    e.target.value = "+" + raw.slice(0, 15); // corta en 15
+  }
+});
 
     const inputs = ["custName","custPhone","custEmail"].map(id => document.getElementById(id));
     const phoneEl = document.getElementById("custPhone");
