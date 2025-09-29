@@ -398,53 +398,48 @@ window.addEventListener("load", () => {
     }
 
     // === Validación de campos obligatorios ===
-    const inputs = ["custName","custPhone","custEmail"].map(id => document.getElementById(id));
-    const phoneEl = document.getElementById("custPhone");
+const inputs = ["custName","custPhone","custEmail"].map(id => document.getElementById(id));
+const phoneEl = document.getElementById("custPhone");
 
-    function validateForm(){
-      const name  = document.getElementById("custName").value.trim();
-      const email = document.getElementById("custEmail").value.trim();
+function validateForm(){
+  const name  = document.getElementById("custName").value.trim();
+  const email = document.getElementById("custEmail").value.trim();
+  let phoneValid = (iti && iti.isValidNumber());
+  const filled = (name !== "" && email !== "" && phoneValid);
+  document.getElementById("confirm").disabled = !filled;
+}
 
-      let phoneValid = false;
-      if (iti && iti.isValidNumber()) {
-        phoneValid = true;
-      }
+// ✅ Valida el teléfono en vivo (solo resalta rojo si es inválido)
+function checkPhoneValidity(){
+  if (!phoneEl) return;
 
-      const filled = (name !== "" && email !== "" && phoneValid);
-      document.getElementById("confirm").disabled = !filled;
+  if (iti && iti.isValidNumber()) {
+    // Extra: limitar longitud máxima absoluta (20 dígitos)
+    const raw = iti.getNumber().replace(/\D/g, "");
+    if (raw.length > 20) {
+      phoneEl.classList.add("input-error");
+      return;
     }
+    phoneEl.classList.remove("input-error");
+  } else {
+    phoneEl.classList.add("input-error");
+  }
+}
 
-    // ✅ Valida el teléfono en vivo (solo resalta rojo si es inválido)
-    function checkPhoneValidity(){
-      if (!phoneEl) return;
+// ✅ Escuchar cambios en los inputs normales
+inputs.forEach(i => i.addEventListener("input", validateForm));
 
-      if (iti && iti.isValidNumber()) {
-        // Extra: limitar longitud máxima absoluta (20 dígitos)
-        const raw = iti.getNumber().replace(/\D/g, "");
-        if (raw.length > 20) {
-          phoneEl.classList.add("input-error");
-          return;
-        }
-        phoneEl.classList.remove("input-error");
-      } else {
-        phoneEl.classList.add("input-error");
-      }
-    }
-
-    // ✅ Escuchar cambios en los inputs normales
-    inputs.forEach(i => i.addEventListener("input", validateForm));
-
-    // ✅ Escuchar cambios en el input de teléfono
-    if (phoneEl) {
-      phoneEl.addEventListener("input", () => {
-        checkPhoneValidity();
-        validateForm();
-      });
-      phoneEl.addEventListener("countrychange", () => {
-        checkPhoneValidity();
-        validateForm();
-      });
-    }
+// ✅ Escuchar cambios en el input de teléfono
+if (phoneEl) {
+  phoneEl.addEventListener("input", () => {
+    checkPhoneValidity();
+    validateForm();
+  });
+  phoneEl.addEventListener("countrychange", () => {
+    checkPhoneValidity();
+    validateForm();
+  });
+}
 
   } catch(e) {
     console.error("Init error:", e);
