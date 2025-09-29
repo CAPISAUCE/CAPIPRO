@@ -389,7 +389,7 @@ window.addEventListener("load", () => {
       if (!phoneEl) return;
       if (iti && iti.isValidNumber()) {
         const raw = iti.getNumber().replace(/\D/g, "");
-        if (raw.length > 20) {
+        if (raw.length > 15) {
           phoneEl.classList.add("input-error");
           return;
         }
