@@ -360,29 +360,28 @@ window.addEventListener("load", () => {
     fetch(SHEETS_WEBAPP_URL).catch(()=>{});
 
     const phoneInput = document.querySelector("#custPhone");
-    if (phoneInput) {
-      iti = window.intlTelInput(phoneInput, {
-        initialCountry: "kg",
-        preferredCountries: ["kg","us","es","kz","ru"],
-        dropdownContainer: document.body,
-        separateDialCode: true,
-        utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js"
-      });
+if (phoneInput) {
+  iti = window.intlTelInput(phoneInput, {
+    initialCountry: "kg",
+    preferredCountries: ["kg","us","es","kz","ru"],
+    dropdownContainer: document.body,
+    separateDialCode: true,
+    utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js"
+  });
 
-      // 🚫 Bloquear letras y limitar a 15 dígitos
-phoneInput.addEventListener("input", (e) => {
-  // Permite solo números y "+"
-  e.target.value = e.target.value.replace(/[^0-9+]/g, "");
-  
-  // Extra: limitar a 15 dígitos (sin contar "+")
-  const raw = e.target.value.replace(/\D/g, "");
-  if (raw.length > 15) {
-    e.target.value = "+" + raw.slice(0, 15); // corta en 15
-  }
-});
+  // 🚫 Bloquear letras y limitar a 15 dígitos
+  phoneInput.addEventListener("input", (e) => {
+    e.target.value = e.target.value.replace(/[^0-9+]/g, "");
+    const raw = e.target.value.replace(/\D/g, "");
+    if (raw.length > 15) {
+      e.target.value = "+" + raw.slice(0, 15);
+    }
+  });
+} // 👈 esta llave te faltaba
 
-    const inputs = ["custName","custPhone","custEmail"].map(id => document.getElementById(id));
-    const phoneEl = document.getElementById("custPhone");
+// === Validación de campos obligatorios ===
+const inputs = ["custName","custPhone","custEmail"].map(id => document.getElementById(id));
+const phoneEl = document.getElementById("custPhone");
 
     function validateForm(){
       const name  = document.getElementById("custName").value.trim();
