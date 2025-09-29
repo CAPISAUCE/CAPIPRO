@@ -213,3 +213,30 @@ aside #confirm {
     align-self: flex-start;
   }
 }
+
+/* 🔧 Overrides mínimos intl-tel-input */
+.iti {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+.iti__flag-container {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  padding: 0 6px;
+}
+.iti__selected-flag {
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+.iti input {
+  padding-left: 52px !important; /* espacio para bandera y prefijo */
+}
+
+/* asegúrate que la lista de países siempre quede por encima */
+.iti__country-list {
+  z-index: 1100 !important;
+}
