@@ -363,25 +363,35 @@ window.addEventListener("load", () => {
     fetch(SHEETS_WEBAPP_URL).catch(()=>{});
 
     // === intl-tel-input inicialización ===
-    const phoneInput = document.querySelector("#custPhone");
-    if (phoneInput) {
-      iti = window.intlTelInput(phoneInput, {
-        initialCountry: "kg",
-        preferredCountries: ["kg","us","es","kz","ru"],
-        dropdownContainer: document.body,
-        separateDialCode: true,
-        utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js"
-      });
+const phoneInput = document.querySelector("#custPhone");
+if (phoneInput) {
+  iti = window.intlTelInput(phoneInput, {
+    initialCountry: "kg",
+    preferredCountries: ["kg","us","es","kz","ru"],
+    dropdownContainer: document.body,
+    separateDialCode: true,
+    utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js"
+  });
 
-      // 🚫 Bloquear letras y limitar a 15 dígitos
-      phoneInput.addEventListener("input", (e) => {
-        e.target.value = e.target.value.replace(/[^0-9+]/g, "");
-        const raw = e.target.value.replace(/\D/g, "");
-        if (raw.length > 15) {
-          e.target.value = "+" + raw.slice(0, 15);
-        }
-      });
+  // 🚀 Arranca en rojo
+  phoneInput.classList.add("input-error");
+
+  // 🚫 Bloquear letras y limitar a 15 dígitos + validar recuadro
+  phoneInput.addEventListener("input", (e) => {
+    e.target.value = e.target.value.replace(/[^0-9+]/g, "");
+    const raw = e.target.value.replace(/\D/g, "");
+    if (raw.length > 15) {
+      e.target.value = "+" + raw.slice(0, 15);
     }
+
+    // 🔄 Recuadro rojo ON/OFF
+    if (phoneInput.value.trim() && iti.isValidNumber()) {
+      phoneInput.classList.remove("input-error"); // ✅ se apaga
+    } else {
+      phoneInput.classList.add("input-error");    // 🔴 sigue rojo
+    }
+  });
+}
 
     // === Validación de campos obligatorios ===
     const inputs = ["custName","custPhone","custEmail"].map(id => document.getElementById(id));
