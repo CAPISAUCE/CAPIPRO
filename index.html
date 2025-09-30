@@ -592,7 +592,7 @@ function checkPhoneValidity(){
   if (!phoneEl) return;
 
   if (iti && iti.isValidNumber()) {
-    // Extra: limitar longitud máxima absoluta (20 dígitos)
+    // 🔢 Limitar a un máximo de 15 dígitos reales
     const raw = iti.getNumber().replace(/\D/g, "");
     if (raw.length > 15) {
       phoneEl.classList.add("input-error");
