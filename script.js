@@ -406,30 +406,41 @@ if (phoneInput) {
     }
 
     function checkPhoneValidity(){
-      if (!phoneEl) return;
-      if (iti && iti.isValidNumber()) {
-        const raw = iti.getNumber().replace(/\D/g, "");
-        if (raw.length > 15) {
-          phoneEl.classList.add("input-error");
-          return;
-        }
-        phoneEl.classList.remove("input-error");
-      } else {
-        phoneEl.classList.add("input-error");
-      }
+  if (!phoneEl) return;
+  if (iti && iti.isValidNumber()) {
+    const raw = iti.getNumber().replace(/\D/g, "");
+    if (raw.length > 15) {
+      phoneEl.classList.add("input-error");
+      return;
+    }
+    phoneEl.classList.remove("input-error");
+  } else {
+    phoneEl.classList.add("input-error");
+  }
+}
+
+inputs.forEach(i => i.addEventListener("input", validateForm));
+
+if (phoneEl) {
+  phoneEl.addEventListener("input", (e) => {
+    // 🚫 Bloquear letras
+    e.target.value = e.target.value.replace(/[^0-9+]/g, "");
+
+    // 🔢 Limitar a 15 dígitos sin forzar "+"
+    const raw = e.target.value.replace(/\D/g, "");
+    if (raw.length > 15) {
+      e.target.value = raw.slice(0, 15);
     }
 
-    inputs.forEach(i => i.addEventListener("input", validateForm));
-    if (phoneEl) {
-      phoneEl.addEventListener("input", () => {
-        checkPhoneValidity();
-        validateForm();
-      });
-      phoneEl.addEventListener("countrychange", () => {
-        checkPhoneValidity();
-        validateForm();
-      });
-    }
+    checkPhoneValidity();
+    validateForm();
+  });
+
+  phoneEl.addEventListener("countrychange", () => {
+    checkPhoneValidity();
+    validateForm();
+  });
+}
 
   } catch(e) {
     console.error("Init error:", e);
