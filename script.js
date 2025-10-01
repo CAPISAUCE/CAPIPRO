@@ -81,11 +81,12 @@ const T = {
   empty_cart:{ ky:"Себет бош", ru:"Корзина пуста", es:"El carrito está vacío", en:"Cart is empty" },
   confirm:{ ky:"Буйрутманы тастыктоо", ru:"Подтвердить заказ", es:"Confirmar pedido", en:"Confirm order" },
   price_lbl:{ ky:"Баасы:", ru:"Цена:", es:"Precio:", en:"Price:" },
+  /* ✅ ACTUALIZADO: frase larga con emojis en 4 idiomas */
   fill_required:{ 
-    ky:"Бардык талааларды толтуруңуз.", 
-    ru:"Пожалуйста, заполните все обязательные поля.", 
-    es:"Por favor, complete todos los campos obligatorios.", 
-    en:"Please fill in all required fields." 
+    ky:"👇🏼🐝Тапшырманы ырастоо үчүн бардык милдеттүү талааларды толтуруңуз🐝👇🏼", 
+    ru:"👇🏼🐝Пожалуйста, заполните все обязательные поля для подтверждения заказа🐝👇🏼", 
+    es:"👇🏼🐝Por favor, complete los campos obligatorios para confirmar el pedido🐝👇🏼", 
+    en:"👇🏼🐝Please fill in the required fields to confirm the order🐝👇🏼" 
   },
   name_ph:{ ky:"Атыңыз", ru:"Ваше имя", es:"Tu nombre", en:"Your name" },
   phone_ph:{ ky:"Телефонуңуз", ru:"Ваш телефон", es:"Tu teléfono", en:"Your phone" },
@@ -144,6 +145,11 @@ function i18n(){
   document.getElementById("custPhone").placeholder = T.phone_ph[lang];
   document.getElementById("custEmail").placeholder = T.email_ph[lang];
 
+  /* ✅ NUEVO: aviso fijo traducido */
+  const notice = document.getElementById("formNotice");
+  if (notice) notice.textContent = T.fill_required[lang];
+
+  // error dinámico
   const err = document.getElementById("formError");
   if (err) err.textContent = "🐝 " + T.fill_required[lang];
 }
