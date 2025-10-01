@@ -29,10 +29,10 @@ const PRODUCTS = [
     id:"mango", 
     img:"mango_logo.png", 
     name:{
-      ky:"Жашыл манго ачуу соусу",
-      ru:"Острый соус из зелёного манго",
-      es:"Salsa Picante de Mango Verde",
-      en:"Green Mango Hot Sauce"
+      ky:"Жашыл манго ачуу соусу (Premium)",
+      ru:"Острый соус из зелёного манго (Premium)",
+      es:"Salsa Picante de Mango Verde (Premium)",
+      en:"Green Mango Hot Sauce (Premium)"
     }, 
     sizes:[
       {ml:350,usd:4.0},
@@ -46,13 +46,13 @@ const PRODUCTS = [
     name:{
       ky:"Кызыл калемпир соусу",
       ru:"Соус из красного перца",
-      es:"Salsa Pimiento Rojo",
+      es:"Salsa de Pimientos Rojos",
       en:"Red Pepper Sauce"
     }, 
     sizes:[
-      {ml:350,usd:3.5},
-      {ml:500,usd:8.0},
-      {ml:1000,usd:20.0}
+      {ml:350,usd:2.8},
+      {ml:500,usd:6.0},
+      {ml:1000,usd:12.0}
     ] 
   },
   { 
@@ -61,13 +61,13 @@ const PRODUCTS = [
     name:{
       ky:"Жашыл калемпир соусу",
       ru:"Соус из зелёного перца",
-      es:"Salsa Pimiento Verde",
+      es:"Salsa de Pimientos Verdes",
       en:"Green Pepper Sauce"
     }, 
     sizes:[
-      {ml:350,usd:3.5},
-      {ml:500,usd:8.0},
-      {ml:1000,usd:20.0}
+      {ml:350,usd:2.8},
+      {ml:500,usd:6.0},
+      {ml:1000,usd:12.0}
     ] 
   }
 ];
