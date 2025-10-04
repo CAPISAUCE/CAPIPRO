@@ -524,6 +524,7 @@ function confirmOrder(){
 </script>
 
 <script>
+<script>
 /* ================== INIT ================== */
 if ('serviceWorker' in navigator) { 
   navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister())); 
@@ -548,55 +549,33 @@ window.addEventListener("load", () => {
     fetch(SHEETS_WEBAPP_URL).catch(()=>{});
 
     // === intl-tel-input inicialización ===
-const phoneInput = document.querySelector("#custPhone");
-if (phoneInput) {
-  iti = window.intlTelInput(phoneInput, {
-    initialCountry: "kg",
-    preferredCountries: ["kg","us","es","kz","ru"],
-    dropdownContainer: document.body,
-    separateDialCode: true,
-    utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js"
-  });
+    const phoneEl = document.getElementById("custPhone");
+    const inputs = ["custName","custPhone","custEmail"].map(id => document.getElementById(id));
+    if (phoneEl) {
+      iti = window.intlTelInput(phoneEl, {
+        initialCountry: "kg",
+        preferredCountries: ["kg","us","es","kz","ru"],
+        dropdownContainer: document.body,
+        separateDialCode: true,
+        utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js"
+      });
 
-  // 🚀 Arranca en rojo
-  phoneInput.classList.add("input-error");
+      // 🚫 Bloquear letras y limitar a 15 dígitos
+      phoneEl.addEventListener("input", (e) => {
+        e.target.value = e.target.value.replace(/[^0-9+]/g, "");
+        const raw = e.target.value.replace(/\D/g, "");
+        if (raw.length > 15) {
+          e.target.value = "+" + raw.slice(0, 15);
+        }
+        checkPhoneValidity();
+        validateForm();
+      });
 
-  // 🚫 Bloquear letras y limitar a 15 dígitos + validar recuadro
-  phoneInput.addEventListener("input", (e) => {
-    e.target.value = e.target.value.replace(/[^0-9+]/g, "");
-    const raw = e.target.value.replace(/\D/g, "");
-    if (raw.length > 15) {
-      e.target.value = "+" + raw.slice(0, 15);
+      phoneEl.addEventListener("countrychange", () => {
+        checkPhoneValidity();
+        validateForm();
+      });
     }
-
-    // 🔄 Recuadro rojo ON/OFF
-    if (phoneInput.value.trim() && iti.isValidNumber()) {
-      phoneInput.classList.remove("input-error"); // ✅ se apaga
-    } else {
-      phoneInput.classList.add("input-error");    // 🔴 sigue rojo
-    }
-  });
-}
-
-    <!-- Campos obligatorios -->
-<div id="customerInfo" style="margin-top:12px; display:flex; flex-direction:column; gap:8px">
-
-  <div style="position:relative; width:100%; margin-bottom:10px;">
-    <input type="text" id="custName" placeholder="Tu nombre" required
-           style="padding-right:40px; width:100%; border:1px solid #ccc; border-radius:8px; padding:8px;">
-  </div>
-
-  <div style="position:relative; width:100%; margin-bottom:10px;">
-    <input type="tel" id="custPhone" placeholder="Tu teléfono" required
-           style="padding-right:40px; width:100%; border:1px solid #ccc; border-radius:8px; padding:8px;">
-  </div>
-
-  <div style="position:relative; width:100%; margin-bottom:10px;">
-    <input type="email" id="custEmail" placeholder="Tu email" required
-           style="padding-right:40px; width:100%; border:1px solid #ccc; border-radius:8px; padding:8px;">
-  </div>
-
-</div>
 
     function validateForm(){
       const name  = document.getElementById("custName").value.trim();
@@ -606,35 +585,24 @@ if (phoneInput) {
       document.getElementById("confirm").disabled = !filled;
     }
 
-    // ✅ Valida el teléfono en vivo (solo resalta rojo si es inválido)
-function checkPhoneValidity(){
-  if (!phoneEl) return;
-
-  if (iti) {
-    // 🔢 Número completo con prefijo internacional
-    let raw = iti.getNumber().replace(/\D/g, "");
-
-    if (raw.length > 15) {
-      raw = raw.slice(0, 15);
-      // Forzar a que el input muestre recortado
-      iti.setNumber("+" + raw);
+    function checkPhoneValidity(){
+      if (!phoneEl) return;
+      if (iti) {
+        let raw = iti.getNumber().replace(/\D/g, "");
+        if (raw.length > 15) {
+          raw = raw.slice(0, 15);
+          iti.setNumber("+" + raw);
+        }
+        if (iti.isValidNumber()) {
+          phoneEl.classList.remove("input-error");
+        } else {
+          phoneEl.classList.add("input-error");
+        }
+      }
     }
 
-    if (iti.isValidNumber()) {
-      phoneEl.classList.remove("input-error");
-    } else {
-      phoneEl.classList.add("input-error");
-    }
-  }
-}
+    inputs.forEach(i => i.addEventListener("input", validateForm));
 
-// Eventos en nombre/email/teléfono
-inputs.forEach(i => i.addEventListener("input", validateForm));
-if (phoneEl) {
-  phoneEl.addEventListener("input", () => { checkPhoneValidity(); validateForm(); });
-  phoneEl.addEventListener("countrychange", () => { checkPhoneValidity(); validateForm(); });
-}
-    
   } catch(e) {
     console.error("Init error:", e);
     document.getElementById("products").innerHTML = 
