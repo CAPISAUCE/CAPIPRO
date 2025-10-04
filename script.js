@@ -390,13 +390,13 @@ window.addEventListener("load", () => {
       document.getElementById("confirm").disabled = !filled;
     }
 
-    // ✅ Check verde (sin borde rojo, solo ✔)
+    // ✅ Check verde (solo ✔, sin borde)
     function checkPhoneValidity(){
       if (!phoneEl) return;
       const raw = phoneEl.value.replace(/\D/g, "");
       const checkIcon = document.getElementById("phoneCheck");
 
-      // control de 15 dígitos
+      // máximo 15 dígitos
       if (raw.length > 15) {
         // phoneEl.value = raw.slice(0, 15); // opcional
       }
@@ -425,12 +425,12 @@ window.addEventListener("load", () => {
       phoneEl.addEventListener("keypress", (e) => {
         const raw = phoneEl.value.replace(/\D/g, "");
         if (raw.length >= 15 && /[0-9]/.test(e.key)) {
-          e.preventDefault(); // bloquea la tecla
+          e.preventDefault(); 
         }
       });
     }
 
-    // ✅ Validación al confirmar pedido (sin borde rojo)
+    // ✅ Validación al confirmar pedido
     const confirmBtn = document.getElementById("confirm");
     if (confirmBtn && phoneEl) {
       confirmBtn.addEventListener("click", (e) => {
