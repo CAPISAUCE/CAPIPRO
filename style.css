@@ -249,39 +249,13 @@ aside #confirm {
 }
 
 /* ✅ Solo borde rojo cuando hay error */
-input.input-error {
+.input-error {
   border: 2px solid red !important;
   outline: none !important;
-  box-shadow: none !important;
 }
 
 /* ✅ Ajustar solo el tamaño del código de país (+996, +1, etc.) */
 .iti__selected-dial-code {
   font-size: 0.8em;   /* más pequeño que el input */
   color: #555;         /* opcional: un poco más suave */
-}
-
-/* ✅ Check verde directamente dentro del input del teléfono */
-.iti {
-  position: relative;
-  width: 100%;
-}
-
-.iti input.valid {
-  padding-right: 35px !important; /* deja espacio para el check */
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2328a745' viewBox='0 0 16 16'><path d='M13.485 1.929a.75.75 0 0 1 1.06 1.06l-8 8a.75.75 0 0 1-1.06 0l-4-4a.75.75 0 1 1 1.06-1.06L6 9.439l7.485-7.51z'/></svg>");
-  background-repeat: no-repeat;
-  background-position: right 10px center;  /* 👈 dentro del recuadro */
-  background-size: 18px;
-}
-
-.iti.valid::after {
-  content: "✔";
-  color: #28a745 !important;   /* verde forzado */
-  font-size: 1.3em;
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  pointer-events: none;
 }
