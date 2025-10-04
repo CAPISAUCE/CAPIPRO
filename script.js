@@ -400,18 +400,19 @@ if (phoneInput) {
 }
 
     // === Validación de campos obligatorios ===
-    const inputs = ["custName","custPhone","custEmail"].map(id => document.getElementById(id));
-    const phoneEl = document.getElementById("custPhone");
+const inputs = ["custName","custPhone","custEmail"].map(id => document.getElementById(id));
+const phoneEl = document.getElementById("custPhone");
 
-    function validateForm(){
-      const name  = document.getElementById("custName").value.trim();
-      const email = document.getElementById("custEmail").value.trim();
-      let phoneValid = (iti && iti.isValidNumber());
-      const filled = (name !== "" && email !== "" && phoneValid);
-      document.getElementById("confirm").disabled = !filled;
-    }
+function validateForm(){
+  const name  = document.getElementById("custName").value.trim();
+  const email = document.getElementById("custEmail").value.trim();
+  let phoneValid = (iti && iti.isValidNumber());
+  const filled = (name !== "" && email !== "" && phoneValid);
+  document.getElementById("confirm").disabled = !filled;
+}
 
-    function checkPhoneValidity(){
+// ✅ Teléfono (limite 15 dígitos y clase error)
+function checkPhoneValidity(){
   if (!phoneEl) return;
 
   if (iti) {
@@ -432,28 +433,51 @@ if (phoneInput) {
   }
 }
 
-inputs.forEach(i => i.addEventListener("input", validateForm));
+// ✅ Función genérica para mostrar ✔ dentro del input
+function showCheck(inputEl, isValid) {
+  if (isValid) {
+    inputEl.style.backgroundImage =
+      "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23008000' d='M9 16.17l-3.88-3.88-1.41 1.41L9 19 20.29 7.71l-1.41-1.41z'/></svg>\")";
+    inputEl.style.backgroundRepeat = "no-repeat";
+    inputEl.style.backgroundPosition = "right 10px center";
+    inputEl.style.backgroundSize = "18px 18px";
+    inputEl.style.paddingRight = "40px"; // espacio para ✔
+  } else {
+    inputEl.style.backgroundImage = "none";
+  }
+}
 
+// ✅ Valida todas las casillas con ✔
+function validateChecks(){
+  // Nombre: al menos 2 caracteres
+  const nameEl = document.getElementById("custName");
+  showCheck(nameEl, nameEl.value.trim().length > 1);
+
+  // Teléfono: válido según intl-tel-input
+  showCheck(phoneEl, (iti && iti.isValidNumber()));
+
+  // Email: formato válido
+  const emailEl = document.getElementById("custEmail");
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  showCheck(emailEl, emailPattern.test(emailEl.value.trim()));
+}
+
+// === Eventos sincronizados ===
+inputs.forEach(i => i.addEventListener("input", () => {
+  validateForm();
+  validateChecks();
+}));
 if (phoneEl) {
-  phoneEl.addEventListener("input", (e) => {
-    // 🚫 Dejar solo dígitos
-    let raw = e.target.value.replace(/\D/g, "");
-
-    // 🔢 Limitar a 15 dígitos
-    if (raw.length > 15) {
-      raw = raw.slice(0, 15);
-    }
-
-    // 🔄 Reemplazar en el input
-    e.target.value = raw;
-
-    checkPhoneValidity();
-    validateForm();
+  phoneEl.addEventListener("input", () => { 
+    checkPhoneValidity(); 
+    validateForm(); 
+    validateChecks();
   });
 
-  phoneEl.addEventListener("countrychange", () => {
-    checkPhoneValidity();
-    validateForm();
+  phoneEl.addEventListener("countrychange", () => { 
+    checkPhoneValidity(); 
+    validateForm(); 
+    validateChecks();
   });
 }
 
