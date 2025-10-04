@@ -400,53 +400,67 @@ if (phoneInput) {
 }
 
     // === Validación de campos obligatorios ===
-    const inputs = ["custName","custPhone","custEmail"].map(id => document.getElementById(id));
-    const phoneEl = document.getElementById("custPhone");
+const inputs = ["custName","custPhone","custEmail"].map(id => document.getElementById(id));
+const phoneEl = document.getElementById("custPhone");
 
-    function validateForm(){
-      const name  = document.getElementById("custName").value.trim();
-      const email = document.getElementById("custEmail").value.trim();
-      let phoneValid = (iti && iti.isValidNumber());
-      const filled = (name !== "" && email !== "" && phoneValid);
-      document.getElementById("confirm").disabled = !filled;
-    }
+// ✅ Función de validación general
+function validateForm(){
+  const nameEl  = document.getElementById("custName");
+  const emailEl = document.getElementById("custEmail");
 
-    function checkPhoneValidity(){
-  if (!phoneEl) return;
-  if (iti && iti.isValidNumber()) {
-    const raw = iti.getNumber().replace(/\D/g, "");
-    if (raw.length > 15) {
-      phoneEl.classList.add("input-error");
-      return;
-    }
-    phoneEl.classList.remove("input-error");
-  } else {
-    phoneEl.classList.add("input-error");
-  }
+  const name  = nameEl.value.trim();
+  const email = emailEl.value.trim();
+
+  const nameValid  = (name.length > 1); // mínimo 2 caracteres
+  const phoneValid = (iti && iti.isValidNumber());
+  const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+  const filled = (nameValid && emailValid && phoneValid);
+  document.getElementById("confirm").disabled = !filled;
+
+  // ✔ verde (SVG incrustado)
+  const checkSvg = "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23008000' d='M9 16.17l-3.88-3.88-1.41 1.41L9 19 20.29 7.71l-1.41-1.41z'/></svg>\")";
+
+  // aplicar ✔ o nada según validación
+  nameEl.style.backgroundImage  = nameValid  ? checkSvg : "none";
+  emailEl.style.backgroundImage = emailValid ? checkSvg : "none";
+  phoneEl.style.backgroundImage = phoneValid ? checkSvg : "none";
+
+  [nameEl, phoneEl, emailEl].forEach(el => {
+    el.style.backgroundRepeat   = "no-repeat";
+    el.style.backgroundPosition = "right 10px center";
+    el.style.backgroundSize     = "18px 18px";
+  });
 }
 
+// ✅ Teléfono (limita a 15 dígitos y aplica ✔ verde)
+function checkPhoneValidity(){
+  if (!phoneEl || !iti) return;
+
+  let raw = iti.getNumber().replace(/\D/g, "");
+  if (raw.length > 15) {
+    raw = raw.slice(0, 15);
+    iti.setNumber("+" + raw);
+  }
+
+  const valid = iti.isValidNumber();
+  const checkSvg = "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23008000' d='M9 16.17l-3.88-3.88-1.41 1.41L9 19 20.29 7.71l-1.41-1.41z'/></svg>\")";
+  phoneEl.style.backgroundImage = valid ? checkSvg : "none";
+  phoneEl.style.backgroundRepeat   = "no-repeat";
+  phoneEl.style.backgroundPosition = "right 10px center";
+  phoneEl.style.backgroundSize     = "18px 18px";
+}
+
+// === Eventos ===
 inputs.forEach(i => i.addEventListener("input", validateForm));
-
 if (phoneEl) {
-  phoneEl.addEventListener("input", (e) => {
-    // 🚫 Dejar solo dígitos
-    let raw = e.target.value.replace(/\D/g, "");
-
-    // 🔢 Limitar a 15 dígitos
-    if (raw.length > 15) {
-      raw = raw.slice(0, 15);
-    }
-
-    // 🔄 Reemplazar en el input
-    e.target.value = raw;
-
-    checkPhoneValidity();
-    validateForm();
+  phoneEl.addEventListener("input", () => { 
+    checkPhoneValidity(); 
+    validateForm(); 
   });
-
-  phoneEl.addEventListener("countrychange", () => {
-    checkPhoneValidity();
-    validateForm();
+  phoneEl.addEventListener("countrychange", () => { 
+    checkPhoneValidity(); 
+    validateForm(); 
   });
 }
 
