@@ -260,3 +260,24 @@ input.input-error {
   font-size: 0.8em;   /* más pequeño que el input */
   color: #555;         /* opcional: un poco más suave */
 }
+
+/* ✅ NUEVO: check verde al final del campo de teléfono */
+.input-wrapper {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+.input-wrapper input.valid {
+  padding-right: 35px !important; /* espacio para el icono */
+}
+
+.input-wrapper.valid::after {
+  content: "✔";
+  color: #28a745;
+  font-size: 1.2em;
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+}
