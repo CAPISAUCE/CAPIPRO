@@ -256,6 +256,13 @@ aside #confirm {
 
 /* ✅ Ajustar solo el tamaño del código de país (+996, +1, etc.) */
 .iti__selected-dial-code {
-  font-size: 0.8em;   /* más pequeño que el input */
+  font-size: 0.7em;   /* más pequeño que el input */
   color: #555;         /* opcional: un poco más suave */
+}
+
+/* Detecta autofill (Safari / Chrome) */
+@keyframes onAutoFillStart {}
+input:-webkit-autofill {
+  animation-name: onAutoFillStart;
+  animation-duration: 0.01s;
 }
