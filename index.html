@@ -578,9 +578,25 @@ if (phoneInput) {
   });
 }
 
-    // === Validación de campos obligatorios ===
-    const inputs = ["custName","custPhone","custEmail"].map(id => document.getElementById(id));
-    const phoneEl = document.getElementById("custPhone");
+    <!-- Campos obligatorios -->
+<div id="customerInfo" style="margin-top:12px; display:flex; flex-direction:column; gap:8px">
+
+  <div style="position:relative; width:100%; margin-bottom:10px;">
+    <input type="text" id="custName" placeholder="Tu nombre" required
+           style="padding-right:40px; width:100%; border:1px solid #ccc; border-radius:8px; padding:8px;">
+  </div>
+
+  <div style="position:relative; width:100%; margin-bottom:10px;">
+    <input type="tel" id="custPhone" placeholder="Tu teléfono" required
+           style="padding-right:40px; width:100%; border:1px solid #ccc; border-radius:8px; padding:8px;">
+  </div>
+
+  <div style="position:relative; width:100%; margin-bottom:10px;">
+    <input type="email" id="custEmail" placeholder="Tu email" required
+           style="padding-right:40px; width:100%; border:1px solid #ccc; border-radius:8px; padding:8px;">
+  </div>
+
+</div>
 
     function validateForm(){
       const name  = document.getElementById("custName").value.trim();
