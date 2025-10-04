@@ -369,35 +369,20 @@ window.addEventListener("load", () => {
     fetch(SHEETS_WEBAPP_URL).catch(()=>{});
 
     // === intl-tel-input inicialización ===
-const phoneInput = document.querySelector("#custPhone");
-if (phoneInput) {
-  iti = window.intlTelInput(phoneInput, {
-    initialCountry: "kg",
-    preferredCountries: ["kg","us","es","kz","ru"],
-    dropdownContainer: document.body,
-    separateDialCode: true,
-    utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js"
-  });
+    let iti; // 🆕 🔧 Declaración segura
+    const phoneInput = document.querySelector("#custPhone");
+    if (phoneInput) {
+      iti = window.intlTelInput(phoneInput, {
+        initialCountry: "kg",
+        preferredCountries: ["kg","us","es","kz","ru"],
+        dropdownContainer: document.body,
+        separateDialCode: true,
+        utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js"
+      });
 
-  // 🚀 Arranca en rojo
-  phoneInput.classList.add("input-error");
-
-  // 🚫 Bloquear letras y limitar a 15 dígitos + validar recuadro
-  phoneInput.addEventListener("input", (e) => {
-    e.target.value = e.target.value.replace(/[^0-9+]/g, "");
-    const raw = e.target.value.replace(/\D/g, "");
-    if (raw.length > 15) {
-      e.target.value = "+" + raw.slice(0, 15);
+      // 🚀 Arranca en rojo
+      phoneInput.classList.add("input-error");
     }
-
-    // 🔄 Recuadro rojo ON/OFF
-    if (phoneInput.value.trim() && iti.isValidNumber()) {
-      phoneInput.classList.remove("input-error"); // ✅ se apaga
-    } else {
-      phoneInput.classList.add("input-error");    // 🔴 sigue rojo
-    }
-  });
-}
 
     // === Validación de campos obligatorios ===
     const inputs = ["custName","custPhone","custEmail"].map(id => document.getElementById(id));
@@ -411,42 +396,41 @@ if (phoneInput) {
       document.getElementById("confirm").disabled = !filled;
     }
 
+    // 🆕 📱 checkPhoneValidity unificado
     function checkPhoneValidity(){
-  if (!phoneEl) return;
-  if (iti && iti.isValidNumber()) {
-    const raw = iti.getNumber().replace(/\D/g, "");
-    if (raw.length > 15) {
-      phoneEl.classList.add("input-error");
-      return;
-    }
-    phoneEl.classList.remove("input-error");
-  } else {
-    phoneEl.classList.add("input-error");
-  }
-}
-
-inputs.forEach(i => i.addEventListener("input", validateForm));
-
-if (phoneEl) {
-  phoneEl.addEventListener("input", (e) => {
-    // 🚫 Bloquear letras
-    e.target.value = e.target.value.replace(/[^0-9+]/g, "");
-
-    // 🔢 Limitar a 15 dígitos sin forzar "+"
-    const raw = e.target.value.replace(/\D/g, "");
-    if (raw.length > 15) {
-      e.target.value = raw.slice(0, 15);
+      if (!phoneEl) return;
+      const raw = phoneEl.value.replace(/\D/g, "");
+      if (raw.length === 0 || raw.length > 15 || !(iti && iti.isValidNumber())) {
+        phoneEl.classList.add("input-error");
+      } else {
+        phoneEl.classList.remove("input-error");
+      }
     }
 
-    checkPhoneValidity();
-    validateForm();
-  });
+    // 🆕 🔄 Eventos sincronizados
+    inputs.forEach(i => i.addEventListener("input", validateForm));
+    if (phoneEl) {
+      phoneEl.addEventListener("input", () => { 
+        checkPhoneValidity(); 
+        validateForm(); 
+      });
+      phoneEl.addEventListener("countrychange", () => { 
+        checkPhoneValidity(); 
+        validateForm(); 
+      });
+    }
 
-  phoneEl.addEventListener("countrychange", () => {
-    checkPhoneValidity();
-    validateForm();
-  });
-}
+    // 🆕 ✅ Validación extra al confirmar pedido
+    const confirmBtn = document.getElementById("confirm");
+    if (confirmBtn && phoneEl) {
+      confirmBtn.addEventListener("click", (e) => {
+        if (!phoneEl.value.trim() || !iti.isValidNumber()) {
+          e.preventDefault(); // bloquea envío
+          phoneEl.classList.add("input-error"); // 🔴 muestra borde rojo
+          alert("Por favor ingresa un número de teléfono válido antes de confirmar el pedido.");
+        }
+      });
+    }
 
   } catch(e) {
     console.error("Init error:", e);
@@ -454,5 +438,4 @@ if (phoneEl) {
       "<div class='card'>Перезагрузите страницу / Vuelva a cargar la página.</div>";
   }
 });
-
 </script>
