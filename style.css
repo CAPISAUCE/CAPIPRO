@@ -261,26 +261,23 @@ input.input-error {
   color: #555;         /* opcional: un poco más suave */
 }
 
-/* ✅ Check verde alineado dentro del campo de teléfono */
-.input-wrapper {
+/* ✅ Check verde dentro del campo de teléfono */
+.iti {
   position: relative;
-  display: inline-block;
   width: 100%;
 }
 
-.input-wrapper input.valid {
-  padding-right: 35px !important; /* deja hueco para el check */
+.iti input.valid {
+  padding-right: 35px !important; /* deja espacio para el ✔️ */
 }
 
-.input-wrapper.valid::after {
+.iti.valid::after {
   content: "✔";
-  color: #28a745;
-  font-size: 1.1em;
+  color: #28a745 !important;   /* verde forzado */
+  font-size: 1.3em;
   position: absolute;
+  right: 12px;
   top: 50%;
-  right: 15px;               /* dentro del input */
   transform: translateY(-50%);
   pointer-events: none;
-  background: #fff7e6;       /* fondo de la página para “tapar” borde */
-  padding-left: 4px;         /* opcional: separa un poco del borde */
 }
