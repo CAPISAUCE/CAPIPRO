@@ -279,11 +279,14 @@ function confirmOrder(){
   if (iti && iti.isValidNumber()) {
     phone = iti.getNumber(); 
     const type = iti.getNumberType();
-    // (Solo móvil; no se pinta rojo, solo se corta si no cumple)
     if (type !== intlTelInputUtils.numberType.MOBILE) {
+      phoneInput.classList.add("input-error");
       return;
+    } else {
+      phoneInput.classList.remove("input-error");
     }
   } else {
+    phoneInput.classList.add("input-error");
     return; 
   }
 
@@ -366,7 +369,6 @@ window.addEventListener("load", () => {
     fetch(SHEETS_WEBAPP_URL).catch(()=>{});
 
     // === intl-tel-input inicialización ===
-iti = null; // usamos la global declarada arriba
 const phoneInput = document.querySelector("#custPhone");
 if (phoneInput) {
   iti = window.intlTelInput(phoneInput, {
@@ -376,71 +378,73 @@ if (phoneInput) {
     separateDialCode: true,
     utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js"
   });
+
+  // 🚀 Arranca en rojo
+  phoneInput.classList.add("input-error");
+
+  // 🚫 Bloquear letras y limitar a 15 dígitos + validar recuadro
+  phoneInput.addEventListener("input", (e) => {
+    e.target.value = e.target.value.replace(/[^0-9+]/g, "");
+    const raw = e.target.value.replace(/\D/g, "");
+    if (raw.length > 15) {
+      e.target.value = "+" + raw.slice(0, 15);
+    }
+
+    // 🔄 Recuadro rojo ON/OFF
+    if (phoneInput.value.trim() && iti.isValidNumber()) {
+      phoneInput.classList.remove("input-error"); // ✅ se apaga
+    } else {
+      phoneInput.classList.add("input-error");    // 🔴 sigue rojo
+    }
+  });
 }
 
-// === Validación de campos obligatorios ===
-const inputs = ["custName","custPhone","custEmail"].map(id => document.getElementById(id));
-const phoneEl = document.getElementById("custPhone");
-const checkIcon = document.getElementById("phoneCheck");
+    // === Validación de campos obligatorios ===
+    const inputs = ["custName","custPhone","custEmail"].map(id => document.getElementById(id));
+    const phoneEl = document.getElementById("custPhone");
 
-function validateForm(){
-  const name  = document.getElementById("custName").value.trim();
-  const email = document.getElementById("custEmail").value.trim();
-  let phoneValid = (iti && iti.isValidNumber());
-  const filled = (name !== "" && email !== "" && phoneValid);
-  document.getElementById("confirm").disabled = !filled;
-}
+    function validateForm(){
+      const name  = document.getElementById("custName").value.trim();
+      const email = document.getElementById("custEmail").value.trim();
+      let phoneValid = (iti && iti.isValidNumber());
+      const filled = (name !== "" && email !== "" && phoneValid);
+      document.getElementById("confirm").disabled = !filled;
+    }
 
-// ✅ Check verde (sin borde rojo)
-function checkPhoneValidity(){
+    function checkPhoneValidity(){
   if (!phoneEl) return;
-  const raw = phoneEl.value.replace(/\D/g, "");
-
-  // limitar a 15 dígitos
-  if (raw.length > 15) {
-    phoneEl.value = raw.slice(0, 15);
-  }
-
   if (iti && iti.isValidNumber()) {
-    if (checkIcon) checkIcon.style.display = "inline";
+    const raw = iti.getNumber().replace(/\D/g, "");
+    if (raw.length > 15) {
+      phoneEl.classList.add("input-error");
+      return;
+    }
+    phoneEl.classList.remove("input-error");
   } else {
-    if (checkIcon) checkIcon.style.display = "none";
+    phoneEl.classList.add("input-error");
   }
 }
 
-// 🔄 Eventos sincronizados
 inputs.forEach(i => i.addEventListener("input", validateForm));
+
 if (phoneEl) {
-  phoneEl.addEventListener("input", () => { 
-    checkPhoneValidity(); 
-    validateForm(); 
+  phoneEl.addEventListener("input", (e) => {
+    // 🚫 Bloquear letras
+    e.target.value = e.target.value.replace(/[^0-9+]/g, "");
+
+    // 🔢 Limitar a 15 dígitos sin forzar "+"
+    const raw = e.target.value.replace(/\D/g, "");
+    if (raw.length > 15) {
+      e.target.value = raw.slice(0, 15);
+    }
+
+    checkPhoneValidity();
+    validateForm();
   });
 
-  phoneEl.addEventListener("countrychange", () => { 
-    checkPhoneValidity(); 
-    validateForm(); 
-  });
-
-  // 🚫 Bloquear letras y más de 15 dígitos
-  phoneEl.addEventListener("keypress", (e) => {
-    if (!/[0-9]/.test(e.key)) {
-      e.preventDefault(); // bloquea letras y símbolos
-    }
-    const raw = phoneEl.value.replace(/\D/g, "");
-    if (raw.length >= 15) {
-      e.preventDefault(); // bloquea más dígitos
-    }
-  });
-}
-
-// ✅ Validación al confirmar pedido (sin borde rojo)
-const confirmBtn = document.getElementById("confirm");
-if (confirmBtn && phoneEl) {
-  confirmBtn.addEventListener("click", (e) => {
-    if (!phoneEl.value.trim() || !iti.isValidNumber()) {
-      e.preventDefault(); 
-      alert("Por favor ingresa un número de teléfono válido antes de confirmar el pedido.");
-    }
+  phoneEl.addEventListener("countrychange", () => {
+    checkPhoneValidity();
+    validateForm();
   });
 }
 
@@ -450,4 +454,5 @@ if (confirmBtn && phoneEl) {
       "<div class='card'>Перезагрузите страницу / Vuelva a cargar la página.</div>";
   }
 });
+
 </script>
