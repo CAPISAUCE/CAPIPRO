@@ -472,11 +472,11 @@ if (phoneEl) {
 validateForm();
 setTimeout(validateForm, 500); // re-chequeo por si hay autofill tardío
 
-// 👇 Extra: Safari autofill (dispara validateForm aunque no escribas nada)
+// 👇 Extra: Safari/iOS autofill (dispara validateForm cuando Safari rellena)
 inputs.forEach(i => {
   i.addEventListener("animationstart", (e) => {
     if (e.animationName === "onAutoFillStart") {
-      validateForm();
+      validateForm(); // fuerza la actualización de los ✔
     }
   });
 });
