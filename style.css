@@ -251,6 +251,7 @@ aside #confirm {
 /* ✅ Solo borde rojo cuando hay error */
 input.input-error {
   border: 2px solid red !important;
+  outline: none !important;
   box-shadow: none !important;
 }
 
