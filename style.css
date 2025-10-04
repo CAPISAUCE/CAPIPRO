@@ -261,7 +261,7 @@ input.input-error {
   color: #555;         /* opcional: un poco más suave */
 }
 
-/* ✅ NUEVO: check verde al final del campo de teléfono */
+/* ✅ Check verde dentro del input de teléfono */
 .input-wrapper {
   position: relative;
   display: inline-block;
@@ -277,7 +277,8 @@ input.input-error {
   color: #28a745;
   font-size: 1.2em;
   position: absolute;
-  right: 10px;
+  right: 12px;          /* margen más corto para acercarlo al borde */
   top: 50%;
   transform: translateY(-50%);
+  pointer-events: none; /* evita que bloquee el click en el input */
 }
