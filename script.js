@@ -429,14 +429,16 @@ inputs.forEach(i => i.addEventListener("input", validateForm));
 
 if (phoneEl) {
   phoneEl.addEventListener("input", (e) => {
-    // 🚫 Bloquear letras
-    e.target.value = e.target.value.replace(/[^0-9+]/g, "");
+    // 🚫 Dejar solo dígitos
+    let raw = e.target.value.replace(/\D/g, "");
 
-    // 🔢 Limitar a 15 dígitos sin forzar "+"
-    const raw = e.target.value.replace(/\D/g, "");
+    // 🔢 Limitar a 15 dígitos
     if (raw.length > 15) {
-      e.target.value = raw.slice(0, 15);
+      raw = raw.slice(0, 15);
     }
+
+    // 🔄 Reemplazar en el input
+    e.target.value = raw;
 
     checkPhoneValidity();
     validateForm();
