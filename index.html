@@ -120,12 +120,32 @@
       }
     }
   </style>
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/css/intlTelInput.css"/>
-<style>
-  /* Pequeños ajustes */
-  .iti { width: 100%; }               /* el input ocupa todo el ancho */
-  .iti__country-list { z-index: 1100; } /* menú por encima del popup del carrito */
-</style>
+  <style>
+    /* Pequeños ajustes */
+    .iti { width: 100%; }               /* el input ocupa todo el ancho */
+    .iti__country-list { z-index: 1100; } /* menú por encima del popup del carrito */
+
+    /* === Check verde en campo de teléfono === */
+    .input-wrapper {
+      position: relative;
+      display: inline-block;
+      width: 100%;
+    }
+    .input-wrapper input.valid {
+      padding-right: 35px !important; /* espacio para el icono */
+    }
+    .input-wrapper.valid::after {
+      content: "✔";
+      color: #28a745;   /* verde */
+      font-size: 1.2em;
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+  </style>
 </head>
 <body>
   <header class="topbar">
@@ -164,24 +184,28 @@
       <div id="cartItems"></div>
       <div id="totals" style="margin-top:8px;font-weight:800">TOTAL: 0 сом / $0.00</div>
 
-<!-- Aviso fijo (se traduce con i18n) -->
-<small id="formNotice" style="color:#d97706;font-weight:600;display:block;"></small>
+      <!-- Aviso fijo (se traduce con i18n) -->
+      <small id="formNotice" style="color:#d97706;font-weight:600;display:block;"></small>
 
-<!-- Error dinámico (se muestra solo si el teléfono es inválido) -->
-<small id="formError" style="color:red;font-weight:600;display:none;"></small>
+      <!-- Error dinámico (se muestra solo si el teléfono es inválido) -->
+      <small id="formError" style="color:red;font-weight:600;display:none;"></small>
 
-<!-- Campos obligatorios -->
-<div id="customerInfo" style="margin-top:12px; display:flex; flex-direction:column; gap:8px">
-  <input type="text" id="custName" placeholder="Tu nombre" required style="padding:8px;border:1px solid #ccc;border-radius:8px;">
-  <input type="tel" id="custPhone" placeholder="Tu teléfono" required style="padding:8px;border:1px solid #ccc;border-radius:8px;">
-  <input type="email" id="custEmail" placeholder="Tu email" required style="padding:8px;border:1px solid #ccc;border-radius:8px;">
-</div>
+      <!-- Campos obligatorios -->
+      <div id="customerInfo" style="margin-top:12px; display:flex; flex-direction:column; gap:8px">
+        <input type="text" id="custName" placeholder="Tu nombre" required style="padding:8px;border:1px solid #ccc;border-radius:8px;">
+        <!-- 👇🏽 SOLO cambio para el check -->
+        <div class="input-wrapper">
+          <input type="tel" id="custPhone" placeholder="Tu teléfono" required style="padding:8px;border:1px solid #ccc;border-radius:8px;">
+        </div>
+        <input type="email" id="custEmail" placeholder="Tu email" required style="padding:8px;border:1px solid #ccc;border-radius:8px;">
+      </div>
 
       <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
-  <button id="confirm" class="btn-capipro" disabled>
-  ✅ Буйрутманы тастыктоо
-</button>
-</div>
+        <button id="confirm" class="btn-capipro" disabled>
+          ✅ Буйрутманы тастыктоо
+        </button>
+      </div>
+    </div>
   </aside>
 
   <footer class="foot">© 2025 CAPIFAN – elcapiproduct@gmail.com</footer>
@@ -389,8 +413,8 @@ function updateCart(){
 
      const icon = it.id === "honey" ? "🍯" 
             : it.id === "mango" ? "🥭🌶️" 
-            : it.id === "pepper_red" ? "🍅"     // tomate para red pepper
-            : it.id === "pepper_green" ? "🫑"   // pimiento verde
+            : it.id === "pepper_red" ? "🍅"
+            : it.id === "pepper_green" ? "🫑"
             : "•";
 
     row.innerHTML = `<span>${icon} ${it.name} ${it.size} ml x${it.qty} (${it.price.kgs} сом / $${money(it.price.usd)})</span>`;
@@ -548,7 +572,7 @@ window.addEventListener("load", () => {
     fetch(SHEETS_WEBAPP_URL).catch(()=>{});
 
     // === intl-tel-input inicialización ===
-    let iti; // 🆕 🔧 Declaración segura para evitar variable global
+    iti = null; // usamos la global declarada arriba
     const phoneInput = document.querySelector("#custPhone");
     if (phoneInput) {
       iti = window.intlTelInput(phoneInput, {
@@ -558,16 +582,13 @@ window.addEventListener("load", () => {
         separateDialCode: true,
         utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js"
       });
-
-      // 🚀 Arranca en rojo
-      phoneInput.classList.add("input-error");
     }
 
     // === Validación de campos obligatorios ===
     const inputs = ["custName","custPhone","custEmail"].map(id => document.getElementById(id));
     const phoneEl = document.getElementById("custPhone");
 
-        function validateForm(){
+    function validateForm(){
       const name  = document.getElementById("custName").value.trim();
       const email = document.getElementById("custEmail").value.trim();
       let phoneValid = (iti && iti.isValidNumber());
@@ -575,18 +596,25 @@ window.addEventListener("load", () => {
       document.getElementById("confirm").disabled = !filled;
     }
 
-    // 🆕 📱 checkPhoneValidity unificado
+    // ✅ Check verde (sin borde rojo)
     function checkPhoneValidity(){
       if (!phoneEl) return;
       const raw = phoneEl.value.replace(/\D/g, "");
-      if (raw.length === 0 || raw.length > 15 || !(iti && iti.isValidNumber())) {
-        phoneEl.classList.add("input-error");
+      if (raw.length > 15) {
+        phoneEl.value = raw.slice(0, 15); // recorta a 15
+      }
+
+      const wrapper = phoneEl.closest(".input-wrapper");
+      if (iti && iti.isValidNumber()) {
+        phoneEl.classList.add("valid");
+        if (wrapper) wrapper.classList.add("valid");   // ✔️ aparece check
       } else {
-        phoneEl.classList.remove("input-error");
+        phoneEl.classList.remove("valid");
+        if (wrapper) wrapper.classList.remove("valid"); // ❌ desaparece check
       }
     }
 
-    // 🆕 🔄 Eventos sincronizados
+    // 🔄 Eventos sincronizados
     inputs.forEach(i => i.addEventListener("input", validateForm));
     if (phoneEl) {
       phoneEl.addEventListener("input", () => { 
@@ -599,22 +627,21 @@ window.addEventListener("load", () => {
         validateForm(); 
       });
 
-      // 🆕 🚫 Bloquear más de 15 dígitos por teclado
+      // 🚫 Bloquear más de 15 dígitos por teclado
       phoneEl.addEventListener("keypress", (e) => {
         const raw = phoneEl.value.replace(/\D/g, "");
         if (raw.length >= 15 && /[0-9]/.test(e.key)) {
-          e.preventDefault(); // ⛔ bloquea la tecla
+          e.preventDefault(); // bloquea la tecla
         }
       });
     }
 
-    // 🆕 ✅ Validación extra al confirmar pedido
+    // ✅ Validación al confirmar pedido (sin borde rojo)
     const confirmBtn = document.getElementById("confirm");
     if (confirmBtn && phoneEl) {
       confirmBtn.addEventListener("click", (e) => {
         if (!phoneEl.value.trim() || !iti.isValidNumber()) {
-          e.preventDefault(); // bloquea envío
-          phoneEl.classList.add("input-error"); // 🔴 muestra borde rojo
+          e.preventDefault(); 
           alert("Por favor ingresa un número de teléfono válido antes de confirmar el pedido.");
         }
       });
