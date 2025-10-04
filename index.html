@@ -594,16 +594,18 @@ if (phoneInput) {
 function checkPhoneValidity(){
   if (!phoneEl) return;
 
-  if (iti && iti.isValidNumber()) {
-    // 🔢 Limitar a un máximo de 15 dígitos reales
-    const raw = iti.getNumber().replace(/\D/g, "");
+  if (iti) {
+    // 🔢 Contar SOLO lo que escribe el usuario (sin prefijo +996)
+    const raw = phoneEl.value.replace(/\D/g, "");
     if (raw.length > 15) {
-      phoneEl.classList.add("input-error");
-      return;
+      phoneEl.value = raw.slice(0, 15); // recorta de inmediato
     }
-    phoneEl.classList.remove("input-error");
-  } else {
-    phoneEl.classList.add("input-error");
+
+    if (iti.isValidNumber()) {
+      phoneEl.classList.remove("input-error");
+    } else {
+      phoneEl.classList.add("input-error");
+    }
   }
 }
 
