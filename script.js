@@ -464,6 +464,9 @@ if (phoneEl) {
   });
 }
 
+// 👇 Nueva línea para inicializar
+validateForm();
+
   } catch(e) {
     console.error("Init error:", e);
     document.getElementById("products").innerHTML = 
