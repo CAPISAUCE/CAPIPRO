@@ -567,7 +567,7 @@ window.addEventListener("load", () => {
     const inputs = ["custName","custPhone","custEmail"].map(id => document.getElementById(id));
     const phoneEl = document.getElementById("custPhone");
 
-    function validateForm(){
+        function validateForm(){
       const name  = document.getElementById("custName").value.trim();
       const email = document.getElementById("custEmail").value.trim();
       let phoneValid = (iti && iti.isValidNumber());
@@ -575,10 +575,9 @@ window.addEventListener("load", () => {
       document.getElementById("confirm").disabled = !filled;
     }
 
-    // 🆕 📱 checkPhoneValidity unificado para recuadro rojo + límite de dígitos
+    // 🆕 📱 checkPhoneValidity unificado
     function checkPhoneValidity(){
       if (!phoneEl) return;
-
       const raw = phoneEl.value.replace(/\D/g, "");
       if (raw.length === 0 || raw.length > 15 || !(iti && iti.isValidNumber())) {
         phoneEl.classList.add("input-error");
@@ -587,11 +586,26 @@ window.addEventListener("load", () => {
       }
     }
 
-    // 🆕 🔄 Eventos sincronizados con checkPhoneValidity + validateForm
+    // 🆕 🔄 Eventos sincronizados
     inputs.forEach(i => i.addEventListener("input", validateForm));
     if (phoneEl) {
-      phoneEl.addEventListener("input", () => { checkPhoneValidity(); validateForm(); });
-      phoneEl.addEventListener("countrychange", () => { checkPhoneValidity(); validateForm(); });
+      phoneEl.addEventListener("input", () => { 
+        checkPhoneValidity(); 
+        validateForm(); 
+      });
+
+      phoneEl.addEventListener("countrychange", () => { 
+        checkPhoneValidity(); 
+        validateForm(); 
+      });
+
+      // 🆕 🚫 Bloquear más de 15 dígitos por teclado
+      phoneEl.addEventListener("keypress", (e) => {
+        const raw = phoneEl.value.replace(/\D/g, "");
+        if (raw.length >= 15 && /[0-9]/.test(e.key)) {
+          e.preventDefault(); // ⛔ bloquea la tecla
+        }
+      });
     }
 
     // 🆕 ✅ Validación extra al confirmar pedido
