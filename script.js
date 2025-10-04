@@ -413,15 +413,22 @@ if (phoneInput) {
 
     function checkPhoneValidity(){
   if (!phoneEl) return;
-  if (iti && iti.isValidNumber()) {
-    const raw = iti.getNumber().replace(/\D/g, "");
+
+  if (iti) {
+    // 🔢 Número completo con prefijo internacional
+    let raw = iti.getNumber().replace(/\D/g, "");
+
     if (raw.length > 15) {
-      phoneEl.classList.add("input-error");
-      return;
+      raw = raw.slice(0, 15);
+      // Forzar a que el input muestre recortado
+      iti.setNumber("+" + raw);
     }
-    phoneEl.classList.remove("input-error");
-  } else {
-    phoneEl.classList.add("input-error");
+
+    if (iti.isValidNumber()) {
+      phoneEl.classList.remove("input-error");
+    } else {
+      phoneEl.classList.add("input-error");
+    }
   }
 }
 
