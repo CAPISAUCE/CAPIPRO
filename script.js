@@ -366,80 +366,83 @@ window.addEventListener("load", () => {
     fetch(SHEETS_WEBAPP_URL).catch(()=>{});
 
     // === intl-tel-input inicialización ===
-    iti = null; // usar la global
-    const phoneInput = document.querySelector("#custPhone");
-    if (phoneInput) {
-      iti = window.intlTelInput(phoneInput, {
-        initialCountry: "kg",
-        preferredCountries: ["kg","us","es","kz","ru"],
-        dropdownContainer: document.body,
-        separateDialCode: true,
-        utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js"
-      });
+iti = null; // usamos la global declarada arriba
+const phoneInput = document.querySelector("#custPhone");
+if (phoneInput) {
+  iti = window.intlTelInput(phoneInput, {
+    initialCountry: "kg",
+    preferredCountries: ["kg","us","es","kz","ru"],
+    dropdownContainer: document.body,
+    separateDialCode: true,
+    utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js"
+  });
+}
+
+// === Validación de campos obligatorios ===
+const inputs = ["custName","custPhone","custEmail"].map(id => document.getElementById(id));
+const phoneEl = document.getElementById("custPhone");
+const checkIcon = document.getElementById("phoneCheck");
+
+function validateForm(){
+  const name  = document.getElementById("custName").value.trim();
+  const email = document.getElementById("custEmail").value.trim();
+  let phoneValid = (iti && iti.isValidNumber());
+  const filled = (name !== "" && email !== "" && phoneValid);
+  document.getElementById("confirm").disabled = !filled;
+}
+
+// ✅ Check verde (sin borde rojo)
+function checkPhoneValidity(){
+  if (!phoneEl) return;
+  const raw = phoneEl.value.replace(/\D/g, "");
+
+  // limitar a 15 dígitos
+  if (raw.length > 15) {
+    phoneEl.value = raw.slice(0, 15);
+  }
+
+  if (iti && iti.isValidNumber()) {
+    if (checkIcon) checkIcon.style.display = "inline";
+  } else {
+    if (checkIcon) checkIcon.style.display = "none";
+  }
+}
+
+// 🔄 Eventos sincronizados
+inputs.forEach(i => i.addEventListener("input", validateForm));
+if (phoneEl) {
+  phoneEl.addEventListener("input", () => { 
+    checkPhoneValidity(); 
+    validateForm(); 
+  });
+
+  phoneEl.addEventListener("countrychange", () => { 
+    checkPhoneValidity(); 
+    validateForm(); 
+  });
+
+  // 🚫 Bloquear letras y más de 15 dígitos
+  phoneEl.addEventListener("keypress", (e) => {
+    if (!/[0-9]/.test(e.key)) {
+      e.preventDefault(); // bloquea letras y símbolos
     }
-
-   // === Validación de campos obligatorios ===
-    const inputs = ["custName","custPhone","custEmail"].map(id => document.getElementById(id));
-    const phoneEl = document.getElementById("custPhone");
-
-    function validateForm(){
-      const name  = document.getElementById("custName").value.trim();
-      const email = document.getElementById("custEmail").value.trim();
-      let phoneValid = (iti && iti.isValidNumber());
-      const filled = (name !== "" && email !== "" && phoneValid);
-      document.getElementById("confirm").disabled = !filled;
+    const raw = phoneEl.value.replace(/\D/g, "");
+    if (raw.length >= 15) {
+      e.preventDefault(); // bloquea más dígitos
     }
+  });
+}
 
-    // ✅ Check verde (solo ✔, sin borde)
-    function checkPhoneValidity(){
-      if (!phoneEl) return;
-      const raw = phoneEl.value.replace(/\D/g, "");
-      const checkIcon = document.getElementById("phoneCheck");
-
-      // máximo 15 dígitos
-      if (raw.length > 15) {
-        // phoneEl.value = raw.slice(0, 15); // opcional
-      }
-
-      if (iti && iti.isValidNumber()) {
-        if (checkIcon) checkIcon.style.display = "inline";
-      } else {
-        if (checkIcon) checkIcon.style.display = "none";
-      }
+// ✅ Validación al confirmar pedido (sin borde rojo)
+const confirmBtn = document.getElementById("confirm");
+if (confirmBtn && phoneEl) {
+  confirmBtn.addEventListener("click", (e) => {
+    if (!phoneEl.value.trim() || !iti.isValidNumber()) {
+      e.preventDefault(); 
+      alert("Por favor ingresa un número de teléfono válido antes de confirmar el pedido.");
     }
-
-    // 🔄 Eventos sincronizados
-    inputs.forEach(i => i.addEventListener("input", validateForm));
-    if (phoneEl) {
-      phoneEl.addEventListener("input", () => { 
-        checkPhoneValidity(); 
-        validateForm(); 
-      });
-
-      phoneEl.addEventListener("countrychange", () => { 
-        checkPhoneValidity(); 
-        validateForm(); 
-      });
-
-      // 🚫 Bloquear más de 15 dígitos por teclado
-      phoneEl.addEventListener("keypress", (e) => {
-        const raw = phoneEl.value.replace(/\D/g, "");
-        if (raw.length >= 15 && /[0-9]/.test(e.key)) {
-          e.preventDefault(); 
-        }
-      });
-    }
-
-    // ✅ Validación al confirmar pedido
-    const confirmBtn = document.getElementById("confirm");
-    if (confirmBtn && phoneEl) {
-      confirmBtn.addEventListener("click", (e) => {
-        if (!phoneEl.value.trim() || !iti.isValidNumber()) {
-          e.preventDefault(); 
-          alert("Por favor ingresa un número de teléfono válido antes de confirmar el pedido.");
-        }
-      });
-    }
+  });
+}
 
   } catch(e) {
     console.error("Init error:", e);
