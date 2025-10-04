@@ -468,11 +468,18 @@ if (phoneEl) {
   });
 }
 
-// Validación inicial al cargar
+// Validación inicial
 validateForm();
+setTimeout(validateForm, 500); // re-chequeo por si hay autofill tardío
 
-// 👇 Revisión extra por si Safari/Chrome hacen autofill al inicio
-setTimeout(validateForm, 500);
+// 👇 Extra: Safari autofill (dispara validateForm aunque no escribas nada)
+inputs.forEach(i => {
+  i.addEventListener("animationstart", (e) => {
+    if (e.animationName === "onAutoFillStart") {
+      validateForm();
+    }
+  });
+});
 
   } catch(e) {
     console.error("Init error:", e);
