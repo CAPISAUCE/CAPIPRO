@@ -249,9 +249,9 @@ aside #confirm {
 }
 
 /* ✅ Solo borde rojo cuando hay error */
-.input-error {
+input.input-error {
   border: 2px solid red !important;
-  outline: none !important;
+  box-shadow: none !important;
 }
 
 /* ✅ Ajustar solo el tamaño del código de país (+996, +1, etc.) */
