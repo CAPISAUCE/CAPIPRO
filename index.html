@@ -659,12 +659,13 @@ window.addEventListener("load", () => {
 });
 </script>
 
-<!-- Wrapper con check verde -->
-<div class="phone-wrapper" style="position:relative; display:inline-block; width:100%;">
+<!-- Wrapper con check verde alineado -->
+<div class="phone-wrapper" style="position:relative; width:100%;">
   <input type="tel" id="custPhone" placeholder="Tu teléfono" required
-         style="padding-right:30px; width:100%; border:1px solid #ccc; border-radius:8px; padding:8px;">
-  <span id="phoneCheck" style="position:absolute; right:10px; top:50%; transform:translateY(-50%);
-        color:green; font-size:18px; display:none;">✔</span>
+         style="padding-right:35px; width:100%; border:1px solid #ccc; border-radius:8px; padding:8px;">
+  <span id="phoneCheck" 
+        style="position:absolute; right:12px; top:50%; transform:translateY(-50%);
+               color:green; font-size:20px; display:none; pointer-events:none;">✔</span>
 </div>
 
 <!-- Librería intl-tel-input -->
