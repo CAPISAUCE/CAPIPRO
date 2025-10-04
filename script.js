@@ -397,45 +397,54 @@ window.addEventListener("load", () => {
     }
 
     // 🆕 📱 checkPhoneValidity unificado
-    function checkPhoneValidity(){
-      if (!phoneEl) return;
-      const raw = phoneEl.value.replace(/\D/g, "");
-      if (raw.length === 0 || raw.length > 15 || !(iti && iti.isValidNumber())) {
-        phoneEl.classList.add("input-error");
-      } else {
-        phoneEl.classList.remove("input-error");
-      }
-    }
-
-    // 🆕 🔄 Eventos sincronizados
-    inputs.forEach(i => i.addEventListener("input", validateForm));
-    if (phoneEl) {
-      phoneEl.addEventListener("input", () => { 
-        checkPhoneValidity(); 
-        validateForm(); 
-      });
-      phoneEl.addEventListener("countrychange", () => { 
-        checkPhoneValidity(); 
-        validateForm(); 
-      });
-    }
-
-    // 🆕 ✅ Validación extra al confirmar pedido
-    const confirmBtn = document.getElementById("confirm");
-    if (confirmBtn && phoneEl) {
-      confirmBtn.addEventListener("click", (e) => {
-        if (!phoneEl.value.trim() || !iti.isValidNumber()) {
-          e.preventDefault(); // bloquea envío
-          phoneEl.classList.add("input-error"); // 🔴 muestra borde rojo
-          alert("Por favor ingresa un número de teléfono válido antes de confirmar el pedido.");
-        }
-      });
-    }
-
-  } catch(e) {
-    console.error("Init error:", e);
-    document.getElementById("products").innerHTML = 
-      "<div class='card'>Перезагрузите страницу / Vuelva a cargar la página.</div>";
+function checkPhoneValidity(){
+  if (!phoneEl) return;
+  const raw = phoneEl.value.replace(/\D/g, "");
+  if (raw.length === 0 || raw.length > 15 || !(iti && iti.isValidNumber())) {
+    phoneEl.classList.add("input-error");
+  } else {
+    phoneEl.classList.remove("input-error");
   }
+}
+
+// 🆕 🔄 Eventos sincronizados
+inputs.forEach(i => i.addEventListener("input", validateForm));
+if (phoneEl) {
+  phoneEl.addEventListener("input", () => { 
+    checkPhoneValidity(); 
+    validateForm(); 
+  });
+
+  phoneEl.addEventListener("countrychange", () => { 
+    checkPhoneValidity(); 
+    validateForm(); 
+  });
+
+  // 🆕 🚫 Bloquear más de 15 dígitos por teclado
+  phoneEl.addEventListener("keypress", (e) => {
+    const raw = phoneEl.value.replace(/\D/g, "");
+    if (raw.length >= 15 && /[0-9]/.test(e.key)) {
+      e.preventDefault(); // ⛔ bloquea la tecla
+    }
+  });
+}
+
+// 🆕 ✅ Validación extra al confirmar pedido
+const confirmBtn = document.getElementById("confirm");
+if (confirmBtn && phoneEl) {
+  confirmBtn.addEventListener("click", (e) => {
+    if (!phoneEl.value.trim() || !iti.isValidNumber()) {
+      e.preventDefault(); // bloquea envío
+      phoneEl.classList.add("input-error"); // 🔴 muestra borde rojo
+      alert("Por favor ingresa un número de teléfono válido antes de confirmar el pedido.");
+    }
+  });
+}
+
+} catch(e) {
+  console.error("Init error:", e);
+  document.getElementById("products").innerHTML = 
+    "<div class='card'>Перезагрузите страницу / Vuelva a cargar la página.</div>";
+}
 });
 </script>
