@@ -452,7 +452,11 @@ function checkPhoneValidity(){
 }
 
 // === Eventos ===
-inputs.forEach(i => i.addEventListener("input", validateForm));
+inputs.forEach(i => {
+  i.addEventListener("input", validateForm);
+  i.addEventListener("change", validateForm); // cubre autofill básico
+});
+
 if (phoneEl) {
   phoneEl.addEventListener("input", () => { 
     checkPhoneValidity(); 
@@ -464,8 +468,11 @@ if (phoneEl) {
   });
 }
 
-// 👇 Nueva línea para inicializar
+// Validación inicial al cargar
 validateForm();
+
+// 👇 Revisión extra por si Safari/Chrome hacen autofill al inicio
+setTimeout(validateForm, 500);
 
   } catch(e) {
     console.error("Init error:", e);
