@@ -378,7 +378,7 @@ window.addEventListener("load", () => {
       });
     }
 
-    // === Validación de campos obligatorios ===
+   // === Validación de campos obligatorios ===
     const inputs = ["custName","custPhone","custEmail"].map(id => document.getElementById(id));
     const phoneEl = document.getElementById("custPhone");
 
@@ -390,31 +390,23 @@ window.addEventListener("load", () => {
       document.getElementById("confirm").disabled = !filled;
     }
 
-    // ✅ Check verde (sin borde rojo)
-function checkPhoneValidity(){
-  if (!phoneEl) return;
-  const raw = phoneEl.value.replace(/\D/g, "");
+    // ✅ Check verde (sin borde rojo, solo ✔)
+    function checkPhoneValidity(){
+      if (!phoneEl) return;
+      const raw = phoneEl.value.replace(/\D/g, "");
+      const checkIcon = document.getElementById("phoneCheck");
 
-  // no pintamos rojo: solo control de 15 dígitos + check verde
-  const wrapper = phoneEl.closest(".input-wrapper");
-  const itiContainer = phoneEl.closest(".iti"); // 👈 contenedor real de intl-tel-input
+      // control de 15 dígitos
+      if (raw.length > 15) {
+        // phoneEl.value = raw.slice(0, 15); // opcional
+      }
 
-  if (raw.length > 15) {
-    // no forzamos +; simplemente no dejamos pasar vía keypress y aquí dejamos tal cual
-    // si quieres recortar también pegados: descomenta la siguiente línea
-    // phoneEl.value = raw.slice(0, 15);
-  }
-
-  if (iti && iti.isValidNumber()) {
-    phoneEl.classList.add("valid");
-    if (wrapper) wrapper.classList.add("valid");   
-    if (itiContainer) itiContainer.classList.add("valid"); // 👈 añadimos también en .iti
-  } else {
-    phoneEl.classList.remove("valid");
-    if (wrapper) wrapper.classList.remove("valid");
-    if (itiContainer) itiContainer.classList.remove("valid"); // 👈 quitamos en .iti
-  }
-}
+      if (iti && iti.isValidNumber()) {
+        if (checkIcon) checkIcon.style.display = "inline";
+      } else {
+        if (checkIcon) checkIcon.style.display = "none";
+      }
+    }
 
     // 🔄 Eventos sincronizados
     inputs.forEach(i => i.addEventListener("input", validateForm));
