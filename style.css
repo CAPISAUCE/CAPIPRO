@@ -261,7 +261,7 @@ input.input-error {
   color: #555;         /* opcional: un poco más suave */
 }
 
-/* ✅ Check verde dentro del input de teléfono */
+/* ✅ Check verde alineado dentro del campo de teléfono */
 .input-wrapper {
   position: relative;
   display: inline-block;
@@ -269,16 +269,18 @@ input.input-error {
 }
 
 .input-wrapper input.valid {
-  padding-right: 35px !important; /* espacio para el icono */
+  padding-right: 35px !important; /* deja hueco para el check */
 }
 
 .input-wrapper.valid::after {
   content: "✔";
   color: #28a745;
-  font-size: 1.2em;
+  font-size: 1.1em;
   position: absolute;
-  right: 12px;          /* margen más corto para acercarlo al borde */
   top: 50%;
+  right: 15px;               /* dentro del input */
   transform: translateY(-50%);
-  pointer-events: none; /* evita que bloquee el click en el input */
+  pointer-events: none;
+  background: #fff7e6;       /* fondo de la página para “tapar” borde */
+  padding-left: 4px;         /* opcional: separa un poco del borde */
 }
