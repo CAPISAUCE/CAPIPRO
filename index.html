@@ -111,6 +111,7 @@
       box-shadow: 0 0 6px rgba(245, 158, 11, 0.3),
                   0 3px 6px rgba(0, 0, 0, 0.2) !important;
     }
+
     @media (max-width: 600px){
       aside #confirm {
         width: auto !important;
@@ -119,21 +120,23 @@
         align-self: flex-start;
       }
     }
-  </style>
+  </style> <!-- 👈 faltaba este cierre -->
+
+  <!-- 📞 Librería intl-tel-input -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/css/intlTelInput.css"/>
 
-<style>
-  /* Pequeños ajustes */
-  .iti { width: 100%; }               /* el input ocupa todo el ancho */
-  .iti__country-list { z-index: 1100; } /* menú por encima del popup del carrito */
+  <style>
+    /* Ajustes intl-tel-input */
+    .iti { width: 100%; }
+    .iti__country-list { z-index: 1100; }
 
-  /* Detectar autofill (Safari / Chrome) */
-  @keyframes onAutoFillStart {}
-  input:-webkit-autofill {
-    animation-name: onAutoFillStart;
-    animation-duration: 0.01s;
-  }
-</style>
+    /* Hack: detectar autofill Safari/Chrome */
+    @keyframes onAutoFillStart {}
+    input:-webkit-autofill {
+      animation-name: onAutoFillStart;
+      animation-duration: 0.01s;
+    }
+  </style>
 </head>
 <body>
   <header class="topbar">
