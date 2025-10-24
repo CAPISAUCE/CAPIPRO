@@ -55,7 +55,7 @@
      
     /* Botón cerrar carrito */
     #closeCart{background:linear-gradient(180deg,#d1f7d1,#a6e3a6);border:1px solid #6ccf6c;color:#000;font-weight:700;cursor:pointer;border-radius:12px;padding:8px 10px;}
-    #closeCart:hover{background:linear-gradient(180deg,#a6e3a6,#8cd88c);}
+    #closeCart:hover{background:linear-gradient(180deg,#a6e3a6,#8cd88c);}  
   </style>
 
   <!-- 🖼️ OVERRIDE imágenes -->
@@ -491,7 +491,7 @@ function confirmOrder(){
     orderId, 
     alive:true, 
     version:"orders-v4-clean+invoices", 
-    to: PHONE_KG + "," + PHONE_US,
+    to: PHONE_KG, // ✅ solo un número
     totalUSD:Number(money(totUSD)), 
     totalKGS:Number(totKGS), 
     currency:"USD/KGS", 
@@ -513,18 +513,13 @@ function confirmOrder(){
 
   sendToSheets(payload);
 
-  // 📲 Enviar a WhatsApp
+  // 📲 Enviar a WhatsApp (solo KG)
   const enc = encodeURIComponent(msg);
   const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
   const urlKG = isMobile 
     ? `whatsapp://send?phone=${PHONE_KG}&text=${enc}` 
     : `https://wa.me/${PHONE_KG}?text=${enc}`; 
   window.open(urlKG,"_blank");
-
-  const urlUS = isMobile 
-    ? `whatsapp://send?phone=${PHONE_US}&text=${enc}` 
-    : `https://wa.me/${PHONE_US}?text=${enc}`; 
-  setTimeout(()=>window.open(urlUS,"_blank"),500);
 
   // 🧹 Reset del carrito
   cart = []; 
