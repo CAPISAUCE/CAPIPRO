@@ -12,62 +12,26 @@ const PRODUCTS = [
   { 
     id:"honey", 
     img:"honey_logo.png", 
-    name:{
-      ky:"Таза бал Issyk Kul", 
-      ru:"Чистый мёд Issyk Kul", 
-      es:"Miel Pura Issyk Kul", 
-      en:"Pure Honey Issyk Kul"
-    }, 
-    sizes:[
-      {ml:350,usd:4.0},
-      {ml:500,usd:6.3},
-      {ml:1000,usd:10.0}
-    ] 
+    name:{ ky:"Таза бал Issyk Kul", ru:"Чистый мёд Issyk Kul", es:"Miel Pura Issyk Kul", en:"Pure Honey Issyk Kul" }, 
+    sizes:[ {ml:350,usd:4.0},{ml:500,usd:6.3},{ml:1000,usd:10.0} ] 
   },
   { 
     id:"mango", 
     img:"mango_logo.png", 
-    name:{
-      ky:"Жашыл манго ачуу соусу (Premium)",
-      ru:"Острый соус из зелёного манго (Premium)",
-      es:"Salsa Picante de Mango Verde (Premium)",
-      en:"Green Mango Hot Sauce (Premium)"
-    }, 
-    sizes:[
-      {ml:350,usd:4.0},
-      {ml:500,usd:9.0},
-      {ml:1000,usd:20.0}
-    ] 
+    name:{ ky:"Жашыл манго ачуу соусу (Premium)", ru:"Острый соус из зелёного манго (Premium)", es:"Salsa Picante de Mango Verde (Premium)", en:"Green Mango Hot Sauce (Premium)" }, 
+    sizes:[ {ml:350,usd:4.0},{ml:500,usd:9.0},{ml:1000,usd:20.0} ] 
   },
   { 
     id:"pepper_red", 
     img:"redpepper_logo.png", 
-    name:{
-      ky:"Кызыл калемпир соусу",
-      ru:"Соус из красного перца",
-      es:"Salsa de Pimientos Rojos",
-      en:"Red Pepper Sauce"
-    }, 
-    sizes:[
-      {ml:350,usd:2.8},
-      {ml:500,usd:6.0},
-      {ml:1000,usd:12.0}
-    ] 
+    name:{ ky:"Кызыл калемпир соусу", ru:"Соус из красного перца", es:"Salsa de Pimientos Rojos", en:"Red Pepper Sauce" }, 
+    sizes:[ {ml:350,usd:2.8},{ml:500,usd:6.0},{ml:1000,usd:12.0} ] 
   },
   { 
     id:"pepper_green", 
     img:"greenpepper_logo.png", 
-    name:{
-      ky:"Жашыл калемпир соусу",
-      ru:"Соус из зелёного перца",
-      es:"Salsa de Pimientos Verdes",
-      en:"Green Pepper Sauce"
-    }, 
-    sizes:[
-      {ml:350,usd:2.8},
-      {ml:500,usd:6.0},
-      {ml:1000,usd:12.0}
-    ] 
+    name:{ ky:"Жашыл калемпир соусу", ru:"Соус из зелёного перца", es:"Salsa de Pimientos Verdes", en:"Green Pepper Sauce" }, 
+    sizes:[ {ml:350,usd:2.8},{ml:500,usd:6.0},{ml:1000,usd:12.0} ] 
   }
 ];
 
@@ -80,7 +44,6 @@ const T = {
   empty_cart:{ ky:"Себет бош", ru:"Корзина пуста", es:"El carrito está vacío", en:"Cart is empty" },
   confirm:{ ky:"Буйрутманы тастыктоо", ru:"Подтвердить заказ", es:"Confirmar pedido", en:"Confirm order" },
   price_lbl:{ ky:"Баасы:", ru:"Цена:", es:"Precio:", en:"Price:" },
-  /* ✅ ACTUALIZADO: frase larga con emojis en 4 idiomas */
   fill_required:{ 
     ky:"👇🏼🐝Тапшырманы ырастоо үчүн бардык милдеттүү талааларды толтуруңуз🐝👇🏼", 
     ru:"👇🏼🐝Пожалуйста, заполните все обязательные поля для подтверждения заказа🐝👇🏼", 
@@ -144,11 +107,9 @@ function i18n(){
   document.getElementById("custPhone").placeholder = T.phone_ph[lang];
   document.getElementById("custEmail").placeholder = T.email_ph[lang];
 
-  /* ✅ NUEVO: aviso fijo traducido */
   const notice = document.getElementById("formNotice");
   if (notice) notice.textContent = T.fill_required[lang];
 
-  // error dinámico
   const err = document.getElementById("formError");
   if (err) err.textContent = "🐝 " + T.fill_required[lang];
 }
@@ -180,14 +141,12 @@ function renderProducts(){
     const q = document.createElement("span"); q.className="q"; q.textContent="1";
     const inc = document.createElement("button"); inc.textContent="+";
 
-    // ✅ Limitar cantidades (mín 1, máx 20)
+    // límite 1-20
     const MAX_QTY = 20;
     dec.onclick = ()=>{ q.textContent = Math.max(1, parseInt(q.textContent)-1); };
     inc.onclick = ()=>{
       const current = parseInt(q.textContent);
-      if (current < MAX_QTY) {
-        q.textContent = current + 1;
-      }
+      if (current < MAX_QTY) q.textContent = current + 1;
     };
 
     controls.append(dec,q,inc); card.appendChild(controls);
@@ -220,8 +179,8 @@ function updateCart(){
 
      const icon = it.id === "honey" ? "🍯" 
             : it.id === "mango" ? "🥭🌶️" 
-            : it.id === "pepper_red" ? "🍅"     
-            : it.id === "pepper_green" ? "🫑"   
+            : it.id === "pepper_red" ? "🍅"
+            : it.id === "pepper_green" ? "🫑"
             : "•";
 
     row.innerHTML = `<span>${icon} ${it.name} ${it.size} ml x${it.qty} (${it.price.kgs} сом / $${money(it.price.usd)})</span>`;
@@ -276,13 +235,16 @@ function confirmOrder(){
 
   let phone = "";
   if (iti && iti.isValidNumber()) {
-    phone = iti.getNumber(); 
-    const type = iti.getNumberType();
-    if (type !== intlTelInputUtils.numberType.MOBILE) {
-      phoneInput.classList.add("input-error");
-      return;
-    } else {
-      phoneInput.classList.remove("input-error");
+    phone = iti.getNumber();
+    // Chequeo MOBILE solo si intlTelInputUtils existe
+    if (typeof intlTelInputUtils !== "undefined") {
+      const type = iti.getNumberType();
+      if (type !== intlTelInputUtils.numberType.MOBILE) {
+        phoneInput.classList.add("input-error");
+        return;
+      } else {
+        phoneInput.classList.remove("input-error");
+      }
     }
   } else {
     phoneInput.classList.add("input-error");
@@ -299,6 +261,7 @@ function confirmOrder(){
     if (err) err.style.display = "none";
   }
 
+  // Mensaje WA
   let msg = "🧾 " + T.cart[lang] + ":\n";
   let totUSD=0, totKGS=0;
   cart.forEach(it=>{ 
@@ -310,11 +273,12 @@ function confirmOrder(){
   const orderId = genOrderId(); 
   msg += `\n\nID: ${orderId}`;
 
+  // Payload Sheets (SOLO un número)
   const payload = { 
     orderId, 
     alive:true, 
     version:"orders-v4-clean+invoices", 
-    to: PHONE_KG + "," + PHONE_US,
+    to: PHONE_KG,
     totalUSD:Number(money(totUSD)), 
     totalKGS:Number(totKGS), 
     currency:"USD/KGS", 
@@ -322,22 +286,21 @@ function confirmOrder(){
     items: cart.map(it=>({id:it.id,name:it.name,ml:Number(it.size),qty:Number(it.qty),usd:Number(it.price.usd),kgs:Number(it.price.kgs)})),
     created_at:new Date().toISOString(),
     customer:name,
-    phone:phone,   
+    phone:phone,
     email:email,
     autoInvoice:true
   };
 
   sendToSheets(payload);
-
   clearCheckoutForm();
 
+  // WhatsApp (solo KG)
   const enc = encodeURIComponent(msg);
   const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
   const urlKG = isMobile ? `whatsapp://send?phone=${PHONE_KG}&text=${enc}` : `https://wa.me/${PHONE_KG}?text=${enc}`; 
   window.open(urlKG,"_blank");
-  const urlUS = isMobile ? `whatsapp://send?phone=${PHONE_US}&text=${enc}` : `https://wa.me/${PHONE_US}?text=${enc}`; 
-  setTimeout(()=>window.open(urlUS,"_blank"),500);
 
+  // Reset
   cart = []; 
   updateCart(); 
   closeCart();
@@ -368,117 +331,98 @@ window.addEventListener("load", () => {
     fetch(SHEETS_WEBAPP_URL).catch(()=>{});
 
     // === intl-tel-input inicialización ===
-const phoneInput = document.querySelector("#custPhone");
-if (phoneInput) {
-  iti = window.intlTelInput(phoneInput, {
-    initialCountry: "kg",
-    preferredCountries: ["kg","us","es","kz","ru"],
-    dropdownContainer: document.body,
-    separateDialCode: true,
-    utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js"
-  });
+    const phoneInput = document.querySelector("#custPhone");
+    if (phoneInput) {
+      iti = window.intlTelInput(phoneInput, {
+        initialCountry: "kg",
+        preferredCountries: ["kg","us","es","kz","ru"],
+        dropdownContainer: document.body,
+        separateDialCode: true,
+        utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js"
+      });
 
-  // 🚀 Arranca en rojo
-  phoneInput.classList.add("input-error");
+      // Arranca en rojo
+      phoneInput.classList.add("input-error");
 
-  // 🚫 Bloquear letras y limitar a 15 dígitos + validar recuadro
-  phoneInput.addEventListener("input", (e) => {
-    e.target.value = e.target.value.replace(/[^0-9+]/g, "");
-    const raw = e.target.value.replace(/\D/g, "");
-    if (raw.length > 15) {
-      e.target.value = "+" + raw.slice(0, 15);
+      // Limitar a 15 dígitos y validar recuadro
+      phoneInput.addEventListener("input", (e) => {
+        e.target.value = e.target.value.replace(/[^0-9+]/g, "");
+        const raw = e.target.value.replace(/\D/g, "");
+        if (raw.length > 15) {
+          e.target.value = "+" + raw.slice(0, 15);
+        }
+        if (phoneInput.value.trim() && iti.isValidNumber()) {
+          phoneInput.classList.remove("input-error");
+        } else {
+          phoneInput.classList.add("input-error");
+        }
+      });
     }
-
-    // 🔄 Recuadro rojo ON/OFF
-    if (phoneInput.value.trim() && iti.isValidNumber()) {
-      phoneInput.classList.remove("input-error"); // ✅ se apaga
-    } else {
-      phoneInput.classList.add("input-error");    // 🔴 sigue rojo
-    }
-  });
-}
 
     // === Validación de campos obligatorios ===
-const inputs = ["custName","custPhone","custEmail"].map(id => document.getElementById(id));
-const phoneEl = document.getElementById("custPhone");
+    const inputs = ["custName","custPhone","custEmail"].map(id => document.getElementById(id));
+    const phoneEl = document.getElementById("custPhone");
 
-// ✅ Función de validación general
-function validateForm(){
-  const nameEl  = document.getElementById("custName");
-  const emailEl = document.getElementById("custEmail");
+    function validateForm(){
+      const nameEl  = document.getElementById("custName");
+      const emailEl = document.getElementById("custEmail");
 
-  const name  = nameEl.value.trim();
-  const email = emailEl.value.trim();
+      const name  = nameEl.value.trim();
+      const email = emailEl.value.trim();
 
-  const nameValid  = (name.length > 1); // mínimo 2 caracteres
-  const phoneValid = (iti && iti.isValidNumber());
-  const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+      const nameValid  = (name.length > 1);
+      const phoneValid = (iti && iti.isValidNumber());
+      const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-  const filled = (nameValid && emailValid && phoneValid);
-  document.getElementById("confirm").disabled = !filled;
+      const filled = (nameValid && emailValid && phoneValid);
+      document.getElementById("confirm").disabled = !filled;
 
-  // ✔ verde (SVG incrustado)
-  const checkSvg = "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23008000' d='M9 16.17l-3.88-3.88-1.41 1.41L9 19 20.29 7.71l-1.41-1.41z'/></svg>\")";
+      const checkSvg = "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23008000' d='M9 16.17l-3.88-3.88-1.41 1.41L9 19 20.29 7.71l-1.41-1.41z'/></svg>\")";
 
-  // aplicar ✔ o nada según validación
-  nameEl.style.backgroundImage  = nameValid  ? checkSvg : "none";
-  emailEl.style.backgroundImage = emailValid ? checkSvg : "none";
-  phoneEl.style.backgroundImage = phoneValid ? checkSvg : "none";
+      nameEl.style.backgroundImage  = nameValid  ? checkSvg : "none";
+      emailEl.style.backgroundImage = emailValid ? checkSvg : "none";
+      phoneEl.style.backgroundImage = phoneValid ? checkSvg : "none";
 
-  [nameEl, phoneEl, emailEl].forEach(el => {
-    el.style.backgroundRepeat   = "no-repeat";
-    el.style.backgroundPosition = "right 10px center";
-    el.style.backgroundSize     = "18px 18px";
-  });
-}
-
-// ✅ Teléfono (limita a 15 dígitos y aplica ✔ verde)
-function checkPhoneValidity(){
-  if (!phoneEl || !iti) return;
-
-  let raw = iti.getNumber().replace(/\D/g, "");
-  if (raw.length > 15) {
-    raw = raw.slice(0, 15);
-    iti.setNumber("+" + raw);
-  }
-
-  const valid = iti.isValidNumber();
-  const checkSvg = "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23008000' d='M9 16.17l-3.88-3.88-1.41 1.41L9 19 20.29 7.71l-1.41-1.41z'/></svg>\")";
-  phoneEl.style.backgroundImage = valid ? checkSvg : "none";
-  phoneEl.style.backgroundRepeat   = "no-repeat";
-  phoneEl.style.backgroundPosition = "right 10px center";
-  phoneEl.style.backgroundSize     = "18px 18px";
-}
-
-// === Eventos ===
-inputs.forEach(i => {
-  i.addEventListener("input", validateForm);
-  i.addEventListener("change", validateForm); // cubre autofill básico
-});
-
-if (phoneEl) {
-  phoneEl.addEventListener("input", () => { 
-    checkPhoneValidity(); 
-    validateForm(); 
-  });
-  phoneEl.addEventListener("countrychange", () => { 
-    checkPhoneValidity(); 
-    validateForm(); 
-  });
-}
-
-// Validación inicial
-validateForm();
-setTimeout(validateForm, 500); // re-chequeo por si hay autofill tardío
-
-// 👇 Extra: Safari/iOS autofill (dispara validateForm cuando Safari rellena)
-inputs.forEach(i => {
-  i.addEventListener("animationstart", (e) => {
-    if (e.animationName === "onAutoFillStart") {
-      validateForm(); // fuerza la actualización de los ✔
+      [nameEl, phoneEl, emailEl].forEach(el => {
+        el.style.backgroundRepeat   = "no-repeat";
+        el.style.backgroundPosition = "right 10px center";
+        el.style.backgroundSize     = "18px 18px";
+      });
     }
-  });
-});
+
+    function checkPhoneValidity(){
+      if (!phoneEl || !iti) return;
+      let raw = iti.getNumber().replace(/\D/g, "");
+      if (raw.length > 15) {
+        raw = raw.slice(0, 15);
+        iti.setNumber("+" + raw);
+      }
+      const valid = iti.isValidNumber();
+      const checkSvg = "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23008000' d='M9 16.17l-3.88-3.88-1.41 1.41L9 19 20.29 7.71l-1.41-1.41z'/></svg>\")";
+      phoneEl.style.backgroundImage = valid ? checkSvg : "none";
+      phoneEl.style.backgroundRepeat   = "no-repeat";
+      phoneEl.style.backgroundPosition = "right 10px center";
+      phoneEl.style.backgroundSize     = "18px 18px";
+    }
+
+    inputs.forEach(i => {
+      i.addEventListener("input", validateForm);
+      i.addEventListener("change", validateForm);
+    });
+
+    if (phoneEl) {
+      phoneEl.addEventListener("input", () => { checkPhoneValidity(); validateForm(); });
+      phoneEl.addEventListener("countrychange", () => { checkPhoneValidity(); validateForm(); });
+    }
+
+    validateForm();
+    setTimeout(validateForm, 500);
+
+    inputs.forEach(i => {
+      i.addEventListener("animationstart", (e) => {
+        if (e.animationName === "onAutoFillStart") validateForm();
+      });
+    });
 
   } catch(e) {
     console.error("Init error:", e);
@@ -486,5 +430,4 @@ inputs.forEach(i => {
       "<div class='card'>Перезагрузите страницу / Vuelva a cargar la página.</div>";
   }
 });
-
 </script>
