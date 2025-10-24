@@ -1,8 +1,7 @@
 <script>
 /* ================== CONFIG ================== */
 const SHEETS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxab8-ziPP2u5oAhQJKBzxzhrc54-Qz_s4xAzbLg_on1Wl5Z9zthTNPxwVSWUylBCoz/exec";
-const PHONE_KG = "996559500551";
-const PHONE_US = "17866514487";
+const PHONE_KG = "996503971822";
 const EXCHANGE_KGS_PER_USD = 89;
 
 /* Idioma por defecto: KY (respeta localStorage si ya existe) */
