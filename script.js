@@ -27,11 +27,26 @@ const PRODUCTS = [
     name:{ ky:"Кызыл калемпир соусу", ru:"Соус из красного перца", es:"Salsa de Pimientos Rojos", en:"Red Pepper Sauce" }, 
     sizes:[ {ml:350,usd:2.8},{ml:500,usd:6.0},{ml:1000,usd:12.0} ] 
   },
-  { 
+    { 
     id:"pepper_green", 
     img:"greenpepper_logo.png", 
     name:{ ky:"Жашыл калемпир соусу", ru:"Соус из зелёного перца", es:"Salsa de Pimientos Verdes", en:"Green Pepper Sauce" }, 
     sizes:[ {ml:350,usd:2.8},{ml:500,usd:6.0},{ml:1000,usd:12.0} ] 
+  }, // 👈 esta coma es obligatoria
+  {
+    id: "mojo_islander",
+    img: "mojo_islander_logo.png", // coloca aquí tu archivo (o déjalo y si no carga se oculta solo)
+    name: {
+      ky: "Можо Islander",
+      ru: "Моджо Islander",
+      es: "Mojo Islander",
+      en: "Mojo Islander"
+    },
+    sizes: [
+      { ml: 350, usd: 2.8 },
+      { ml: 500, usd: 6.0 },
+      { ml: 1000, usd: 12.0 }
+    ]
   }
 ];
 
@@ -178,10 +193,11 @@ function updateCart(){
     row.className = "row";
 
      const icon = it.id === "honey" ? "🍯" 
-            : it.id === "mango" ? "🥭🌶️" 
-            : it.id === "pepper_red" ? "🍅"
-            : it.id === "pepper_green" ? "🫑"
-            : "•";
+      : it.id === "mango" ? "🥭🌶️" 
+      : it.id === "pepper_red" ? "🍅"
+      : it.id === "pepper_green" ? "🫑"
+      : it.id === "mojo_islander" ? "🌿"   // 👈 nuevo
+      : "•";
 
     row.innerHTML = `<span>${icon} ${it.name} ${it.size} ml x${it.qty} (${it.price.kgs} сом / $${money(it.price.usd)})</span>`;
 
