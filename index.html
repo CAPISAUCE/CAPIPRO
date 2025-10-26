@@ -12,6 +12,9 @@
   <link rel="apple-touch-icon" sizes="180x180" href="icons/ios-180x180.png?v=2">
   <link rel="apple-touch-icon" sizes="1024x1024" href="icons/ios-1024x1024.png?v=2">
 
+  <!-- ✅ PRELOAD del logo de la nueva salsa Mojo -->
+  <link rel="preload" as="image" href="mojo_islander_logo.png">
+
   <!-- PWA meta -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
@@ -267,9 +270,25 @@ const PRODUCTS = [
       {ml:500,usd:6.0},
       {ml:1000,usd:12.0}
     ] 
-  }
-];
-
+  },
+{
+  
+  id: "mojo_islander",
+  img: "mojoisleño_logo.png", // coloca aquí tu archivo (o déjalo y si no carga se oculta solo)
+  name: {
+    ky: "Можо Islander",
+    ru: "Моджо Islander",
+    es: "Mojo Isleño",
+    en: "Mojo Islander"
+  },
+  sizes: [
+    { ml: 350, usd: 2.8 },
+    { ml: 500, usd: 6.0 },
+    { ml: 1000, usd: 12.0 }
+  ]
+}
+];  
+  
 const T = {
   title:{ ky:"Продукциялар 100% табигый", ru:"Продукция 100% натуральная", es:"Productos 100% Natural", en:"100% Natural Products" },
   prices_note:{ ky:"Баалар USD жана KGS менен. Өлчөмдү өзгөртүп бааны көрүңүз.", ru:"Цены в USD и сомах. Меняйте объём, чтобы увидеть цену.", es:"Precios en USD y KGS. Cambia el tamaño para ver el precio.", en:"Prices in USD and KGS. Change size to see price." },
@@ -398,10 +417,11 @@ function updateCart(){
     row.className = "row";
 
      const icon = it.id === "honey" ? "🍯" 
-            : it.id === "mango" ? "🥭🌶️" 
-            : it.id === "pepper_red" ? "🍅"     // tomate para red pepper
-            : it.id === "pepper_green" ? "🫑"   // pimiento verde
-            : "•";
+      : it.id === "mango" ? "🥭🌶️" 
+      : it.id === "pepper_red" ? "🍅"
+      : it.id === "pepper_green" ? "🫑"
+      : it.id === "mojo_islander" ? "🌿"  // 👈 nuevo
+      : "•";
 
     row.innerHTML = `<span>${icon} ${it.name} ${it.size} ml x${it.qty} (${it.price.kgs} сом / $${money(it.price.usd)})</span>`;
 
